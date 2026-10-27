@@ -6,6 +6,7 @@
 
 - [本机安装与运行](docs/web-local-operation.md)
 - [功能与技术设计](docs/web-product-and-architecture-design.md)
+- [本地 Agent Runtime 与模型接入设计](docs/local-agent-runtime-design.md)
 - [实现与验收状态](docs/web-execution-status.md)
 
 本机环境准备完成后，运行 `./start-workbench.command` 启动 API 和独立研究 worker，访问 `http://127.0.0.1:8001/workbench/`。现已支持多用户登录与开放注册，无需邀请码；每个账号有独立工作区。首次由本机所有者用一次性初始化凭证创建管理员账号，原有本机资料保留在该账号下；之后的新账号从空自选和独立研究记录开始，分别配置模型与数据账号。

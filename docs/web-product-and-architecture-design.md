@@ -1,6 +1,8 @@
 **TradingAgents 美股投研工作台功能设计与技术选型方案**
 
-版本：方案 v1.1。日期：2026-10-24。状态：开发设计依据，尚未实施新版应用。技术基线更新为 TypeScript 7 + Orval + Oxc 质量工具链；实施任务见 [实现方案](./web-implementation-plan.md)。
+版本：方案 v1.2。更新日期：2026-10-27。本文主体保留最初功能设计依据；当前应用已实现多项能力及账号隔离，实际范围见 [实现状态](web-execution-status.md)。TypeScript 7 + Orval + Oxc 技术基线保持，实施任务见 [实现方案](./web-implementation-plan.md)。
+
+本地 Agent 执行与模型接入按新增的 [本地 Agent Runtime 与模型接入设计](local-agent-runtime-design.md) 演进：区分模型服务、执行机器/Runtime、研究 Agent 和研究执行方案；保留内置12角色，增加独立Agent研究及后续混合研究。该增量方案已完成参照分析，Runtime桥接尚未实施；与本文早期规划冲突时，以增量方案和实际交付状态为准。
 
 适用范围：先在本机供个人使用，完成后支持少量朋友独立使用，为后续产品化保留演进路径。现有 8000 应用和 8011 交互草稿均不代表本文全部功能已经完成。
 

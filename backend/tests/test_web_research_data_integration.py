@@ -24,7 +24,7 @@ def test_settings_api_freezes_references_and_private_runtime_consumes_ui_key(tmp
         "quick_think_provider": "ollama",
         "deep_think_provider": "ollama",
     }
-    app = create_app(config, secret_store=secrets)
+    app = create_app(config, secret_store=secrets, authentication_required=False)
     with TestClient(app, base_url="http://127.0.0.1:8000") as client:
         headers = {"Origin": "http://127.0.0.1:8000"}
         created = client.post(
@@ -74,7 +74,7 @@ def test_settings_api_freezes_references_and_private_runtime_consumes_ui_key(tmp
 
 
 def test_settings_validation_does_not_echo_sensitive_input(tmp_path):
-    app = create_app({"results_dir": str(tmp_path / "state")}, secret_store=MemorySecretStore())
+    app = create_app({"results_dir": str(tmp_path / "state")}, secret_store=MemorySecretStore(), authentication_required=False)
     with TestClient(app, base_url="http://127.0.0.1:8000") as client:
         response = client.post(
             "/api/v1/research-data-connections",
@@ -126,7 +126,7 @@ def test_legacy_run_cannot_complete_or_write_decision_after_connection_change(tm
         },
         graph_factory=lambda *args, **kwargs: Graph(),
         secret_store=MemorySecretStore(),
-    )
+     authentication_required=False)
     with TestClient(app, base_url="http://127.0.0.1:8000") as client:
         connection = app.state.research_data_service.create_connection(
             {"provider": "fred", "name": "FRED", "api_key": "isolated-test-only"}

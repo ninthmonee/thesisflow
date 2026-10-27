@@ -9,6 +9,7 @@ from fastapi import APIRouter, FastAPI
 from pydantic.json_schema import models_json_schema
 
 from .alternative_router import create_alternative_router
+from .auth_router import create_auth_router
 from .data_router import create_data_router
 from .intelligence_router import create_intelligence_router
 from .market_router import create_market_router
@@ -164,9 +165,11 @@ def create_api_router(
     research_context_service_reader: Callable | None = None,
     viewpoint_service_reader: Callable | None = None,
     professional_pulse_service_reader: Callable | None = None,
+    authentication_service_reader: Callable | None = None,
 ) -> APIRouter:
     """Readers are injected at runtime; schema export supplies none and performs no IO."""
     router = APIRouter(prefix="/api/v1", tags=["system"])
+    router.include_router(create_auth_router(authentication_service_reader, prefix=""))
 
     @router.get("/health", response_model=HealthResponse, operation_id="getHealth")
     def health() -> HealthResponse:

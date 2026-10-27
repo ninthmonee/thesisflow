@@ -604,8 +604,14 @@ def create_app(
     alternative_providers=None,
     research_data_tester=None,
     durable_research: bool = False,
+    authentication_required: bool = True,
 ) -> FastAPI:
+    # The supported account mode always uses the scoped persistent queue.
+    # Explicit legacy mode is retained for offline compatibility tests only.
+    durable_research = durable_research or authentication_required
     store = RunStore(config if config is not None else DEFAULT_CONFIG, graph_factory)
+    from types import SimpleNamespace
+
     from tradingagents.web.api import create_api_router
     from tradingagents.web.application.data_settings import DataSettingsService
     from tradingagents.web.application.market_alternatives import AlternativeMarketService
@@ -626,13 +632,32 @@ def create_app(
     from tradingagents.web.application.runtime_readiness import RuntimeReadinessService
     from tradingagents.web.application.themes import ThemesService
     from tradingagents.web.application.tracking import WatchlistTrackingService
+    from tradingagents.web.application.user_services import UserServiceRegistry, build_user_services
     from tradingagents.web.application.viewpoints import ViewpointService
     from tradingagents.web.application.watchlists import WatchlistService
     from tradingagents.web.domain.research_workflow import research_workflow_definition
     from tradingagents.web.infrastructure.database import initialize_database
+    from tradingagents.web.infrastructure.http_auth import (
+        AccountAuthenticationMiddleware,
+        SessionBoundResearch,
+        current_request_identity,
+    )
 
     database = initialize_database(store.root / "workbench.sqlite3")
     workspace = database.local_workspace()
+    authentication = None
+    if authentication_required:
+        from tradingagents.web.application.authentication import AuthenticationService
+        authentication = AuthenticationService(database)
+        authentication.ensure_setup_token()
+    else:
+        from sqlalchemy import func, select
+
+        from tradingagents.web.infrastructure.auth_models import AccountRecord
+        with database.session() as session:
+            if session.scalar(select(func.count()).select_from(AccountRecord)):
+                database.dispose()
+                raise RuntimeError("Cannot disable authentication for an initialized account store")
     model_service = ModelConfigurationService(
         database, workspace, secret_store=secret_store, tester=model_tester
     )
@@ -650,6 +675,8 @@ def create_app(
         store.root / "research",
         config_snapshot_provider=lambda: deepcopy(store.config),
         data_snapshot_provider=research_data_service.freeze_for_run,
+        max_active_runs_per_owner=3 if authentication_required else None,
+        max_queued_runs_total=50 if authentication_required else None,
     )
     research_evidence_service = ResearchEvidenceStore(database, store.root / "research")
     readiness_service = RuntimeReadinessService(database, workspace, clock=market_clock)
@@ -691,8 +718,9 @@ def create_app(
     )
 
     def select_models(request):
-        chosen = dict(resolve_models(request))
-        chosen["context_inputs"] = research_context_service.freeze(
+        bundle = scoped_services()
+        chosen = dict(bundle.resolve_models(request))
+        chosen["context_inputs"] = bundle.research_context_service.freeze(
             request.context_ids, ticker=request.ticker, analysis_date=request.date
         )
         return chosen
@@ -727,6 +755,64 @@ def create_app(
     )
     data_service.apply_saved_settings()
 
+    local_services = SimpleNamespace(
+        model_service=model_service, watchlist_service=watchlist_service,
+        research_service=research_service, research_data_service=research_data_service,
+        research_evidence_service=research_evidence_service, readiness_service=readiness_service,
+        viewpoint_service=viewpoint_service, market_service=market_service,
+        intelligence_service=intelligence_service, themes_service=themes_service,
+        tracking_service=tracking_service, alternative_service=alternative_service,
+        professional_pulse_service=professional_pulse_service,
+        research_context_service=research_context_service, data_service=data_service,
+        market_brief_generator=market_brief_generator, resolve_models=resolve_models,
+    )
+    user_services = UserServiceRegistry(workspace, local_services, lambda space: build_user_services(
+        database, space, store.root, store.config, secret_store=secret_store,
+        model_tester=model_tester, instrument_search=instrument_search, market_provider=market_provider,
+        market_clock=market_clock, alternative_providers=alternative_providers,
+        research_data_tester=research_data_tester,
+    ))
+
+    def current_scope():
+        if not authentication_required:
+            return workspace
+        context = current_request_identity()
+        if context is None:
+            raise HTTPException(401, "请先登录。")
+        return context.identity.workspace
+
+    def scoped_services():
+        return user_services.get(current_scope())
+
+    def scoped_research():
+        service = scoped_services().research_service
+        context = current_request_identity()
+        return SessionBoundResearch(service, authentication, context) if authentication_required else service
+
+    def scoped_public_config():
+        space = current_scope()
+        if (space.workspace_id, space.user_id) == (workspace.workspace_id, workspace.user_id):
+            return public_config(store.config, active_run_id())
+        bundle = scoped_services()
+        template = bundle.model_service.settings()["default_template"]
+        profiles = {item["id"]: item for item in bundle.model_service.list_profiles()}
+        profile = profiles.get(template["default_profile_id"]) if template else None
+        connections = {item["id"]: item for item in bundle.model_service.list_connections()}
+        connection = connections.get(profile["connection_id"]) if profile else None
+        ready = bool(profile and connection and connection["enabled"])
+        provider = profile["provider"] if profile else "unconfigured"
+        services = []
+        for source in bundle.research_data_service.list_connections():
+            configured = source.enabled and (source.credential_configured or source.user_agent_configured)
+            services.append({"id": source.provider, "name": source.name,
+                "configured": configured, "status": "configured" if configured else "optional"})
+        return {"version": tradingagents.__version__, "today": current_research_date(),
+            "provider": provider, "quick_provider": provider, "deep_provider": provider,
+            "quick_model": profile["model_id"] if profile else None,
+            "deep_model": profile["model_id"] if profile else None,
+            "output_language": template["language"] if template else "Chinese",
+            "model_ready": ready, "services": services, "active_run_id": active_run_id()}
+
     def active_run_id():
         if not durable_research:
             return store.active_id
@@ -734,12 +820,13 @@ def create_app(
 
         from tradingagents.web.infrastructure.models import ResearchRun
 
+        space = current_scope()
         with database.session() as session:
             return session.scalar(
                 select(ResearchRun.id)
                 .where(
-                    ResearchRun.workspace_id == workspace.workspace_id,
-                    ResearchRun.owner_id == workspace.user_id,
+                    ResearchRun.workspace_id == space.workspace_id,
+                    ResearchRun.owner_id == space.user_id,
                     ResearchRun.status.in_(["queued", "running", "cancelling"]),
                 )
                 .order_by(ResearchRun.created_at)
@@ -750,10 +837,11 @@ def create_app(
         from tradingagents.web.domain.tasks import ResearchError
 
         try:
-            return getattr(research_service, method)(
+            space = current_scope()
+            return getattr(scoped_research(), method)(
                 *args,
-                workspace_id=workspace.workspace_id,
-                owner_id=workspace.user_id,
+                workspace_id=space.workspace_id,
+                owner_id=space.user_id,
                 **kwargs,
             )
         except ResearchError as exc:
@@ -775,10 +863,7 @@ def create_app(
         try:
             yield
         finally:
-            tracking_service.close()
-            themes_service.close()
-            intelligence_service.close()
-            professional_pulse_service.close()
+            user_services.close()
             database.dispose()
 
     app = FastAPI(
@@ -805,17 +890,20 @@ def create_app(
     app.state.alternative_service = alternative_service
     app.state.research_data_service = research_data_service
     app.state.tracking_service = tracking_service
+    app.state.authentication_service = authentication
+    app.state.authentication_required = authentication_required
+    app.state.user_services = user_services
     ui_root = (workbench_dir or Path(__file__).parent / "ui").resolve()
     app.include_router(
         create_api_router(
-            public_config_reader=lambda: public_config(store.config, active_run_id()),
+            public_config_reader=scoped_public_config,
             workspace_reader=lambda: {
-                "id": workspace.workspace_id,
-                "name": workspace.name,
-                "owner_id": workspace.user_id,
+                "id": current_scope().workspace_id,
+                "name": current_scope().name,
+                "owner_id": current_scope().user_id,
             },
-            model_service_reader=lambda: model_service,
-            watchlist_service_reader=lambda: watchlist_service,
+            model_service_reader=lambda: scoped_services().model_service,
+            watchlist_service_reader=lambda: scoped_services().watchlist_service,
             capability_states={
                 "model_connections": "available",
                 "watchlists": "available",
@@ -823,25 +911,28 @@ def create_app(
                 "market_pulse": "available",
                 "sector_attention": "available",
             },
-            research_service_reader=lambda: research_service,
-            scope_reader=lambda: workspace,
+            research_service_reader=scoped_research,
+            scope_reader=current_scope,
             selection_resolver=select_models,
-            market_service_reader=lambda: market_service,
-            intelligence_service_reader=lambda: intelligence_service,
-            brief_generator_reader=lambda: market_brief_generator,
-            data_service_reader=lambda: data_service,
-            themes_service_reader=lambda: themes_service,
-            alternative_service_reader=lambda: alternative_service,
-            research_data_service_reader=lambda: research_data_service,
-            tracking_service_reader=lambda: tracking_service,
+            market_service_reader=lambda: scoped_services().market_service,
+            intelligence_service_reader=lambda: scoped_services().intelligence_service,
+            brief_generator_reader=lambda: scoped_services().market_brief_generator,
+            data_service_reader=lambda: scoped_services().data_service,
+            themes_service_reader=lambda: scoped_services().themes_service,
+            alternative_service_reader=lambda: scoped_services().alternative_service,
+            research_data_service_reader=lambda: scoped_services().research_data_service,
+            tracking_service_reader=lambda: scoped_services().tracking_service,
             workflow_reader=research_workflow_definition,
             research_evidence_service_reader=lambda: research_evidence_service,
-            readiness_service_reader=lambda: readiness_service,
-            research_context_service_reader=lambda: research_context_service,
-            viewpoint_service_reader=lambda: viewpoint_service,
-            professional_pulse_service_reader=lambda: professional_pulse_service,
+            readiness_service_reader=lambda: scoped_services().readiness_service,
+            research_context_service_reader=lambda: scoped_services().research_context_service,
+            viewpoint_service_reader=lambda: scoped_services().viewpoint_service,
+            professional_pulse_service_reader=lambda: scoped_services().professional_pulse_service,
+            authentication_service_reader=(lambda: authentication) if authentication_required else None,
         )
     )
+    if authentication_required:
+        app.add_middleware(AccountAuthenticationMiddleware, authentication=authentication, service_registry=user_services)
 
     @app.middleware("http")
     async def local_boundary(request: Request, call_next):
@@ -923,9 +1014,17 @@ def create_app(
         ]
         return JSONResponse({"detail": "输入参数有误", "errors": errors}, status_code=422)
 
+    if authentication_required:
+        from tradingagents.web.application.authentication import AuthError
+
+        @app.exception_handler(AuthError)
+        async def authentication_error(_request, error):
+            return JSONResponse({"error_code": error.code, "message": error.message, "retryable": False},
+                status_code=error.status_code)
+
     @app.get("/api/config")
     def get_config():
-        return public_config(store.config, active_run_id())
+        return scoped_public_config()
 
     @app.get("/api/runs")
     def list_runs():
@@ -960,7 +1059,7 @@ def create_app(
             try:
                 selection = select_models(body)
             except ModelConfigurationError as exc:
-                raise HTTPException(exc.status_code, exc.message) from None
+                raise HTTPException(getattr(exc, "status_code", getattr(exc, "status", 409)), exc.message) from None
             snapshot = persistent_call("create_run", body, manifest=selection)
             return legacy_snapshot(snapshot["id"])
         return store.create(request)
@@ -981,7 +1080,12 @@ def create_app(
             nonlocal revision
             heartbeat = time.monotonic()
             while not await request.is_disconnected():
-                snapshot = legacy_snapshot(run_id)
+                try:
+                    snapshot = legacy_snapshot(run_id)
+                except Exception as error:
+                    if getattr(error, "status_code", None) in {401, 403, 404}:
+                        return
+                    raise
                 if snapshot["revision"] != revision:
                     revision = snapshot["revision"]
                     yield f"id: {revision}\nevent: update\ndata: {json.dumps(snapshot, ensure_ascii=False)}\n\n"
@@ -1031,6 +1135,9 @@ def create_app(
 
     @app.get("/")
     def index():
+        if authentication_required:
+            from fastapi.responses import RedirectResponse
+            return RedirectResponse("/workbench/", status_code=307)
         file = static / "index.html"
         if not file.is_file():
             raise HTTPException(503, "界面文件尚未安装")

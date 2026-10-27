@@ -39,6 +39,18 @@ def main() -> int:
             print("此状态目录已有工作台启动进程。", file=sys.stderr)
             return 1
         database = initialize_database(owned / "workbench.sqlite3")
+        from shlex import quote
+
+        from tradingagents.web.application.authentication import AuthenticationService
+
+        setup = AuthenticationService(database).ensure_setup_token()
+        if setup is not None:
+            command = " ".join(quote(str(value)) for value in (
+                sys.executable, BACKEND / "scripts/account_setup.py", "--database", database.path, "--show-token"
+            ))
+            print("首次启用账号登录：请在页面初始化主人账号。", flush=True)
+            print("初始化码保存在本机私有文件；请在自己的终端运行以下命令查看，再填入页面：", flush=True)
+            print(command, flush=True)
         database.dispose()
         stop = threading.Event()
         for event in (signal.SIGINT, signal.SIGTERM):

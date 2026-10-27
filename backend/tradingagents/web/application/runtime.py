@@ -6,6 +6,7 @@ from typing import Any
 
 from tradingagents.web.api.model_schemas import ModelConfigurationError
 from tradingagents.web.application.models import ModelConfigurationService
+from tradingagents.web.domain.model_access import is_local_owner
 from tradingagents.web.infrastructure.database import Database
 from tradingagents.web.infrastructure.recovery_policy import requires_explicit_model_binding
 from tradingagents.web.infrastructure.secrets import SecretStore
@@ -27,6 +28,10 @@ def create_selection_resolver(
                     request.template_version_id, require_tested=True, analysts=request.analysts
                 ),
             }
+        if not is_local_owner(model_service.workspace.workspace_id, model_service.workspace.user_id):
+            raise ModelConfigurationError(
+                "model_connection_required", "请先在当前账号保存并检测自己的模型连接；不会使用服务器的本机账号。", 409
+            )
         if requires_explicit_model_binding(model_service.database):
             raise ModelConfigurationError(
                 "recovery_credentials_rebind_required", "恢复的数据需要在模型设置中显式绑定并检测连接；不会继承本机环境或订阅账号。", 409
@@ -56,7 +61,23 @@ def create_runtime_resolver(
         baseline = deepcopy(dict(base_config))
 
     def resolve(manifest: Mapping[str, Any], *, callbacks=None) -> dict:
-        config = deepcopy(baseline)
+        selection = manifest.get("selection", {})
+        workspace = LocalWorkspace(
+            user_id=manifest["owner_id"],
+            workspace_id=manifest["workspace_id"],
+            watchlist_id="",
+            name="研究工作区",
+        )
+        if "model_snapshot" not in selection and not is_local_owner(workspace.workspace_id, workspace.user_id):
+            raise ModelConfigurationError(
+                "local_model_access_forbidden", "研究没有本账号的模型快照，不能回退到服务器本机账号。", 403
+            )
+        # Configured users receive only public execution defaults. Private host
+        # endpoints, keys, headers and local paths never become their graph config.
+        config = (
+            {key: deepcopy(value) for key, value in baseline.items() if key in SAFE_RUNTIME_KEYS}
+            if "model_snapshot" in selection else deepcopy(baseline)
+        )
         frozen = manifest.get("runtime", {})
         config.update(
             {key: deepcopy(value) for key, value in frozen.items() if key in SAFE_RUNTIME_KEYS}
@@ -68,7 +89,6 @@ def create_runtime_resolver(
             max_risk_discuss_rounds=request.get("depth", 1),
             checkpoint_enabled=bool(request.get("checkpoint", True)),
         )
-        selection = manifest.get("selection", {})
         if "model_snapshot" not in selection and requires_explicit_model_binding(database):
             raise ModelConfigurationError(
                 "recovery_credentials_rebind_required", "恢复的旧本机授权任务不能自动复用账号，请配置模型模板后重新研究。", 409
@@ -78,12 +98,6 @@ def create_runtime_resolver(
             ResearchDataConnectionService,
         )
 
-        workspace = LocalWorkspace(
-            user_id=manifest["owner_id"],
-            workspace_id=manifest["workspace_id"],
-            watchlist_id="",
-            name="研究工作区",
-        )
         data_service = ResearchDataConnectionService(database, workspace, secret_store=secret_store)
         frozen_data = manifest.get("data_connections")
         if frozen_data is None:

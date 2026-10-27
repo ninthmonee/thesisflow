@@ -25,6 +25,7 @@ from tradingagents.web.api.model_schemas import ModelConfigurationError
 from tradingagents.web.api.schemas import ContractModel
 from tradingagents.web.application.models import ModelConfigurationService
 from tradingagents.web.application.runtime import create_runtime_resolver
+from tradingagents.web.domain.model_access import is_local_owner
 from tradingagents.web.infrastructure.recovery_policy import requires_explicit_model_binding
 
 
@@ -132,6 +133,8 @@ class MarketBriefGenerator:
             config = create_runtime_resolver(self.model_service.database, self.base_config,
                                              self.model_service.secrets)(manifest)
             return config["__role_model_resolver"]("quick"), chosen["provider"], chosen["model"]
+        if not is_local_owner(self.model_service.workspace.workspace_id, self.model_service.workspace.user_id):
+            raise IntelligenceError("market_model_required", "请先为当前账号配置并检测市场简报模型；不会继承服务器账号。", 409)
         if self.local_status_reader is None or not self.local_status_reader().get("model_ready"):
             raise IntelligenceError("market_model_required", "请先配置市场简报模型或完成本机授权。")
         if requires_explicit_model_binding(self.model_service.database):

@@ -22,7 +22,7 @@ def make_app(tmp_path, monkeypatch, *, ui=None):
         deep_think_provider=None,
         backend_url="https://private:password@invalid.example/v1",
     )
-    return create_app(config, workbench_dir=ui or tmp_path / "missing-ui")
+    return create_app(config, workbench_dir=ui or tmp_path / "missing-ui", authentication_required=False)
 
 
 def test_bootstrap_uses_persistent_local_identity_and_allowlisted_config(tmp_path, monkeypatch):
@@ -40,7 +40,7 @@ def test_bootstrap_uses_persistent_local_identity_and_allowlisted_config(tmp_pat
         assert client.get("/api/v1/health").status_code == 200
         assert client.get("/api/config").status_code == 200
         assert client.get("/").status_code == 200
-        assert app.state.database.schema_revision() == "0010_research_viewpoints"
+        assert app.state.database.schema_revision() == "0011_accounts_sessions"
 
 
 def test_unbuilt_workbench_is_explicitly_unavailable(tmp_path, monkeypatch):
@@ -73,7 +73,7 @@ def test_market_runtime_is_injected_and_lazy_with_provenance(tmp_path, monkeypat
     config["results_dir"] = str(tmp_path / "state")
     app = create_app(
         config, market_provider=provider, market_clock=lambda: datetime(2026, 10, 24, 1, tzinfo=UTC)
-    )
+    , authentication_required=False)
     with TestClient(app, base_url="http://127.0.0.1:8000") as client:
         capabilities = client.get("/api/v1/bootstrap").json()["capabilities"]
         assert next(row for row in capabilities if row["id"] == "charts")["state"] == "available"

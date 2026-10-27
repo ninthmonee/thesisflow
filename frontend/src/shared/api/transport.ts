@@ -1,3 +1,11 @@
+import {
+  assertCurrentSession,
+  authGeneration,
+  authWorkspaceId,
+  csrfToken,
+  notifySessionExpired,
+} from "./session-state";
+
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
@@ -50,9 +58,18 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
     throw new ApiError({ status: 0, code: "invalid_api_url", message: "请求地址不属于本地 API" });
   }
   const headers = new Headers(options.headers);
+  const requestGeneration = authGeneration();
+  const method = (options.method ?? "GET").toUpperCase();
   headers.set("Accept", "application/json");
   if (options.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
   headers.set("X-Request-ID", crypto.randomUUID());
+  const authEndpoint = url.startsWith("/api/v1/auth/");
+  headers.delete("X-Workspace-ID");
+  const workspaceId = authWorkspaceId();
+  if (!authEndpoint && workspaceId) headers.set("X-Workspace-ID", workspaceId);
+  headers.delete("X-CSRF-Token");
+  const csrf = csrfToken();
+  if (!["GET", "HEAD", "OPTIONS"].includes(method) && csrf) headers.set("X-CSRF-Token", csrf);
   let response: Response;
   try {
     response = await fetch(url, {
@@ -62,6 +79,7 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
       cache: "no-store",
     });
   } catch (error) {
+    assertCurrentSession(requestGeneration);
     if (options.signal?.aborted || (error instanceof Error && error.name === "AbortError")) {
       throw error;
     }
@@ -73,6 +91,11 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
     });
   }
   const raw = await response.text();
+  assertCurrentSession(requestGeneration);
+  const anonymousAuthEndpoint = /^\/api\/v1\/auth\/(?:session|login|register|setup)(?:\?|$)/.test(
+    url,
+  );
+  if (response.status === 401 && !anonymousAuthEndpoint) notifySessionExpired(requestGeneration);
   let payload: unknown;
   try {
     payload = raw ? JSON.parse(raw) : undefined;

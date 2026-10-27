@@ -247,6 +247,7 @@ backend/tradingagents/web/static/
 /docs/screenshots/
 .git-credentials
 .netrc
+account-setup-token
 .npmrc
 *.sqlite
 *.sqlite3

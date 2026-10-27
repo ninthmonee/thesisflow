@@ -1,7 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createSseDecoder, readResearchEvents } from "./research-events";
+import {
+  authWorkspaceId,
+  clearAuthSession,
+  installAuthSession,
+  subscribeSessionExpired,
+} from "./session-state";
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  clearAuthSession();
+});
 const runId = "e7818f34-d248-4e34-aafe-47882a8fffee";
 const envelope = (seq: number, id = runId) => ({
   event_id: `${id}:${seq}`,
@@ -84,5 +93,34 @@ describe("research event stream", () => {
     await expect(
       readResearchEvents({ runId, signal: new AbortController().signal, onEvent: () => {} }),
     ).rejects.toMatchObject({ code: "invalid_event_cursor", status: 422 });
+  });
+
+  it("binds the event stream to the same confirmed workspace as ordinary API calls", async () => {
+    installAuthSession({ userId: "one", workspaceId: "space-one", csrfToken: "csrf-one" });
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(stream([envelope(1)]));
+    vi.stubGlobal("fetch", fetchMock);
+    await readResearchEvents({ runId, signal: new AbortController().signal, onEvent: () => {} });
+    expect(new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get("X-Workspace-ID")).toBe(
+      "space-one",
+    );
+  });
+
+  it("an event handshake 401 expires the client session rather than polling private data forever", async () => {
+    installAuthSession({ userId: "one", workspaceId: "space-one", csrfToken: "csrf-one" });
+    const expired = vi.fn<() => void>();
+    const unsubscribe = subscribeSessionExpired(expired);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(new Response("{}", { status: 401 })),
+    );
+    try {
+      await expect(
+        readResearchEvents({ runId, signal: new AbortController().signal, onEvent: () => {} }),
+      ).rejects.toMatchObject({ status: 401 });
+      expect(expired).toHaveBeenCalledTimes(1);
+      expect(authWorkspaceId()).toBeUndefined();
+    } finally {
+      unsubscribe();
+    }
   });
 });

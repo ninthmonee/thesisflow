@@ -18,6 +18,7 @@ from tradingagents.web.api.research_data_schemas import (
     ResearchDataConnectionView,
     validated_jev_url,
 )
+from tradingagents.web.domain.model_access import is_local_owner
 from tradingagents.web.infrastructure.models import Membership, utc_now
 from tradingagents.web.infrastructure.research_data_model import ResearchDataConnectionRecord
 from tradingagents.web.infrastructure.secrets import KeyringSecretStore, SecretStoreError
@@ -166,6 +167,7 @@ class ResearchDataConnectionService:
         return value
 
     def _legacy_value(self, provider):
+        self._require_environment_owner()
         from pydantic import SecretStr
 
         raw = self.environment(ENVIRONMENT_NAMES[provider])
@@ -176,6 +178,12 @@ class ResearchDataConnectionService:
                 409,
             )
         return self._raw(SecretStr(raw), identity=provider == "sec_edgar")
+
+    def _require_environment_owner(self):
+        if not is_local_owner(self.workspace_id, self.owner_id):
+            raise ResearchDataConnectionError(
+                "research_environment_forbidden", "当前账号不能导入服务器的本机环境凭据，请填写自己的数据账号。", 403
+            )
 
     @staticmethod
     def _validate_fields(provider, source, api_key, user_agent, model, base_url):
@@ -196,6 +204,8 @@ class ResearchDataConnectionService:
 
     def create_connection(self, body):
         body = ResearchDataConnectionCreate.model_validate(body)
+        if body.credential_source == "legacy_environment":
+            self._require_environment_owner()
         self._validate_fields(
             body.provider,
             body.credential_source,
@@ -276,6 +286,8 @@ class ResearchDataConnectionService:
                 row = self._owned(session, identifier)
                 self._cas(row, body.revision)
                 source = body.credential_source or row.credential_source
+                if source == "legacy_environment":
+                    self._require_environment_owner()
                 self._validate_fields(
                     row.provider, source, body.api_key, body.user_agent, body.model, body.base_url
                 )
@@ -366,6 +378,8 @@ class ResearchDataConnectionService:
         return result
 
     def _settings(self, row):
+        if row.credential_source == "legacy_environment":
+            self._require_environment_owner()
         settings = {}
         if row.provider == "typesafe_jev":
             legacy = row.credential_source == "legacy_environment"

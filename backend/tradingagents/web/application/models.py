@@ -19,6 +19,7 @@ from tradingagents.web.api.model_schemas import (
     TemplateWrite,
     validated_endpoint,
 )
+from tradingagents.web.domain.model_access import is_local_owner
 from tradingagents.web.domain.model_configuration import (
     PROVIDERS,
     ROLES,
@@ -28,6 +29,7 @@ from tradingagents.web.domain.model_configuration import (
 )
 from tradingagents.web.infrastructure.database import Database
 from tradingagents.web.infrastructure.models import (
+    Membership,
     ModelConnection,
     ModelProfile,
     ResearchTemplateVersion,
@@ -80,6 +82,8 @@ class ModelConfigurationService:
         self.local_authorization_reader = local_authorization_reader
 
     def _local_authorization(self) -> dict:
+        if not is_local_owner(self.workspace.workspace_id, self.workspace.user_id):
+            return {"status": "unavailable"}
         try:
             if self.local_authorization_reader is None:
                 from tradingagents.llm_clients.chatgpt_auth import authorization_status
@@ -98,6 +102,13 @@ class ModelConfigurationService:
         return {"status": "unavailable"}
 
     def _local_authorization_view(self) -> dict:
+        if not is_local_owner(self.workspace.workspace_id, self.workspace.user_id):
+            return {
+                "status": "unavailable",
+                "message": "本机订阅授权只属于原本机工作区；当前账号请配置自己的模型API连接。",
+                "login_command": "",
+                "logout_command": "",
+            }
         status = self._local_authorization()["status"]
         return {
             "status": status,
@@ -110,10 +121,15 @@ class ModelConfigurationService:
             "logout_command": "backend/.venv/bin/tradingagents logout chatgpt",
         }
 
-    @staticmethod
-    def _validate_local_connection(provider, endpoint, auth_type, scope, secret, headers):
+    def _validate_local_connection(self, provider, endpoint, auth_type, scope, secret, headers):
         if provider != "chatgpt":
             return
+        if not is_local_owner(self.workspace.workspace_id, self.workspace.user_id):
+            raise ModelConfigurationError(
+                "local_model_access_forbidden",
+                "当前账号不能使用服务器的本机ChatGPT订阅授权，请配置自己的模型API连接。",
+                403,
+            )
         if (
             auth_type != "oauth_local"
             or endpoint != provider_definition("chatgpt")["default_endpoint"]
@@ -132,6 +148,8 @@ class ModelConfigurationService:
             if item["id"] == "chatgpt"
             else deepcopy(item)
             for item in PROVIDERS
+            if item["id"] != "chatgpt"
+            or is_local_owner(self.workspace.workspace_id, self.workspace.user_id)
         ]
 
     def _connection(self, session, connection_id: str, *, edit: bool = False) -> ModelConnection:
@@ -931,18 +949,47 @@ class ModelConfigurationService:
         cache = {}
         lock = RLock()
 
+        def verify_model(model):
+            if model.get("workspace_id") != self.workspace.workspace_id:
+                raise ModelConfigurationError("credential_scope", "模型快照不属于当前工作区", 403)
+            if model.get("provider") == "chatgpt":
+                if not is_local_owner(self.workspace.workspace_id, self.workspace.user_id):
+                    raise ModelConfigurationError(
+                        "local_model_access_forbidden", "当前账号不能使用服务器本机订阅授权。", 403
+                    )
+                if self._local_authorization().get("identity_fingerprint") != model.get("local_authorization_fingerprint"):
+                    raise ModelConfigurationError(
+                        "local_authorization_changed", "本机ChatGPT授权已改变，请重新检测并创建研究。", 409
+                    )
+            with self.database.session() as session:
+                if session.scalar(select(Membership.id).where(
+                    Membership.workspace_id == self.workspace.workspace_id,
+                    Membership.user_id == self.workspace.user_id,
+                )) is None:
+                    raise ModelConfigurationError("credential_scope", "当前用户无权使用该工作区模型。", 403)
+                profile, connection = self._profile(session, model.get("profile_id"))
+                current = self._snapshot(profile, connection)
+                checked_fields = (
+                    "workspace_id", "connection_id", "connection_revision", "profile_id", "profile_revision",
+                    "provider", "model", "base_url", "auth_type", "credential_ref", "api_protocol",
+                    "extra_header_ref", "parameters",
+                )
+                if profile.test_status != "passed" or any(current.get(key) != model.get(key) for key in checked_fields):
+                    raise ModelConfigurationError(
+                        "model_configuration_changed", "研究模型或凭据配置已改变，请重新检测并创建研究。", 409
+                    )
+
+        def verify():
+            checked = set()
+            for model in snapshot["roles"].values():
+                identifier = _hash(model)
+                if identifier not in checked:
+                    verify_model(model)
+                    checked.add(identifier)
+
         def resolve(role: str):
             model = snapshot["roles"].get(role) or snapshot["roles"]["quick"]
-            if model["workspace_id"] != self.workspace.workspace_id:
-                raise ModelConfigurationError("credential_scope", "模型快照不属于当前工作区", 403)
-            if model["provider"] == "chatgpt" and self._local_authorization().get(
-                "identity_fingerprint"
-            ) != model.get("local_authorization_fingerprint"):
-                raise ModelConfigurationError(
-                    "local_authorization_changed",
-                    "本机ChatGPT授权已改变，请重新检测并创建研究。",
-                    409,
-                )
+            verify_model(model)
             identity = _hash(model)
             with lock:
                 if identity not in cache:
@@ -957,6 +1004,7 @@ class ModelConfigurationService:
                     ).get_llm()
                 return cache[identity]
 
+        resolve.verify = verify
         return resolve
 
     def _test_configured_model(self, snapshot: dict, secret: str | None) -> dict:

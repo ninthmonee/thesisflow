@@ -7,6 +7,247 @@
 import * as zod from 'zod';
 
 /**
+ * @summary Login
+ */
+export const loginAccountBodyPasswordMax = 128;
+
+export const loginAccountBodyUsernameMin = 3;
+export const loginAccountBodyUsernameMax = 32;
+
+
+
+export const LoginAccountBody = zod.object({
+  "password": zod.string().min(1).max(loginAccountBodyPasswordMax),
+  "username": zod.string().min(loginAccountBodyUsernameMin).max(loginAccountBodyUsernameMax)
+})
+
+export const LoginAccountResponse = zod.object({
+  "authenticated": zod.boolean(),
+  "csrf_token": zod.union([zod.string(),zod.null()]).optional(),
+  "expires_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional(),
+  "registration_mode": zod.enum(['open', 'closed']),
+  "setup_required": zod.boolean(),
+  "user": zod.union([zod.object({
+  "display_name": zod.string(),
+  "id": zod.string(),
+  "is_admin": zod.boolean(),
+  "username": zod.string(),
+  "workspace": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "owner_id": zod.string()
+})
+}),zod.null()]).optional()
+})
+
+
+/**
+ * @summary Logout
+ */
+export const LogoutAccountResponse = zod.object({
+  "authenticated": zod.boolean(),
+  "csrf_token": zod.union([zod.string(),zod.null()]).optional(),
+  "expires_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional(),
+  "registration_mode": zod.enum(['open', 'closed']),
+  "setup_required": zod.boolean(),
+  "user": zod.union([zod.object({
+  "display_name": zod.string(),
+  "id": zod.string(),
+  "is_admin": zod.boolean(),
+  "username": zod.string(),
+  "workspace": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "owner_id": zod.string()
+})
+}),zod.null()]).optional()
+})
+
+
+/**
+ * @summary Logout All
+ */
+export const LogoutAllSessionsResponse = zod.object({
+  "authenticated": zod.boolean(),
+  "csrf_token": zod.union([zod.string(),zod.null()]).optional(),
+  "expires_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional(),
+  "registration_mode": zod.enum(['open', 'closed']),
+  "setup_required": zod.boolean(),
+  "user": zod.union([zod.object({
+  "display_name": zod.string(),
+  "id": zod.string(),
+  "is_admin": zod.boolean(),
+  "username": zod.string(),
+  "workspace": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "owner_id": zod.string()
+})
+}),zod.null()]).optional()
+})
+
+
+/**
+ * @summary Password
+ */
+export const changeAccountPasswordBodyCurrentPasswordMax = 128;
+
+export const changeAccountPasswordBodyNewPasswordMin = 12;
+export const changeAccountPasswordBodyNewPasswordMax = 128;
+
+
+
+export const ChangeAccountPasswordBody = zod.object({
+  "current_password": zod.string().min(1).max(changeAccountPasswordBodyCurrentPasswordMax),
+  "new_password": zod.string().min(changeAccountPasswordBodyNewPasswordMin).max(changeAccountPasswordBodyNewPasswordMax)
+})
+
+export const ChangeAccountPasswordResponse = zod.object({
+  "authenticated": zod.boolean(),
+  "csrf_token": zod.union([zod.string(),zod.null()]).optional(),
+  "expires_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional(),
+  "registration_mode": zod.enum(['open', 'closed']),
+  "setup_required": zod.boolean(),
+  "user": zod.union([zod.object({
+  "display_name": zod.string(),
+  "id": zod.string(),
+  "is_admin": zod.boolean(),
+  "username": zod.string(),
+  "workspace": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "owner_id": zod.string()
+})
+}),zod.null()]).optional()
+})
+
+
+/**
+ * @summary Register
+ */
+export const registerAccountBodyDisplayNameOneMax = 80;
+
+export const registerAccountBodyPasswordMin = 12;
+export const registerAccountBodyPasswordMax = 128;
+
+export const registerAccountBodyUsernameMin = 3;
+export const registerAccountBodyUsernameMax = 32;
+
+
+
+export const RegisterAccountBody = zod.object({
+  "display_name": zod.union([zod.string().max(registerAccountBodyDisplayNameOneMax),zod.null()]).optional(),
+  "password": zod.string().min(registerAccountBodyPasswordMin).max(registerAccountBodyPasswordMax),
+  "username": zod.string().min(registerAccountBodyUsernameMin).max(registerAccountBodyUsernameMax)
+})
+
+export const RegisterAccountResponse = zod.object({
+  "authenticated": zod.boolean(),
+  "csrf_token": zod.union([zod.string(),zod.null()]).optional(),
+  "expires_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional(),
+  "registration_mode": zod.enum(['open', 'closed']),
+  "setup_required": zod.boolean(),
+  "user": zod.union([zod.object({
+  "display_name": zod.string(),
+  "id": zod.string(),
+  "is_admin": zod.boolean(),
+  "username": zod.string(),
+  "workspace": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "owner_id": zod.string()
+})
+}),zod.null()]).optional()
+})
+
+
+/**
+ * @summary Registration
+ */
+export const GetRegistrationSettingsResponse = zod.object({
+  "registration_mode": zod.enum(['open', 'closed'])
+})
+
+
+/**
+ * @summary Update Registration
+ */
+export const UpdateRegistrationSettingsBody = zod.object({
+  "registration_mode": zod.enum(['open', 'closed'])
+})
+
+export const UpdateRegistrationSettingsResponse = zod.object({
+  "registration_mode": zod.enum(['open', 'closed'])
+})
+
+
+/**
+ * @summary Session Status
+ */
+export const GetAuthSessionResponse = zod.object({
+  "authenticated": zod.boolean(),
+  "csrf_token": zod.union([zod.string(),zod.null()]).optional(),
+  "expires_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional(),
+  "registration_mode": zod.enum(['open', 'closed']),
+  "setup_required": zod.boolean(),
+  "user": zod.union([zod.object({
+  "display_name": zod.string(),
+  "id": zod.string(),
+  "is_admin": zod.boolean(),
+  "username": zod.string(),
+  "workspace": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "owner_id": zod.string()
+})
+}),zod.null()]).optional()
+})
+
+
+/**
+ * @summary Setup
+ */
+export const setupOwnerAccountBodyDisplayNameOneMax = 80;
+
+export const setupOwnerAccountBodyPasswordMin = 12;
+export const setupOwnerAccountBodyPasswordMax = 128;
+
+export const setupOwnerAccountBodySetupTokenMin = 32;
+export const setupOwnerAccountBodySetupTokenMax = 128;
+
+export const setupOwnerAccountBodyUsernameMin = 3;
+export const setupOwnerAccountBodyUsernameMax = 32;
+
+
+
+export const SetupOwnerAccountBody = zod.object({
+  "display_name": zod.union([zod.string().max(setupOwnerAccountBodyDisplayNameOneMax),zod.null()]).optional(),
+  "password": zod.string().min(setupOwnerAccountBodyPasswordMin).max(setupOwnerAccountBodyPasswordMax),
+  "setup_token": zod.string().min(setupOwnerAccountBodySetupTokenMin).max(setupOwnerAccountBodySetupTokenMax),
+  "username": zod.string().min(setupOwnerAccountBodyUsernameMin).max(setupOwnerAccountBodyUsernameMax)
+})
+
+export const SetupOwnerAccountResponse = zod.object({
+  "authenticated": zod.boolean(),
+  "csrf_token": zod.union([zod.string(),zod.null()]).optional(),
+  "expires_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional(),
+  "registration_mode": zod.enum(['open', 'closed']),
+  "setup_required": zod.boolean(),
+  "user": zod.union([zod.object({
+  "display_name": zod.string(),
+  "id": zod.string(),
+  "is_admin": zod.boolean(),
+  "username": zod.string(),
+  "workspace": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "owner_id": zod.string()
+})
+}),zod.null()]).optional()
+})
+
+
+/**
  * @summary Bootstrap
  */
 export const getBootstrapResponseApiVersionDefault = `1`;

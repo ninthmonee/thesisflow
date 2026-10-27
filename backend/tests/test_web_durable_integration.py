@@ -23,7 +23,7 @@ def test_legacy_and_v1_share_queue_reports_and_persistent_history(tmp_path, monk
         quick_think_provider=None,
         deep_think_provider=None,
     )
-    app = create_app(config, secret_store=MemorySecretStore(), durable_research=True)
+    app = create_app(config, secret_store=MemorySecretStore(), durable_research=True, authentication_required=False)
     with TestClient(app, base_url="http://127.0.0.1:8000") as client:
         response = client.post(
             "/api/runs", json={"ticker": "NVDA", "date": "2024-01-02"}, headers=ORIGIN
@@ -52,7 +52,7 @@ def test_legacy_and_v1_share_queue_reports_and_persistent_history(tmp_path, monk
         assert exported.headers["x-frame-options"] == "SAMEORIGIN"
         assert "frame-ancestors 'self'" in exported.headers["content-security-policy"]
         assert client.get("/api/config").json()["active_run_id"] is None
-    restarted = create_app(config, secret_store=MemorySecretStore(), durable_research=True)
+    restarted = create_app(config, secret_store=MemorySecretStore(), durable_research=True, authentication_required=False)
     with TestClient(restarted, base_url="http://127.0.0.1:8000") as client:
         assert client.get(f"/api/v1/runs/{run_id}").json()["status"] == "completed"
         assert client.get(f"/api/runs/{run_id}/report").status_code == 200
@@ -61,7 +61,7 @@ def test_legacy_and_v1_share_queue_reports_and_persistent_history(tmp_path, monk
 def test_v1_validation_does_not_echo_secret_input(tmp_path, monkeypatch):
     config = deepcopy(DEFAULT_CONFIG)
     config["results_dir"] = str(tmp_path)
-    app = create_app(config, secret_store=MemorySecretStore(), durable_research=True)
+    app = create_app(config, secret_store=MemorySecretStore(), durable_research=True, authentication_required=False)
     with TestClient(app, base_url="http://127.0.0.1:8000") as client:
         response = client.post(
             "/api/v1/runs", json={"ticker": "Bearer PRIVATE-KEY"}, headers=ORIGIN

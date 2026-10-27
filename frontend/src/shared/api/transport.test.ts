@@ -1,7 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError, apiFetch, shouldRetryQuery } from "./transport";
+import {
+  authGeneration,
+  authWorkspaceId,
+  clearAuthSession,
+  installAuthSession,
+  subscribeSessionExpired,
+} from "./session-state";
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  clearAuthSession();
+});
 
 describe("API transport", () => {
   it.each([401, 422, 429])(
@@ -78,4 +88,86 @@ describe("API transport", () => {
     });
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it("binds business requests to the confirmed workspace and writes to the memory CSRF token", async () => {
+    installAuthSession({ userId: "one", workspaceId: "space-one", csrfToken: "csrf-one" });
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockImplementation(() => Promise.resolve(new Response("{}")));
+    vi.stubGlobal("fetch", fetchMock);
+    await apiFetch("/api/v1/watchlists", {
+      method: "POST",
+      body: "{}",
+      headers: { "X-Workspace-ID": "forged", "X-CSRF-Token": "forged" },
+    });
+    const written = new Headers(fetchMock.mock.calls[0]?.[1]?.headers);
+    expect(written.get("X-Workspace-ID")).toBe("space-one");
+    expect(written.get("X-CSRF-Token")).toBe("csrf-one");
+    await apiFetch("/api/v1/watchlists");
+    const read = new Headers(fetchMock.mock.calls[1]?.[1]?.headers);
+    expect(read.get("X-Workspace-ID")).toBe("space-one");
+    expect(read.has("X-CSRF-Token")).toBe(false);
+    await apiFetch("/api/v1/auth/session");
+    expect(new Headers(fetchMock.mock.calls[2]?.[1]?.headers).has("X-Workspace-ID")).toBe(false);
+  });
+
+  it("does not globally expire the session for a login failure", async () => {
+    installAuthSession({ userId: "one", workspaceId: "space-one", csrfToken: "csrf-one" });
+    const expired = vi.fn<() => void>();
+    const unsubscribe = subscribeSessionExpired(expired);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(new Response("{}", { status: 401 })),
+    );
+    try {
+      await expect(
+        apiFetch("/api/v1/auth/login", { method: "POST", body: "{}" }),
+      ).rejects.toMatchObject({ status: 401 });
+      expect(expired).not.toHaveBeenCalled();
+      expect(authWorkspaceId()).toBe("space-one");
+    } finally {
+      unsubscribe();
+    }
+  });
+
+  it("invalidates a current authenticated session on a business 401", async () => {
+    installAuthSession({ userId: "one", workspaceId: "space-one", csrfToken: "csrf-one" });
+    const expired = vi.fn<() => void>();
+    const unsubscribe = subscribeSessionExpired(expired);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(new Response("{}", { status: 401 })),
+    );
+    try {
+      await expect(apiFetch("/api/v1/watchlists")).rejects.toMatchObject({ status: 401 });
+      expect(expired).toHaveBeenCalledTimes(1);
+      expect(authWorkspaceId()).toBeUndefined();
+    } finally {
+      unsubscribe();
+    }
+  });
+
+  it.each([200, 401])(
+    "discards a late HTTP %s response belonging to an earlier session",
+    async (status) => {
+      installAuthSession({ userId: "one", workspaceId: "space-one", csrfToken: "csrf-one" });
+      let finish: ((response: Response) => void) | undefined;
+      vi.stubGlobal(
+        "fetch",
+        vi.fn<typeof fetch>().mockImplementation(
+          () =>
+            new Promise((resolve) => {
+              finish = resolve;
+            }),
+        ),
+      );
+      const oldGeneration = authGeneration();
+      const pending = apiFetch("/api/v1/watchlists");
+      installAuthSession({ userId: "two", workspaceId: "space-two", csrfToken: "csrf-two" });
+      finish?.(new Response('{"private":"earlier-user"}', { status }));
+      await expect(pending).rejects.toMatchObject({ name: "AbortError" });
+      expect(authGeneration()).toBeGreaterThan(oldGeneration);
+      expect(authWorkspaceId()).toBe("space-two");
+    },
+  );
 });

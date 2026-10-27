@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, func, or_, select
 
 from tradingagents.agents.rating import run_rating
 from tradingagents.web.api.schemas import CreateResearchRequest
@@ -150,12 +150,19 @@ class ResearchService:
         *,
         clock: Callable[[], datetime] | None = None,
         data_snapshot_provider: Callable[[str, str], Mapping[str, Any]] | None = None,
+        max_active_runs_per_owner: int | None = None,
+        max_queued_runs_total: int | None = None,
     ):
         self.database = database
         self.artifacts_root = Path(artifacts_root).expanduser().resolve()
         self.config_snapshot_provider = config_snapshot_provider
         self.data_snapshot_provider = data_snapshot_provider
         self.tasks = TaskRepository(database, clock)
+        for limit in (max_active_runs_per_owner, max_queued_runs_total):
+            if limit is not None and (isinstance(limit, bool) or not isinstance(limit, int) or limit < 1):
+                raise ValueError("Research queue limits must be positive integers")
+        self.max_active_runs_per_owner = max_active_runs_per_owner
+        self.max_queued_runs_total = max_queued_runs_total
 
     @staticmethod
     def _scope(session, workspace_id: str, owner_id: str, *, write: bool = False) -> None:
@@ -310,6 +317,16 @@ class ResearchService:
             else:
                 run_id = None
             if run_id is None:
+                if self.max_active_runs_per_owner is not None:
+                    count = session.scalar(select(func.count()).select_from(ResearchRun).where(
+                        ResearchRun.workspace_id == workspace_id, ResearchRun.owner_id == owner_id,
+                        ResearchRun.status.in_(["queued", "running", "cancelling"])))
+                    if count >= self.max_active_runs_per_owner:
+                        raise ResearchError("research_account_queue_full", "当前账号待处理研究已达上限，请先等待完成或取消已有任务。", 429)
+                if self.max_queued_runs_total is not None:
+                    count = session.scalar(select(func.count()).select_from(ResearchRun).where(ResearchRun.status == "queued"))
+                    if count >= self.max_queued_runs_total:
+                        raise ResearchError("research_queue_full", "服务队列已满，请稍后重试。", 429)
                 run = ResearchRun(
                     id=str(uuid4()),
                     workspace_id=workspace_id,

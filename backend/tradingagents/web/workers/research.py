@@ -24,7 +24,7 @@ from tradingagents.dataflows.evidence import EvidenceCaptureError, evidence_scop
 from tradingagents.dataflows.execution_budget import execution_budget_scope
 from tradingagents.web.api.model_schemas import ModelConfigurationError
 from tradingagents.web.api.research_data_schemas import ResearchDataConnectionError
-from tradingagents.web.application.research import REPORT_LABELS, ResearchService
+from tradingagents.web.application.research import REPORT_LABELS, SAFE_RUNTIME_KEYS, ResearchService
 from tradingagents.web.application.research_evidence import ResearchEvidenceStore
 from tradingagents.web.domain.tasks import (
     LeaseLost,
@@ -91,6 +91,7 @@ class ResearchWorker:
     def _runtime(
         self, claim: TaskClaim, manifest: dict, callbacks: list | None = None
     ) -> tuple[dict, dict]:
+        self._validate_manifest_scope(claim, manifest)
         resolver_parameters = inspect.signature(self.config_resolver).parameters
         accepts_callbacks = "callbacks" in resolver_parameters or any(
             parameter.kind == inspect.Parameter.VAR_KEYWORD
@@ -103,7 +104,7 @@ class ResearchWorker:
         )
         private = {key: resolved.pop(key) for key in list(resolved) if key.startswith("__")}
         config = deepcopy(resolved)
-        config.update(deepcopy(manifest.get("runtime", {})))
+        config.update({key: deepcopy(value) for key, value in manifest.get("runtime", {}).items() if key in SAFE_RUNTIME_KEYS})
         request = manifest["request"]
         folder = self.checkpoints.attempt_directory(claim)
         folder.mkdir(parents=True, mode=0o700, exist_ok=True)
@@ -134,6 +135,11 @@ class ResearchWorker:
             options["__data_connection_resolver"] = private["__data_connection_resolver"]
         return config, options
 
+    @staticmethod
+    def _validate_manifest_scope(claim, manifest):
+        if (manifest.get("workspace_id"), manifest.get("owner_id")) != (claim.workspace_id, claim.owner_id):
+            raise ResearchError("manifest_scope_mismatch", "研究配置的用户或工作区归属不匹配，未解析任何凭据。", 403)
+
     def run_once(self) -> bool:
         claim = self.service.tasks.claim_next(self.worker_id, self.lease_seconds)
         if claim is None:
@@ -141,6 +147,7 @@ class ResearchWorker:
         started = time.monotonic()
         stopped, lost, timed_out = threading.Event(), threading.Event(), threading.Event()
         data_validator = None
+        model_validator = None
         evidence_session = None
         callback = None
         request = {}
@@ -173,6 +180,8 @@ class ResearchWorker:
         def active():
             if data_validator is not None:
                 data_validator()
+            if model_validator is not None:
+                model_validator()
             if evidence_session is not None:
                 evidence_session.verify()
             if lost.is_set():
@@ -211,6 +220,7 @@ class ResearchWorker:
         try:
             manifest_record = self.service.tasks.manifest(claim)
             manifest, manifest_hash = manifest_record["content"], manifest_record["content_hash"]
+            self._validate_manifest_scope(claim, manifest)
             verify_graph_contract(manifest)
             request = manifest["request"]
             callback.budget = request
@@ -220,6 +230,7 @@ class ResearchWorker:
                     self.worker_id, self._health_token, run_id=claim.run_id, state="busy"
                 )
             config, options = self._runtime(claim, manifest, callbacks=[callback])
+            model_validator = getattr(options.get("role_model_resolver"), "verify", None)
             data_resolver = options.pop("__data_connection_resolver", None)
             data_validator = getattr(data_resolver, "verify", None)
             factory = self.graph_factory

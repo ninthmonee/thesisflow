@@ -41,7 +41,7 @@ def test_incremental_migration_preserves_revision_one_data(tmp_path):
             session.add(User(id="old-user", name="preserved"))
         database.migrate()
         database.migrate()
-        assert database.schema_revision() == "0010_research_viewpoints"
+        assert database.schema_revision() == "0011_accounts_sessions"
         with database.session() as session:
             assert session.get(User, "old-user").name == "preserved"
             assert list(session.scalars(select(DataSettingsRecord))) == []

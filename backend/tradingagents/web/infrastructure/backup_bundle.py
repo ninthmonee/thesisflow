@@ -94,7 +94,8 @@ def create_bundle(state_root, output):
         hashes = {name: _digest(path) for name, path in paths.items()}
         manifest = {"version": 1, "created_at": datetime.now(UTC).isoformat(), "schema_revision": revision,
                     "source_root": str(root), "inventory": before, "files": hashes,
-                    "credentials": "excluded; all connections disabled and require rebinding on restore",
+                    "credentials": "provider secrets excluded; all connections disabled and require rebinding on restore",
+                    "accounts": "private account password hashes included; sessions revoked on restore",
                     "scope": "private local recovery; does not grant data redistribution or multi-user access"}
         descriptor = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         try:
@@ -187,6 +188,14 @@ def restore_bundle(bundle, destination):
                     connection.execute(f'UPDATE "{table}" SET {assignments}')
             if "worker_heartbeats" in tables:
                 connection.execute("DELETE FROM worker_heartbeats")
+            # Recovery must never resurrect a previously valid browser session
+            # or copy an old single-use owner-setup capability into a new store.
+            if "auth_sessions" in tables:
+                connection.execute("DELETE FROM auth_sessions")
+            if "auth_rate_limits" in tables:
+                connection.execute("DELETE FROM auth_rate_limits")
+            if "auth_settings" in tables:
+                connection.execute("UPDATE auth_settings SET setup_token_digest=NULL,setup_created_at=NULL")
             _quiet(connection)
             restored = _inventory(connection)
             if restored != manifest["inventory"]:

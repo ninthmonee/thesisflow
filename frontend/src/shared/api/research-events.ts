@@ -1,5 +1,11 @@
 import { GetResearchEventsResponse } from "./generated/validators";
 import { ApiError } from "./transport";
+import {
+  assertCurrentSession,
+  authGeneration,
+  authWorkspaceId,
+  notifySessionExpired,
+} from "./session-state";
 
 export const researchEventSchema = GetResearchEventsResponse.shape.events.element;
 export type ResearchEvent = ReturnType<typeof researchEventSchema.parse>;
@@ -46,6 +52,9 @@ export async function readResearchEvents(options: {
   onEvent: (event: ResearchEvent) => void;
 }): Promise<string | undefined> {
   const headers = new Headers({ Accept: "text/event-stream" });
+  const requestGeneration = authGeneration();
+  const workspaceId = authWorkspaceId();
+  if (workspaceId) headers.set("X-Workspace-ID", workspaceId);
   if (options.cursor) headers.set("Last-Event-ID", options.cursor);
   const response = await fetch(`/api/v1/runs/${encodeURIComponent(options.runId)}/events`, {
     signal: options.signal,
@@ -53,6 +62,8 @@ export async function readResearchEvents(options: {
     credentials: "same-origin",
     cache: "no-store",
   });
+  assertCurrentSession(requestGeneration);
+  if (response.status === 401) notifySessionExpired(requestGeneration);
   if (
     !response.ok ||
     !response.body ||
@@ -94,6 +105,7 @@ export async function readResearchEvents(options: {
   try {
     while (!options.signal.aborted) {
       const part = await reader.read();
+      assertCurrentSession(requestGeneration);
       if (part.done) {
         decode(decoder.decode());
         break;

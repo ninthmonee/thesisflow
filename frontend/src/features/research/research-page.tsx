@@ -58,6 +58,7 @@ import { ResearchEvidencePanel } from "./research-evidence";
 import { ResearchContextPicker } from "./research-context";
 import { ResearchViewpoints } from "./research-viewpoints";
 import { ResearchComparisonPanel } from "./research-comparison";
+import { useAuth } from "../auth/auth-context";
 import styles from "../../shared/ui/workbench.module.css";
 
 const analystChoices = [
@@ -137,6 +138,8 @@ export function ResearchPage({ bootstrap }: { bootstrap: BootstrapResponse }) {
 }
 
 function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
+  const auth = useAuth();
+  const canUseLocalConfiguration = auth.session?.user?.is_admin === true;
   const scope = scopeForWorkspace(bootstrap.workspace),
     navigate = useNavigate();
   const [search] = useSearchParams(),
@@ -218,6 +221,13 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
         (!!fromRun && !workflowTemplateId)
       ? { label: "模板模型信息尚未确认", fallbackByTier: false, roles: {} }
       : modelsFromBootstrap(bootstrap.model);
+  const modelSelectionReady =
+    settings.isSuccess &&
+    templates.isSuccess &&
+    (!!workflowTemplate ||
+      ((!workflowTemplateId || workflowTemplateId === CURRENT_MODEL_CONFIGURATION) &&
+        canUseLocalConfiguration &&
+        bootstrap.model.configured));
   const queryTicker = search.get("ticker");
   useEffect(() => {
     if (!settings.data || presetApplied.current || fromRun) return;
@@ -273,7 +283,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
     if (queryTicker && !fromRun) form.setFieldValue("ticker", queryTicker.toUpperCase());
   }, [queryTicker, fromRun, form]);
   async function submit(values: CreateResearchRequest) {
-    if (sourceLoading || sourceError || !contextReady) return;
+    if (sourceLoading || sourceError || !contextReady || !modelSelectionReady) return;
     const body = researchRequest({ ...values, context_ids: contextIds });
     const fingerprint = JSON.stringify([scope, body]);
     if (idempotency.current?.fingerprint !== fingerprint)
@@ -419,7 +429,10 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                       value: CURRENT_MODEL_CONFIGURATION,
                       label: settings.data?.default_template
                         ? `明确使用当前默认配置 v${settings.data.default_template.version}`
-                        : "明确使用当前本机 quick / deep 配置（兼容来源）",
+                        : canUseLocalConfiguration
+                          ? "明确使用当前本机 quick / deep 配置（兼容来源）"
+                          : "尚未配置个人模型，请先在模型设置中保存模板",
+                      disabled: !settings.data?.default_template && !canUseLocalConfiguration,
                     },
                     ...(templates.data?.templates ?? []).map((item) => ({
                       value: item.id,
@@ -440,7 +453,9 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
               <p className={styles.muted}>
                 {settings.data?.default_template
                   ? `已保存默认配置 v${settings.data.default_template.version}，可选择对应模板使用角色绑定。`
-                  : "未保存模板时可沿用本机模型；新模型需先检测。"}{" "}
+                  : canUseLocalConfiguration
+                    ? "主人账号可使用已配置的本机模型；新模型需先检测。"
+                    : "请配置自己的模型供应商和凭据，检测后保存研究模板。此账号不会继承主人的模型授权。"}{" "}
                 <Link to="/settings/models">管理模型</Link>
               </p>
               <Form.Item
@@ -547,7 +562,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                 type="primary"
                 htmlType="submit"
                 loading={busy}
-                disabled={sourceLoading || sourceError || !contextReady}
+                disabled={sourceLoading || sourceError || !contextReady || !modelSelectionReady}
               >
                 启动 TradingAgents 分析
               </Button>

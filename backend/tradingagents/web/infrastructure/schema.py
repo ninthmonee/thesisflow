@@ -1,6 +1,12 @@
 """Register all revisions' entities for Alembic metadata comparison, without I/O."""
 
 from .alternative_models import AlternativeDataConnection
+from .auth_models import (
+    AccountRecord,
+    AccountSessionRecord,
+    AuthenticationRateLimitRecord,
+    AuthenticationSettingsRecord,
+)
 from .data_settings_model import DataSettingsRecord
 from .models import Base
 from .research_data_model import ResearchDataConnectionRecord
@@ -11,6 +17,10 @@ from .worker_health_model import WorkerHeartbeatRecord
 
 __all__ = [
     "Base",
+    "AccountRecord",
+    "AccountSessionRecord",
+    "AuthenticationRateLimitRecord",
+    "AuthenticationSettingsRecord",
     "DataSettingsRecord",
     "AlternativeDataConnection",
     "ResearchDataConnectionRecord",

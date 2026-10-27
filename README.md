@@ -8,7 +8,9 @@
 - [功能与技术设计](docs/web-product-and-architecture-design.md)
 - [实现与验收状态](docs/web-execution-status.md)
 
-本机环境准备完成后，运行 `./start-workbench.command` 启动 API 和独立研究 worker，访问 `http://127.0.0.1:8001/workbench/`。当前为本机单用户模式，多用户登录与共享尚未实现。
+本机环境准备完成后，运行 `./start-workbench.command` 启动 API 和独立研究 worker，访问 `http://127.0.0.1:8001/workbench/`。现已支持多用户登录与开放注册，无需邀请码；每个账号有独立工作区。首次由本机所有者用一次性初始化凭证创建管理员账号，原有本机资料保留在该账号下；之后的新账号从空自选和独立研究记录开始，分别配置模型与数据账号。
+
+顶栏账号入口可修改密码、退出全部会话，管理员可开放或关闭注册。服务仍仅监听本机回环地址；多人共享协作、邮箱找回与公网部署尚未交付。具体初始化命令和凭据隔离边界见[本机运行说明](docs/web-local-operation.md)。
 
 仓库包含源码、测试、锁文件和配置示例；真实密钥、授权、本机运行数据、缓存、备份、依赖安装目录及本机验收截图不提交。模型与部分数据服务需自行配置账号。
 
@@ -256,11 +258,14 @@ Open `http://127.0.0.1:8000` in your browser. On macOS, after installing into th
 project's `backend/.venv`, you can also double-click `start-web.command`. To use another
 port, run `tradingagents-web --port 8001`.
 
-The workspace uses your existing `backend/.env` configuration and model sign-in. For a
-ChatGPT subscription, sign in once with `tradingagents login chatgpt` before
-starting an analysis. Credentials stay on the Python backend. The server listens
-on loopback for local use, and accepts one analysis at a time. Runs are kept under
-`results_dir/web`; closing the browser does not stop an active analysis.
+Web access requires a local account. On first launch, the machine owner completes
+the one-time setup shown in the terminal; later accounts can register without an
+invitation while registration is open. Each account owns a separate workspace
+and configures its own model and data credentials. New accounts do not inherit the
+machine owner's environment keys or ChatGPT subscription authorization. Credentials
+stay on the Python backend. The server listens on loopback for local use; closing
+the browser does not stop an active analysis. Use the launcher below for the
+persistent queue and independent research worker.
 
 ### React research workbench
 
@@ -291,7 +296,25 @@ backend/.venv/bin/python backend/scripts/package_workbench.py
 Open `http://127.0.0.1:8001/workbench/`. The launcher starts the API and one
 independent research worker against `data/web/development/web/workbench.sqlite3`.
 The old Web/CLI state remains separate. Model keys entered in the new UI are
-stored through the operating system keyring. This launch mode is local only.
+stored through the operating system keyring and scoped to the owning account.
+The first owner retains the existing local workspace; newly registered accounts
+start with an empty watchlist and their own research records. Common preset themes
+remain available. The owner's ChatGPT OAuth sign-in and environment credentials
+are not shared with those accounts.
+
+First-owner setup requires a one-time token. Run this command yourself in your
+local terminal and enter its output directly into the setup form:
+
+```bash
+backend/.venv/bin/python backend/scripts/account_setup.py --database data/web/development/web/workbench.sqlite3 --show-token
+```
+
+Do not commit or send the token in chat. The token is consumed after setup. Open
+registration needs no token or invitation. The account page supports password
+changes and signing out all sessions; administrators can close or reopen
+registration. Restoring a backup revokes saved sessions and requires fresh sign-in
+and credential binding. This launch mode remains local only; shared workspaces,
+email recovery and public hosting are not implemented.
 
 ### Markets and tickers
 

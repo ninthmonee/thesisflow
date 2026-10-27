@@ -91,7 +91,7 @@ def web(tmp_path, monkeypatch):
     config = deepcopy(DEFAULT_CONFIG)
     config.update(results_dir=str(tmp_path / "results"), backend_url="https://secret:password@example.com/v1",
                   llm_provider="openai", quick_think_provider=None, deep_think_provider=None)
-    app = create_app(config, graph_factory=FakeGraph)
+    app = create_app(config, graph_factory=FakeGraph, authentication_required=False)
     with TestClient(app, base_url="http://127.0.0.1:8000") as client:
         yield client, app.state.store, config
         if FakeGraph.gate:

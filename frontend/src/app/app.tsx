@@ -23,10 +23,17 @@ import {
   ReloadOutlined,
   SafetyCertificateOutlined,
   SwapOutlined,
+  LogoutOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useBootstrap } from "../shared/api/bootstrap";
 import type { BootstrapResponse } from "../shared/api/generated/models";
+import type { AuthUser } from "../shared/api/generated/models";
 import { ApiError } from "../shared/api/transport";
+import { AuthProvider } from "../features/auth/auth-provider";
+import { AuthGate } from "../features/auth/auth-routes";
+import { useAuth } from "../features/auth/auth-context";
+import { AccountPage } from "../features/auth/account-page";
 import styles from "./app.module.css";
 
 const queryClient = new QueryClient();
@@ -199,8 +206,9 @@ function ConnectedPages({ data }: { data: BootstrapResponse }) {
   );
 }
 
-function Terminal() {
-  const bootstrap = useBootstrap();
+function Terminal({ user }: { user: AuthUser }) {
+  const auth = useAuth();
+  const bootstrap = useBootstrap({ userId: user.id, workspaceId: user.workspace.id });
   const location = useLocation();
   const current = navigation.find((item) =>
     location.pathname.startsWith(item.path.split("/").slice(0, 2).join("/")),
@@ -233,7 +241,7 @@ function Terminal() {
         <div className={styles.sidebarBottom}>
           <SafetyCertificateOutlined />
           <div>
-            本机个人工作区<small>LOCAL · PRIVATE</small>
+            独立个人工作区<small>ACCOUNT · PRIVATE</small>
           </div>
         </div>
       </aside>
@@ -241,7 +249,9 @@ function Terminal() {
         <header className={styles.topbar}>
           <div>
             <span>WORKBENCH</span>
-            <strong>{current?.label ?? "个股研究"}</strong>
+            <strong>
+              {location.pathname === "/account" ? "账号与安全" : (current?.label ?? "个股研究")}
+            </strong>
           </div>
           <div className={styles.topbarActions}>
             <StatusPill good={bootstrap.isSuccess}>
@@ -251,6 +261,22 @@ function Terminal() {
                   ? "连接本机服务"
                   : "连接失败"}
             </StatusPill>
+            <NavLink
+              to="/account"
+              className={styles.accountName}
+              title={`账号与安全：${user.username}`}
+            >
+              <UserOutlined /> {user.display_name}
+            </NavLink>
+            <Button
+              icon={<LogoutOutlined />}
+              aria-label={`退出登录：${user.username}`}
+              onClick={() => {
+                void auth.logout().catch(() => {});
+              }}
+            >
+              退出
+            </Button>
             <Button
               aria-label="刷新工作区状态"
               icon={<ReloadOutlined />}
@@ -264,7 +290,11 @@ function Terminal() {
           <span>DATA</span>行情、主题观察样本与新闻情绪均显示来源、时间和覆盖范围。
         </div>
         <main className={styles.content}>
-          {bootstrap.isPending ? (
+          {auth.error && <Alert type="warning" showIcon title={auth.error} />}
+          {auth.notice && <Alert type="info" showIcon title={auth.notice} />}
+          {location.pathname === "/account" ? (
+            <AccountPage />
+          ) : bootstrap.isPending ? (
             <div className={styles.loading}>
               <Spin size="large" />
               <p>正在读取本机工作区…</p>
@@ -304,6 +334,12 @@ function Terminal() {
   );
 }
 
+function AuthenticatedTerminal() {
+  const auth = useAuth();
+  const user = auth.session?.user;
+  return user ? <Terminal key={`${user.id}:${user.workspace.id}`} user={user} /> : null;
+}
+
 export function App() {
   return (
     <ConfigProvider
@@ -324,7 +360,11 @@ export function App() {
       <AppBoundary>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Terminal />
+            <AuthProvider>
+              <AuthGate>
+                <AuthenticatedTerminal />
+              </AuthGate>
+            </AuthProvider>
           </BrowserRouter>
         </QueryClientProvider>
       </AppBoundary>

@@ -1,0 +1,12 @@
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  height: min(760px, calc(100dvh - 48px));
+  overflow: hidden;
+}
+
+.modalBody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

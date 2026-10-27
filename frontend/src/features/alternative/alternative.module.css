@@ -1,0 +1,150 @@
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tabs a {
+  padding: 8px 15px;
+  border: 1px solid #293c48;
+  border-radius: 4px;
+  color: #89a0b3;
+  font-size: 12px;
+}
+.tabs .active {
+  border-color: #368b80;
+  color: #b5e0d5;
+  background: #18332f;
+}
+.controls {
+  display: flex;
+  gap: 10px 16px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+.field {
+  display: grid;
+  gap: 7px;
+  min-width: 155px;
+  font-size: 11px;
+  color: #8ca1b3;
+}
+.field input[type="date"] {
+  background: #101b25;
+  border: 1px solid #344653;
+  color: #c3d3de;
+  padding: 6px 10px;
+  border-radius: 4px;
+  min-height: 32px;
+  color-scheme: dark;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 12px;
+}
+.metric {
+  padding: 16px 18px;
+  border: 1px solid #2a3b47;
+  border-radius: 5px;
+  background: #111c26;
+}
+.metric small {
+  display: block;
+  color: #8299ad;
+  line-height: 1.7;
+  font-size: 11px;
+}
+.metric strong {
+  display: block;
+  margin: 10px 0 4px;
+  font:
+    25px/1.2 ui-monospace,
+    SFMono-Regular,
+    monospace;
+  color: #d7e5ef;
+  font-variant-numeric: tabular-nums;
+}
+.metric p {
+  margin: 0;
+  color: #8299ad;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.positive {
+  color: #45b799 !important;
+}
+.negative {
+  color: #df7181 !important;
+}
+.chart {
+  width: 100%;
+  height: 340px;
+  margin: 0;
+  min-width: 0;
+}
+.empty {
+  display: grid;
+  min-height: 180px;
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 24px;
+  color: #829aaf;
+  text-align: center;
+  line-height: 1.9;
+}
+.metadata {
+  display: flex;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  font:
+    11px/1.8 ui-monospace,
+    SFMono-Regular,
+    monospace;
+  color: #8ba2b7;
+  border-top: 1px solid #283b48;
+}
+.timestamp {
+  color: #8ba2b7;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.news {
+  padding: 16px 18px;
+  border-bottom: 1px solid #263846;
+}
+.news h3 {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.8;
+  font-weight: 500;
+  color: #c2d1de;
+}
+.news h3 a {
+  color: #c2d1de;
+}
+.newsMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: #7892a9;
+  font-size: 11px;
+}
+.scrollNote {
+  font-size: 11px;
+  color: #879eb2;
+  padding: 0 18px 10px;
+  margin: 0;
+}
+@media (max-width: 760px) {
+  .field {
+    flex: 1 1 160px;
+  }
+  .chart {
+    height: 310px;
+  }
+  .metric strong {
+    font-size: 22px;
+  }
+}

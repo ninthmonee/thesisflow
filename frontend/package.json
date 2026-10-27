@@ -1,0 +1,59 @@
+{
+  "name": "tradingagents-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vendor:patch": "node --experimental-strip-types scripts/patch-vendor-types.ts",
+    "vendor:check": "node --experimental-strip-types scripts/patch-vendor-types.ts --check",
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "api:generate": "node --experimental-strip-types scripts/generate-api.ts",
+    "api:generate:check": "node --experimental-strip-types scripts/generate-api.ts --check",
+    "lint:quick": "oxlint --max-warnings 0 .",
+    "lint": "oxlint --type-aware --max-warnings 0 .",
+    "lint:fix": "oxlint --type-aware --max-warnings 0 --fix .",
+    "fmt": "oxfmt --write .",
+    "fmt:check": "oxfmt --check .",
+    "typecheck:app": "tsc -p tsconfig.app.json --noEmit",
+    "typecheck:tools": "tsc -p tsconfig.node.json --noEmit",
+    "typecheck": "npm run typecheck:app && npm run typecheck:tools",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "npm run vendor:check && npm run api:generate:check && npm run fmt:check && npm run lint && npm run typecheck && npm run test:unit && npm run build"
+  },
+  "dependencies": {
+    "@ant-design/icons": "6.3.4",
+    "@tanstack/react-query": "5.104.5",
+    "antd": "6.6.7",
+    "echarts": "6.1.0",
+    "lightweight-charts": "5.2.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-router-dom": "7.18.4",
+    "zod": "4.6.7",
+    "zustand": "5.0.16"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "10.6.0",
+    "@modelcontextprotocol/server": "2.4.0",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.19.2",
+    "@types/picomatch": "4.0.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "orval": "8.44.0",
+    "oxfmt": "0.74.0",
+    "oxlint": "1.89.0",
+    "oxlint-tsgolint": "7.0.2005",
+    "typescript": "7.0.2",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  },
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "packageManager": "npm@11.19.1"
+}

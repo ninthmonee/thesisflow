@@ -1,0 +1,76 @@
+name: Release assets
+
+# Builds the source archive and wheel from the release tag and attaches them to
+# the GitHub release, so a version can be installed without cloning:
+#   pip install https://github.com/TauricResearch/TradingAgents/releases/download/<tag>/<wheel>
+# Run it by hand with a tag to attach builds to an earlier release.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build and attach, for example v0.6.0"
+        required: true
+
+permissions: {}
+
+concurrency:
+  group: release-assets-${{ inputs.tag || github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build and attach
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag || github.event.release.tag_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Release branches share their tag's name, so name the tag explicitly.
+          ref: refs/tags/${{ env.TAG }}
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24.22.1"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Check the package version matches the tag
+        working-directory: backend
+        run: |
+          version=$(python -c "import re, pathlib; print(re.search(r'__version__ = \"([^\"]+)\"', pathlib.Path('tradingagents/__init__.py').read_text()).group(1))")
+          if [ "v$version" != "$TAG" ]; then
+            echo "tradingagents/__init__.py says $version, but the tag is $TAG"
+            exit 1
+          fi
+      - name: Install locked browser dependencies and patch vendor declarations
+        working-directory: frontend
+        run: |
+          npm ci --ignore-scripts
+          npm run vendor:patch
+      - name: Build browser assets
+        working-directory: frontend
+        run: npm run build
+      - name: Package React and legacy browser assets
+        run: python backend/scripts/package_workbench.py --skip-build
+      - name: Build the source archive and wheel
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+      - name: Install the wheel in a clean environment
+        run: |
+          python -m venv /tmp/smoke
+          /tmp/smoke/bin/pip install backend/dist/*.whl
+          # From another directory, so the imports come from the wheel, not the checkout.
+          cd /tmp
+          /tmp/smoke/bin/python -c "import importlib.resources as r, tradingagents, cli.main; assert (r.files('cli') / 'static' / 'welcome.txt').is_file(); assert (r.files('tradingagents') / 'web' / 'ui' / 'index.html').is_file(); assert (r.files('tradingagents') / 'web' / 'static' / 'index.html').is_file(); print('wheel install OK', tradingagents.__version__)"
+      - name: Attach them to the release
+        run: gh release upload "$TAG" backend/dist/* --clobber --repo "$GITHUB_REPOSITORY"

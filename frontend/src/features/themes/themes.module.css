@@ -1,0 +1,156 @@
+.layout {
+  display: grid;
+  grid-template-columns: 275px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.catalog {
+  display: grid;
+  gap: 6px;
+  max-height: 68vh;
+  overflow: auto;
+  padding: 12px;
+}
+.theme {
+  display: flex;
+  align-items: flex-start;
+  color: #a9bdce;
+  background: #101a24;
+  border: 1px solid #263745;
+  border-radius: 5px;
+  text-align: left;
+  padding: 0;
+}
+.theme:hover,
+.selected {
+  border-color: #6fa79e;
+  background: #19302f;
+  color: #e0f1ed;
+}
+.theme strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+.themeChoice {
+  min-width: 0;
+  flex: 1;
+  align-self: stretch;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 12px 4px 12px 12px;
+  border-radius: 4px;
+}
+.themeChoice:focus-visible {
+  outline: 2px solid #83bfb3;
+  outline-offset: -2px;
+}
+.pin {
+  flex-shrink: 0;
+  color: #869cab;
+  margin: 7px 5px 0 0;
+}
+.pinned {
+  color: #c8ac70;
+  background: #c8ac7015;
+}
+.theme small {
+  display: block;
+  color: #8099a9;
+  margin-top: 6px;
+  font-size: 10px;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metric {
+  border: 1px solid #273b48;
+  border-radius: 5px;
+  padding: 15px;
+  background: #111c26;
+  min-width: 0;
+}
+.metric small {
+  color: #8aa0af;
+  display: block;
+  margin-bottom: 12px;
+  font-size: 11px;
+}
+.metric strong {
+  font:
+    22px ui-monospace,
+    SFMono-Regular,
+    monospace;
+  color: #cfdee8;
+}
+.positive {
+  color: #38b89a !important;
+}
+.negative {
+  color: #df7887 !important;
+}
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+  gap: 5px;
+  padding: 16px;
+}
+.tile {
+  border: 1px solid #3d5360;
+  border-radius: 3px;
+  padding: 16px 9px;
+  color: #eef6f4;
+  text-align: center;
+}
+.tile a {
+  color: inherit;
+  font:
+    13px ui-monospace,
+    monospace;
+}
+.tile strong {
+  display: block;
+  font:
+    18px ui-monospace,
+    monospace;
+  margin-top: 8px;
+}
+.sources {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11px;
+}
+.sources a {
+  color: #8fbab1;
+}
+.editor {
+  max-height: 68vh;
+  overflow: auto;
+  padding-right: 5px;
+}
+.editorActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .catalog {
+    max-height: 230px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

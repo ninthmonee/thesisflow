@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "ignorePatterns": [
+    "legacy/**",
+    "src/shared/api/generated/**",
+    "dist/**",
+    "coverage/**",
+    "node_modules/**",
+    "package-lock.json",
+    "test-results/**",
+    "playwright-report/**"
+  ]
+}

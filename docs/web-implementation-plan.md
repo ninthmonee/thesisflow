@@ -2,7 +2,7 @@
 
 版本：实现设计 v1.2。更新日期：2026-10-27。本文主体记录最初实施拆分，现有前后端及账号功能的完成情况见 [实现状态](web-execution-status.md)，不应把下文历史起点当成当前代码状态。
 
-M4增量实施按 [本地 Agent Runtime 与模型接入设计](local-agent-runtime-design.md) 的阶段表执行：先提取内置执行器与连接/能力契约，再接首个Codex研究闭环，随后补恢复/审批、其他Runtime及混合研究和个人连接器。M4当前仅完成设计，尚未开始运行接口实现。
+M4增量实施按 [本地 Agent Runtime 与模型接入设计](local-agent-runtime-design.md) 的阶段表执行：内置执行器拆分、Runtime连接管理和首个Codex独立研究闭环已实现；恢复/审批、其他Runtime、混合研究和个人连接器仍待实现。具体范围及验收结果见 [实现状态](web-execution-status.md)。
 
 本文件与 [功能设计与技术选型方案](web-product-and-architecture-design.md) 配套。以技术选型文档的版本表为统一依赖基线；本文件规定模块边界、实现顺序、数据迁移、质量门禁与验收。首先完成本机个人版本 M1 + M2，朋友使用安排在 M3，权限完成前不开放网络。
 

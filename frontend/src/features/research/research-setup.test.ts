@@ -176,4 +176,68 @@ describe("reviewable research setup", () => {
     expect(researchContextIds(["bad"]).ids).toEqual([]);
     expect(researchContextIds(["bad"]).warning).toContain("无效资料ID");
   });
+  it("retains Runtime execution and its own connection when reviewing an original or current-date rerun", () => {
+    const source = manifest({
+      selection: { execution_mode: "local_agent", runtime_snapshot: { model_id: "frozen" } },
+      request: {
+        ticker: "NVDA",
+        date: "2026-10-01",
+        execution_mode: "local_agent",
+        runtime_connection_id: "runtime",
+        checkpoint: false,
+        research_instructions: "核查来源",
+        context_ids: ["attachment"],
+      },
+    });
+    expect(researchPrefill(source, "current", "2026-10-28", [template], template)).toMatchObject({
+      execution_mode: "local_agent",
+      runtime_connection_id: "runtime",
+      date: "2026-10-28",
+      checkpoint: false,
+      template_version_id: null,
+      research_instructions: "核查来源",
+      context_ids: [],
+    });
+    expect(researchPrefill(source, "original", "2026-10-28", [template], template)).toMatchObject({
+      date: "2026-10-01",
+      template_version_id: null,
+      context_ids: ["attachment"],
+    });
+    expect(source.request.date).toBe("2026-10-01");
+  });
+  it("normalizes Runtime requests without leaking the previously selected built-in template or checkpoint", () => {
+    expect(
+      researchRequest({
+        ticker: " nvda ",
+        date: "2026-10-28",
+        execution_mode: "local_agent",
+        runtime_connection_id: "runtime",
+        template_version_id: template.id,
+        checkpoint: true,
+        research_instructions: " 核查 HBM ",
+      }),
+    ).toMatchObject({
+      ticker: "NVDA",
+      execution_mode: "local_agent",
+      runtime_connection_id: "runtime",
+      template_version_id: null,
+      checkpoint: false,
+      research_instructions: "核查 HBM",
+    });
+  });
+  it("clears the stale Runtime binding when switching back to the built-in execution path", () => {
+    expect(
+      researchRequest({
+        ticker: "NVDA",
+        date: "2026-10-28",
+        execution_mode: "builtin_workflow",
+        runtime_connection_id: "runtime",
+        template_version_id: template.id,
+      }),
+    ).toMatchObject({
+      execution_mode: "builtin_workflow",
+      runtime_connection_id: null,
+      template_version_id: template.id,
+    });
+  });
 });

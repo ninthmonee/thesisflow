@@ -6,6 +6,7 @@
  */
 import type { CreateResearchRequestAnalystsItem } from './createResearchRequestAnalystsItem.ts';
 import type { CreateResearchRequestDepth } from './createResearchRequestDepth.ts';
+import type { CreateResearchRequestExecutionMode } from './createResearchRequestExecutionMode.ts';
 import type { CreateResearchRequestHoldingState } from './createResearchRequestHoldingState.ts';
 import type { CreateResearchRequestHorizon } from './createResearchRequestHorizon.ts';
 import type { CreateResearchRequestLanguage } from './createResearchRequestLanguage.ts';
@@ -30,6 +31,7 @@ export interface CreateResearchRequest {
      */
   date: string;
   depth?: CreateResearchRequestDepth;
+  execution_mode?: CreateResearchRequestExecutionMode;
   holding_state?: CreateResearchRequestHoldingState;
   horizon?: CreateResearchRequestHorizon;
   language?: CreateResearchRequestLanguage;
@@ -44,7 +46,15 @@ export interface CreateResearchRequest {
      */
   max_runtime_seconds?: number;
   max_tokens_total?: number | null;
+  /**
+     * @minimum 1
+     * @maximum 100
+     */
+  max_tool_calls?: number;
   objective?: CreateResearchRequestObjective;
+  /** @maxLength 4000 */
+  research_instructions?: string;
+  runtime_connection_id?: string | null;
   template_version_id?: string | null;
   /**
      * @minLength 1

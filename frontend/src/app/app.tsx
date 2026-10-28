@@ -68,6 +68,9 @@ const DataConnectionsPage = lazy(() =>
 const ModelsPage = lazy(() =>
   import("../features/models/models-page").then((module) => ({ default: module.ModelsPage })),
 );
+const RuntimesPage = lazy(() =>
+  import("../features/runtimes/runtimes-page").then((module) => ({ default: module.RuntimesPage })),
+);
 const WatchlistsPage = lazy(() =>
   import("../features/watchlists/watchlists-page").then((module) => ({
     default: module.WatchlistsPage,
@@ -152,6 +155,7 @@ function SettingsLayout() {
     <>
       <nav className={styles.settingsNav} aria-label="设置分类">
         <NavLink to="/settings/models">模型与研究配置</NavLink>
+        <NavLink to="/settings/runtimes">电脑与运行环境</NavLink>
         <NavLink to="/settings/data">数据中心</NavLink>
         <NavLink to="/settings/sources">数据源账号</NavLink>
       </nav>
@@ -194,6 +198,7 @@ function ConnectedPages({ data }: { data: BootstrapResponse }) {
         <Route path="/settings" element={<SettingsLayout />}>
           <Route index element={<Navigate to="models" replace />} />
           <Route path="models" element={<ModelsPage bootstrap={data} />} />
+          <Route path="runtimes" element={<RuntimesPage bootstrap={data} />} />
           <Route path="data" element={<DataSettingsPage bootstrap={data} />} />
           <Route path="sources" element={<DataConnectionsPage bootstrap={data} />} />
           <Route path="*" element={<Navigate to="/settings/models" replace />} />

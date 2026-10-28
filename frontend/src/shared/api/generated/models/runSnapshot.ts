@@ -9,6 +9,7 @@ import type { ResearchQualitySummary } from './researchQualitySummary.ts';
 import type { RunSnapshotAnalystsItem } from './runSnapshotAnalystsItem.ts';
 import type { RunSnapshotAssetType } from './runSnapshotAssetType.ts';
 import type { RunSnapshotDepth } from './runSnapshotDepth.ts';
+import type { RunSnapshotExecutionMode } from './runSnapshotExecutionMode.ts';
 import type { RunSnapshotHoldingState } from './runSnapshotHoldingState.ts';
 import type { RunSnapshotHorizon } from './runSnapshotHorizon.ts';
 import type { RunSnapshotLanguage } from './runSnapshotLanguage.ts';
@@ -16,6 +17,7 @@ import type { RunSnapshotObjective } from './runSnapshotObjective.ts';
 import type { RunSnapshotReports } from './runSnapshotReports.ts';
 import type { RunSnapshotStatus } from './runSnapshotStatus.ts';
 import type { RunStats } from './runStats.ts';
+import type { RuntimeExecutionInfo } from './runtimeExecutionInfo.ts';
 
 /**
  * Safe shape of the existing run store, including its pending state.
@@ -29,6 +31,7 @@ export interface RunSnapshot {
   depth: RunSnapshotDepth;
   error?: string | null;
   events?: LegacyRunEvent[];
+  execution_mode?: RunSnapshotExecutionMode;
   finished_at?: string | null;
   holding_state?: RunSnapshotHoldingState;
   horizon?: RunSnapshotHorizon;
@@ -38,6 +41,7 @@ export interface RunSnapshot {
   max_llm_calls?: number | null;
   max_runtime_seconds?: number | null;
   max_tokens_total?: number | null;
+  max_tool_calls?: number | null;
   objective?: RunSnapshotObjective;
   quality?: ResearchQualitySummary;
   rating?: string | null;
@@ -46,6 +50,8 @@ export interface RunSnapshot {
   reports?: RunSnapshotReports;
   /** @minimum 0 */
   revision: number;
+  runtime_connection_id?: string | null;
+  runtime_execution?: RuntimeExecutionInfo | null;
   stage: string;
   started_at?: string | null;
   stats?: RunStats;

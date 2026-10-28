@@ -26,6 +26,19 @@ function profile(id: string, model: string, provider = "openai"): ProfileView {
 }
 
 describe("workflow model provenance", () => {
+  it("keeps a local Agent separate from host graph defaults and role bindings", () => {
+    const result = modelsFromManifest({
+      selection: {
+        execution_mode: "local_agent",
+        runtime_snapshot: { model_id: "requested-agent-model" },
+      },
+      runtime: { llm_provider: "host-provider", quick_think_llm: "host-model" },
+    });
+    expect(result.fallbackByTier).toBe(false);
+    expect(result.roles).toEqual({});
+    expect(result.label).toContain("requested-agent-model");
+    expect(JSON.stringify(result)).not.toContain("host-model");
+  });
   it("separates explicit draft role bindings from the inherited default", () => {
     const result = modelsFromProfiles(
       {

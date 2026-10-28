@@ -15,7 +15,7 @@ class ResearchEvidenceIssue(ContractModel):
 
 class ResearchQualitySummary(ContractModel):
     status: Literal["usable", "degraded", "insufficient", "unverified"]
-    rule_version: Literal["research-quality-v1"] = "research-quality-v1"
+    rule_version: Literal["research-quality-v1", "local-agent-evidence-v1"] = "research-quality-v1"
     checked_at: datetime | None = None
     evidence_count: int = Field(ge=0)
     validated_price: bool

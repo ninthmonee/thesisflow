@@ -227,6 +227,20 @@ class ResearchService:
         ):
             raise ResearchError("invalid_idempotency_key", "幂等键长度须为 1 至 160", 422)
         selected = deepcopy(dict(manifest or {}))
+        if body["execution_mode"] == "local_agent":
+            from tradingagents.web.domain.agent_research import EXECUTOR_VERSION, evidence_policy
+
+            snapshot = selected.get("runtime_snapshot")
+            if (
+                selected.get("execution_mode") != "local_agent"
+                or not isinstance(snapshot, dict)
+                or snapshot.get("id") != body["runtime_connection_id"]
+                or selected.get("executor_version") != EXECUTOR_VERSION
+                or selected.get("evidence_policy") != evidence_policy(body["objective"])
+            ):
+                raise ResearchError("runtime_selection_unresolved", "Runtime与研究资格策略尚未冻结，请重新选择运行环境", 422)
+        elif selected.get("execution_mode") == "local_agent" or "runtime_snapshot" in selected:
+            raise ResearchError("runtime_selection_conflict", "研究执行方式与配置不一致", 422)
         context_ids = body.get("context_ids", [])
         context_inputs = selected.get("context_inputs", [])
         if (
@@ -251,6 +265,11 @@ class ResearchService:
         public_runtime = {
             key: deepcopy(value) for key, value in runtime.items() if key in SAFE_RUNTIME_KEYS
         }
+        if body["execution_mode"] == "local_agent":
+            # Host graph model defaults were never used by this executor.
+            for key in ("llm_provider", "quick_think_provider", "deep_think_provider", "quick_think_llm", "deep_think_llm",
+                "temperature", "max_tokens", "google_thinking_level", "openai_reasoning_effort", "anthropic_effort"):
+                public_runtime.pop(key, None)
         if self.data_snapshot_provider is not None:
             data_connections = deepcopy(dict(self.data_snapshot_provider(workspace_id, owner_id)))
         else:
@@ -372,6 +391,7 @@ class ResearchService:
         exports = set()
         stored_rating = None
         decision_text = None
+        runtime_execution = None
         for report in session.scalars(
             select(Report).where(Report.run_id == run.id).order_by(Report.version)
         ):
@@ -381,6 +401,8 @@ class ResearchService:
                 stored_rating = report.content
             elif report.kind == "_research_quality":
                 continue
+            elif report.kind == "_runtime_execution":
+                runtime_execution = report.structured
             else:
                 if report.kind == "final_trade_decision":
                     decision_text = report.content
@@ -399,7 +421,16 @@ class ResearchService:
                 payload = event.payload
                 message = payload.get("label") or payload.get("message")
                 if event.event_type == "report":
-                    message = REPORT_LABELS.get(payload.get("section"), "研究报告") + "已更新"
+                    section = payload.get("section")
+                    label = REPORT_LABELS.get(section, "研究报告")
+                    if request.get("execution_mode") == "local_agent":
+                        label = {
+                            "runtime_summary": "Agent研究概览", "runtime_analysis": "Agent研究分析",
+                            "runtime_bull_case": "Agent多头观点", "runtime_bear_case": "Agent空头观点",
+                            "runtime_risks": "Agent风险与失效条件", "runtime_evidence": "Agent证据引用",
+                            "final_trade_decision": "Agent原始结论",
+                        }.get(section, "Agent研究报告")
+                    message = label + "已更新"
                 if event.event_type == "state":
                     message = {
                         "queued": "研究已排队",
@@ -426,6 +457,10 @@ class ResearchService:
         raw_rating = stored_rating or (
             run_rating({"final_trade_decision": decision_text}) if decision_text else None
         )
+        if request.get("execution_mode") == "local_agent":
+            # Independent Agent reports have no structured rating field. Do not
+            # turn the legacy text parser's REVIEW fallback into a model opinion.
+            raw_rating = None
         rating = raw_rating if run.status == "completed" and quality.eligible_for_rating else None
         return {
             "id": run.id,
@@ -451,6 +486,10 @@ class ResearchService:
             "max_llm_calls": request.get("max_llm_calls"),
             "max_tokens_total": request.get("max_tokens_total"),
             "max_runtime_seconds": request.get("max_runtime_seconds"),
+            "execution_mode": request.get("execution_mode", "builtin_workflow"),
+            "runtime_connection_id": request.get("runtime_connection_id"),
+            "max_tool_calls": request.get("max_tool_calls"),
+            "runtime_execution": runtime_execution,
             "reports": reports,
             "events": events,
             "error": run.error_message,
@@ -702,6 +741,8 @@ class ResearchService:
                 raise ResearchError("invalid_resume_state", "只能继续已中断、失败或取消的研究")
             attempt = self.tasks.latest_attempt(session, run_id)
             manifest = session.get(RunManifest, run_id)
+            if manifest is not None and manifest.content.get("selection", {}).get("execution_mode") == "local_agent":
+                raise ResearchError("runtime_resume_unsupported", "此Runtime研究尚不支持可靠会话恢复，请核对配置后重新研究", 409)
             if attempt is None or not attempt.checkpoint_ref or manifest is None:
                 raise ResearchError("checkpoint_unavailable", "没有兼容检查点，请重新研究")
             verify_graph_contract(manifest.content)

@@ -40,7 +40,7 @@ def test_bootstrap_uses_persistent_local_identity_and_allowlisted_config(tmp_pat
         assert client.get("/api/v1/health").status_code == 200
         assert client.get("/api/config").status_code == 200
         assert client.get("/").status_code == 200
-        assert app.state.database.schema_revision() == "0011_accounts_sessions"
+        assert app.state.database.schema_revision() == "0012_agent_runtimes"
 
 
 def test_unbuilt_workbench_is_explicitly_unavailable(tmp_path, monkeypatch):

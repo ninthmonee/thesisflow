@@ -161,6 +161,7 @@ class ResearchEvidenceStore:
             if path is not None:
                 path.unlink(missing_ok=True)
             raise
+        return identifier
 
     def _read(self, snapshot):
         path = self.root / snapshot.file_path
@@ -232,15 +233,29 @@ class ResearchEvidenceStore:
         if problems:
             details = [{**item, "price_validated": False} for item in details]
         checked = max((snapshot.received_at for _, snapshot in rows if snapshot), default=None)
-        return started, ResearchQualitySummary.model_validate(
-            qualify(
+        selection = manifest.content.get("selection", {}) if manifest else {}
+        external = selection.get("execution_mode") == "local_agent"
+        required = None
+        if external:
+            from tradingagents.web.domain.agent_research import evidence_policy
+
+            policy = evidence_policy(manifest.content.get("request", {}).get("objective", "general"))
+            required = policy["required_categories"]
+            if selection.get("evidence_policy") != policy:
+                started = False
+                problems.append(issue("runtime_evidence_policy_invalid", "外部研究的证据策略缺失或不兼容，不能推导结论资格"))
+        result = qualify(
                 details,
                 analysts,
                 capture_started=started,
                 checked_at=checked,
                 capture_issues=problems,
+                required_categories=required,
             )
-        )
+        if external:
+            result.update(rule_version="local-agent-evidence-v1", eligible_for_rating=False)
+            result["issues"].append(issue("runtime_claims_unverified", "本地Agent报告保留为原始研究观点；引用存在性不等于报告中的结论、目标与仓位已被独立核验"))
+        return started, ResearchQualitySummary.model_validate(result)
 
     def get_quality(self, run_id, *, workspace_id, owner_id):
         with self.database.session() as session:
@@ -351,6 +366,8 @@ class EvidenceCaptureSession:
         self.symbol, self.analysis_date = symbol, analysis_date
         self.failure = False
         self.lock = threading.Lock()
+        self.captured_ids = []
+        self.observations = []
 
     def verify(self):
         if self.failure:
@@ -387,7 +404,10 @@ class EvidenceCaptureSession:
                     received_at=self.store.tasks.now(),
                     redactions=redactions,
                 )
-                self.store.record(self.claim, details, body)
+                identifier = self.store.record(self.claim, details, body)
+                if isinstance(identifier, str):
+                    self.captured_ids.append(identifier)
+                    self.observations.append({"id": identifier, "details": details, "body": body})
             except Exception:
                 self.failure = True
                 raise EvidenceCaptureError("Research evidence capture failed.") from None

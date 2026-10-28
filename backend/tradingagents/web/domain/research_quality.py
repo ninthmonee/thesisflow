@@ -538,7 +538,7 @@ def normalize_observation(
     return details, encoded.decode() if encoded else None
 
 
-def qualify(records, analysts, *, capture_started, checked_at=None, capture_issues=()):
+def qualify(records, analysts, *, capture_started, checked_at=None, capture_issues=(), required_categories=None):
     required = sorted(
         {
             {
@@ -552,6 +552,8 @@ def qualify(records, analysts, *, capture_started, checked_at=None, capture_issu
         }
         | {"market"}
     )
+    if required_categories is not None:
+        required = sorted(set(required_categories) | {"market"})
     available = sorted(
         {row["category"] for row in records if row.get("status") in {"validated", "available"}}
     )

@@ -102,6 +102,15 @@ export function modelsFromProfiles(
 export function modelsFromManifest(manifest: unknown): WorkflowModelBindings {
   const document = record(manifest);
   const selection = record(own(document, "selection"));
+  if (own(selection, "execution_mode") === "local_agent") {
+    const snapshot = record(own(selection, "runtime_snapshot"));
+    const model = text(own(snapshot, "model_id"));
+    return {
+      label: `本地 Agent 独立研究${model ? ` · 请求模型 ${model}` : ""}，不使用内置角色模型绑定`,
+      fallbackByTier: false,
+      roles: {},
+    };
+  }
   if (selection && Object.hasOwn(selection, "model_snapshot")) {
     const snapshot = record(own(selection, "model_snapshot"));
     const frozen = record(own(snapshot, "roles"));

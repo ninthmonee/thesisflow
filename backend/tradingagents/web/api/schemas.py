@@ -7,7 +7,7 @@ from datetime import date, datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import ConfigDict, Field, RootModel, field_validator
+from pydantic import ConfigDict, Field, RootModel, field_validator, model_validator
 
 from .base import ContractModel
 from .research_evidence_schemas import ResearchQualitySummary
@@ -114,6 +114,21 @@ class CreateResearchRequest(ContractModel):
     max_tokens_total: int | None = Field(default=None, ge=1, le=10_000_000)
     max_runtime_seconds: int = Field(default=1800, ge=60, le=14400)
     context_ids: list[str] = Field(default_factory=list, max_length=5)
+    execution_mode: Literal["builtin_workflow", "local_agent"] = "builtin_workflow"
+    runtime_connection_id: str | None = Field(default=None, max_length=36)
+    research_instructions: str = Field(default="", max_length=4000)
+    max_tool_calls: int = Field(default=40, ge=1, le=100, strict=True)
+
+    @model_validator(mode="after")
+    def execution_selection(self):
+        if self.execution_mode == "local_agent":
+            if not self.runtime_connection_id or self.template_version_id:
+                raise ValueError("本地Agent研究需要选择Runtime，且不能同时指定内置模型模板")
+            self.runtime_connection_id = str(UUID(self.runtime_connection_id))
+            self.checkpoint = False
+        elif self.runtime_connection_id:
+            raise ValueError("内置研究不能同时指定Runtime连接")
+        return self
 
     @field_validator("context_ids")
     @classmethod
@@ -173,6 +188,16 @@ class LegacyRunEvent(ContractModel):
     message: str
 
 
+class RuntimeExecutionInfo(ContractModel):
+    executor_version: str
+    requested_model: str = Field(max_length=240)
+    effective_model: str | None = Field(default=None, max_length=240)
+    effective_provider: str | None = Field(default=None, max_length=120)
+    auth_source: Literal["runtime_login", "model_connection", "unknown"] = "unknown"
+    llm_calls_known: Literal[False] = False
+    resume_supported: Literal[False] = False
+
+
 class RunSnapshot(ContractModel):
     """Safe shape of the existing run store, including its pending state."""
 
@@ -211,6 +236,10 @@ class RunSnapshot(ContractModel):
     max_llm_calls: int | None = None
     max_tokens_total: int | None = None
     max_runtime_seconds: int | None = None
+    execution_mode: Literal["builtin_workflow", "local_agent"] = "builtin_workflow"
+    runtime_connection_id: str | None = None
+    max_tool_calls: int | None = None
+    runtime_execution: RuntimeExecutionInfo | None = None
 
 
 class ProgressPayload(ContractModel):
@@ -272,10 +301,23 @@ class ResyncEvent(EventBase):
     payload: ResyncPayload
 
 
+class RuntimeEventPayload(ContractModel):
+    event: Literal["preparing", "session_started", "tool_started", "tool_completed", "message_completed", "usage", "completed"]
+    label: str = Field(max_length=240)
+    tool: str | None = Field(default=None, max_length=80)
+    model: str | None = Field(default=None, max_length=200)
+    provider: str | None = Field(default=None, max_length=120)
+
+
+class RuntimeEvent(EventBase):
+    type: Literal["runtime"]
+    payload: RuntimeEventPayload
+
+
 class EventEnvelope(
     RootModel[
         Annotated[
-            ProgressEvent | ReportEvent | StatsEvent | StateEvent | ErrorEvent | ResyncEvent,
+            ProgressEvent | ReportEvent | StatsEvent | StateEvent | ErrorEvent | ResyncEvent | RuntimeEvent,
             Field(discriminator="type"),
         ]
     ]

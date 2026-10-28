@@ -8,10 +8,11 @@ import type { ErrorEvent } from './errorEvent.ts';
 import type { ProgressEvent } from './progressEvent.ts';
 import type { ReportEvent } from './reportEvent.ts';
 import type { ResyncEvent } from './resyncEvent.ts';
+import type { RuntimeEvent } from './runtimeEvent.ts';
 import type { StateEvent } from './stateEvent.ts';
 import type { StatsEvent } from './statsEvent.ts';
 
 /**
  * Stored event data; SSE framing and reconnection remain a separate transport.
  */
-export type EventEnvelope = ProgressEvent | ReportEvent | StatsEvent | StateEvent | ErrorEvent | ResyncEvent;
+export type EventEnvelope = ProgressEvent | ReportEvent | StatsEvent | StateEvent | ErrorEvent | ResyncEvent | RuntimeEvent;

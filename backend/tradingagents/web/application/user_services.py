@@ -87,7 +87,7 @@ class UserServiceRegistry:
 
 def _build_user_services(database, workspace, root, base_config, *, resources, secret_store=None,
     model_tester=None, instrument_search=None, market_provider=None, market_clock=None,
-    alternative_providers=None, research_data_tester=None):
+    alternative_providers=None, research_data_tester=None, runtime_probe=None):
     """No shared credentials, mutable market settings, or cached research views."""
     from tradingagents.web.application.data_settings import DataSettingsService
     from tradingagents.web.application.market_alternatives import AlternativeMarketService
@@ -104,6 +104,7 @@ def _build_user_services(database, workspace, root, base_config, *, resources, s
         ResearchDataConnectionService,
     )
     from tradingagents.web.application.runtime import create_selection_resolver
+    from tradingagents.web.application.runtime_connections import RuntimeConnectionService
     from tradingagents.web.application.runtime_readiness import RuntimeReadinessService
     from tradingagents.web.application.themes import ThemesService
     from tradingagents.web.application.tracking import WatchlistTrackingService
@@ -113,6 +114,7 @@ def _build_user_services(database, workspace, root, base_config, *, resources, s
     private_root = root / "users" / sha256(f"{workspace.workspace_id}:{workspace.user_id}".encode()).hexdigest()[:32]
     config = {key: deepcopy(value) for key, value in base_config.items() if key in SAFE_RUNTIME_KEYS}
     models = ModelConfigurationService(database, workspace, secret_store=secret_store, tester=model_tester)
+    runtimes = RuntimeConnectionService(database, workspace, secret_store=secret_store, probe=runtime_probe)
     watchlists = WatchlistService(database, workspace_id=workspace.workspace_id,
         owner_id=workspace.user_id, search_provider=instrument_search)
     sources = ResearchDataConnectionService(database, workspace, secret_store=secret_store, tester=research_data_tester)
@@ -148,7 +150,7 @@ def _build_user_services(database, workspace, root, base_config, *, resources, s
         snapshot_cache_root=private_root / "market-snapshots", apply_callback=apply,
         cache_invalidator=invalidate, capabilities_reader=market.capabilities, environment_reader=lambda _: None)
     data.apply_saved_settings()
-    return SimpleNamespace(model_service=models, watchlist_service=watchlists, research_service=research,
+    return SimpleNamespace(model_service=models, runtime_service=runtimes, watchlist_service=watchlists, research_service=research,
         research_data_service=sources, market_service=market, intelligence_service=intelligence,
         themes_service=themes, tracking_service=tracking, alternative_service=alternatives,
         professional_pulse_service=pulse, research_context_service=context, data_service=data,

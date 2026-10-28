@@ -61,7 +61,7 @@ def test_migration_and_local_seed_are_idempotent(database):
     assert local.workspace_id == LOCAL_WORKSPACE_ID
     assert local.user_id == LOCAL_USER_ID
     assert local.watchlist_id == LOCAL_WATCHLIST_ID
-    assert database.schema_revision() == "0011_accounts_sessions"
+    assert database.schema_revision() == "0012_agent_runtimes"
     with database.session() as session:
         for model in (User, Workspace, Membership, Watchlist):
             assert session.scalar(select(func.count()).select_from(model)) == 1
@@ -283,6 +283,6 @@ def test_migration_path_does_not_depend_on_current_directory(tmp_path, monkeypat
     monkeypatch.chdir(tmp_path)
     database = initialize_database(tmp_path / "isolated.sqlite3")
     try:
-        assert database.schema_revision() == "0011_accounts_sessions"
+        assert database.schema_revision() == "0012_agent_runtimes"
     finally:
         database.dispose()

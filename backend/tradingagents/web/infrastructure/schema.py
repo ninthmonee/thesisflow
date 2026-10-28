@@ -10,6 +10,7 @@ from .auth_models import (
 from .data_settings_model import DataSettingsRecord
 from .models import Base
 from .research_data_model import ResearchDataConnectionRecord
+from .runtime_models import AgentRuntimeConnection
 from .theme_model import ThemeMemberRecord, ThemeRecord, ThemeVersionRecord
 from .viewpoint_model import ResearchViewpoint
 from .watchlist_observation_model import WatchlistObservationRecord
@@ -24,6 +25,7 @@ __all__ = [
     "DataSettingsRecord",
     "AlternativeDataConnection",
     "ResearchDataConnectionRecord",
+    "AgentRuntimeConnection",
     "ThemeMemberRecord",
     "ThemeRecord",
     "ThemeVersionRecord",

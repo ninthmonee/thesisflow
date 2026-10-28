@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { ResearchEvidenceIssue } from './researchEvidenceIssue.ts';
+import type { ResearchQualitySummaryRuleVersion } from './researchQualitySummaryRuleVersion.ts';
 import type { ResearchQualitySummaryStatus } from './researchQualitySummaryStatus.ts';
 
 export interface ResearchQualitySummary {
@@ -18,7 +19,7 @@ export interface ResearchQualitySummary {
   issues: ResearchEvidenceIssue[];
   missing_categories: string[];
   required_categories: string[];
-  rule_version?: 'research-quality-v1';
+  rule_version?: ResearchQualitySummaryRuleVersion;
   scope_notice?: string;
   status: ResearchQualitySummaryStatus;
   validated_price: boolean;

@@ -1,10 +1,11 @@
 import type {
-  CreateResearchRequest,
   ManifestResponse,
   RunSnapshot,
   TemplateView,
 } from "../../shared/api/generated/models";
 import type { WorkflowModelBindings } from "./workflow-utils";
+import { isRuntimeResearch } from "../runtimes/runtime-state";
+import type { RuntimeResearchRequest } from "../runtimes/runtime-state";
 
 export const CURRENT_MODEL_CONFIGURATION = "__current_configuration__";
 export type ResearchPrefillMode = "current" | "original";
@@ -30,8 +31,18 @@ export function researchPrefill(
   today: string,
   templates: readonly TemplateView[],
   currentTemplate?: TemplateView | null,
-): Partial<CreateResearchRequest> {
-  const original = manifest.request;
+): Partial<RuntimeResearchRequest> {
+  const original = manifest.request as RuntimeResearchRequest;
+  if (isRuntimeResearch(manifest)) {
+    return {
+      ...original,
+      execution_mode: "local_agent",
+      date: mode === "current" ? today : original.date,
+      context_ids: mode === "current" ? [] : (original.context_ids ?? []),
+      checkpoint: false,
+      template_version_id: null,
+    };
+  }
   if (mode === "current") {
     return {
       ...original,
@@ -68,10 +79,20 @@ export function modelBindingSummary(models: WorkflowModelBindings) {
   return labels.length ? labels.join("；") : "模型信息未确认";
 }
 
-export function researchRequest(values: CreateResearchRequest): CreateResearchRequest {
+export function researchRequest(values: RuntimeResearchRequest): RuntimeResearchRequest {
+  if (values.execution_mode === "local_agent") {
+    return {
+      ...values,
+      ticker: values.ticker.trim().toUpperCase(),
+      template_version_id: null,
+      checkpoint: false,
+      research_instructions: values.research_instructions?.trim() ?? "",
+    };
+  }
   return {
     ...values,
     ticker: values.ticker.trim().toUpperCase(),
+    runtime_connection_id: null,
     template_version_id:
       !values.template_version_id || values.template_version_id === CURRENT_MODEL_CONFIGURATION
         ? null

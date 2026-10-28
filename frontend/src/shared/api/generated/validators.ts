@@ -2312,6 +2312,7 @@ export const ListResearchRunsQueryParams = zod.object({
 export const listResearchRunsResponseItemsItemErrorDefault = null;
 export const listResearchRunsResponseItemsItemEventsItemIdMin = 0;
 
+export const listResearchRunsResponseItemsItemExecutionModeDefault = `builtin_workflow`;
 export const listResearchRunsResponseItemsItemFinishedAtDefault = null;
 export const listResearchRunsResponseItemsItemHoldingStateDefault = `unknown`;
 export const listResearchRunsResponseItemsItemHorizonDefault = null;
@@ -2319,6 +2320,7 @@ export const listResearchRunsResponseItemsItemMarkdownUrlDefault = null;
 export const listResearchRunsResponseItemsItemMaxLlmCallsDefault = null;
 export const listResearchRunsResponseItemsItemMaxRuntimeSecondsDefault = null;
 export const listResearchRunsResponseItemsItemMaxTokensTotalDefault = null;
+export const listResearchRunsResponseItemsItemMaxToolCallsDefault = null;
 export const listResearchRunsResponseItemsItemObjectiveDefault = null;
 export const listResearchRunsResponseItemsItemQualityCheckedAtDefault = null;
 export const listResearchRunsResponseItemsItemQualityEvidenceCountMin = 0;
@@ -2330,6 +2332,19 @@ export const listResearchRunsResponseItemsItemRawRatingDefault = null;
 export const listResearchRunsResponseItemsItemReportUrlDefault = null;
 export const listResearchRunsResponseItemsItemRevisionMin = 0;
 
+export const listResearchRunsResponseItemsItemRuntimeConnectionIdDefault = null;
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneAuthSourceDefault = `unknown`;
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveModelOneMax = 240;
+
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveModelDefault = null;
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveProviderOneMax = 120;
+
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveProviderDefault = null;
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneLlmCallsKnownDefault = false;
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneRequestedModelMax = 240;
+
+export const listResearchRunsResponseItemsItemRuntimeExecutionOneResumeSupportedDefault = false;
+export const listResearchRunsResponseItemsItemRuntimeExecutionDefault = null;
 export const listResearchRunsResponseItemsItemStartedAtDefault = null;
 export const listResearchRunsResponseItemsItemStatsAttemptCountDefault = 0;
 export const listResearchRunsResponseItemsItemStatsAttemptCountMin = 0;
@@ -2388,6 +2403,7 @@ export const ListResearchRunsResponse = zod.object({
   "time": zod.iso.datetime({"offset":true}),
   "type": zod.string()
 })).optional(),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(listResearchRunsResponseItemsItemExecutionModeDefault),
   "finished_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(listResearchRunsResponseItemsItemFinishedAtDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(listResearchRunsResponseItemsItemHoldingStateDefault),
   "horizon": zod.union([zod.enum(['short', 'medium', 'long']),zod.null()]).default(listResearchRunsResponseItemsItemHorizonDefault),
@@ -2397,6 +2413,7 @@ export const ListResearchRunsResponse = zod.object({
   "max_llm_calls": zod.union([zod.int(),zod.null()]).default(listResearchRunsResponseItemsItemMaxLlmCallsDefault),
   "max_runtime_seconds": zod.union([zod.int(),zod.null()]).default(listResearchRunsResponseItemsItemMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int(),zod.null()]).default(listResearchRunsResponseItemsItemMaxTokensTotalDefault),
+  "max_tool_calls": zod.union([zod.int(),zod.null()]).default(listResearchRunsResponseItemsItemMaxToolCallsDefault),
   "objective": zod.union([zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']),zod.null()]).default(listResearchRunsResponseItemsItemObjectiveDefault),
   "quality": zod.object({
   "available_categories": zod.array(zod.string()),
@@ -2411,7 +2428,7 @@ export const ListResearchRunsResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(listResearchRunsResponseItemsItemQualityRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(listResearchRunsResponseItemsItemQualityRuleVersionDefault),
   "scope_notice": zod.string().default(listResearchRunsResponseItemsItemQualityScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -2421,6 +2438,16 @@ export const ListResearchRunsResponse = zod.object({
   "report_url": zod.union([zod.string(),zod.null()]).default(listResearchRunsResponseItemsItemReportUrlDefault),
   "reports": zod.record(zod.string(), zod.string()).optional(),
   "revision": zod.int().min(listResearchRunsResponseItemsItemRevisionMin),
+  "runtime_connection_id": zod.union([zod.string(),zod.null()]).default(listResearchRunsResponseItemsItemRuntimeConnectionIdDefault),
+  "runtime_execution": zod.union([zod.object({
+  "auth_source": zod.enum(['runtime_login', 'model_connection', 'unknown']).default(listResearchRunsResponseItemsItemRuntimeExecutionOneAuthSourceDefault),
+  "effective_model": zod.union([zod.string().max(listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveModelOneMax),zod.null()]).default(listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveModelDefault),
+  "effective_provider": zod.union([zod.string().max(listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveProviderOneMax),zod.null()]).default(listResearchRunsResponseItemsItemRuntimeExecutionOneEffectiveProviderDefault),
+  "executor_version": zod.string(),
+  "llm_calls_known": zod.literal(false).default(listResearchRunsResponseItemsItemRuntimeExecutionOneLlmCallsKnownDefault).meta({ title: 'Llm Calls Known' }),
+  "requested_model": zod.string().max(listResearchRunsResponseItemsItemRuntimeExecutionOneRequestedModelMax),
+  "resume_supported": zod.literal(false).default(listResearchRunsResponseItemsItemRuntimeExecutionOneResumeSupportedDefault).meta({ title: 'Resume Supported' })
+}),zod.null()]).default(listResearchRunsResponseItemsItemRuntimeExecutionDefault),
   "stage": zod.string(),
   "started_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(listResearchRunsResponseItemsItemStartedAtDefault),
   "stats": zod.object({
@@ -2476,6 +2503,7 @@ export const createResearchRunBodyDateMax = 10;
 
 export const createResearchRunBodyDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const createResearchRunBodyDepthDefault = 1;
+export const createResearchRunBodyExecutionModeDefault = `builtin_workflow`;
 export const createResearchRunBodyHoldingStateDefault = `unknown`;
 export const createResearchRunBodyHorizonDefault = `medium`;
 export const createResearchRunBodyLanguageDefault = `Chinese`;
@@ -2489,7 +2517,16 @@ export const createResearchRunBodyMaxRuntimeSecondsMax = 14400;
 export const createResearchRunBodyMaxTokensTotalOneMax = 10000000;
 
 export const createResearchRunBodyMaxTokensTotalDefault = null;
+export const createResearchRunBodyMaxToolCallsDefault = 40;
+export const createResearchRunBodyMaxToolCallsMax = 100;
+
 export const createResearchRunBodyObjectiveDefault = `general`;
+export const createResearchRunBodyResearchInstructionsDefault = ``;
+export const createResearchRunBodyResearchInstructionsMax = 4000;
+
+export const createResearchRunBodyRuntimeConnectionIdOneMax = 36;
+
+export const createResearchRunBodyRuntimeConnectionIdDefault = null;
 export const createResearchRunBodyTemplateVersionIdOneMax = 36;
 
 export const createResearchRunBodyTemplateVersionIdDefault = null;
@@ -2503,13 +2540,17 @@ export const CreateResearchRunBody = zod.object({
   "context_ids": zod.array(zod.string()).max(createResearchRunBodyContextIdsMax).optional(),
   "date": zod.string().min(createResearchRunBodyDateMin).max(createResearchRunBodyDateMax).regex(createResearchRunBodyDateRegExp),
   "depth": zod.union([zod.literal(1),zod.literal(2),zod.literal(3)]).default(createResearchRunBodyDepthDefault),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(createResearchRunBodyExecutionModeDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(createResearchRunBodyHoldingStateDefault),
   "horizon": zod.enum(['short', 'medium', 'long']).default(createResearchRunBodyHorizonDefault),
   "language": zod.enum(['Chinese', 'English']).default(createResearchRunBodyLanguageDefault),
   "max_llm_calls": zod.int().min(1).max(createResearchRunBodyMaxLlmCallsMax).default(createResearchRunBodyMaxLlmCallsDefault),
   "max_runtime_seconds": zod.int().min(createResearchRunBodyMaxRuntimeSecondsMin).max(createResearchRunBodyMaxRuntimeSecondsMax).default(createResearchRunBodyMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int().min(1).max(createResearchRunBodyMaxTokensTotalOneMax),zod.null()]).default(createResearchRunBodyMaxTokensTotalDefault),
+  "max_tool_calls": zod.int().min(1).max(createResearchRunBodyMaxToolCallsMax).default(createResearchRunBodyMaxToolCallsDefault),
   "objective": zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']).default(createResearchRunBodyObjectiveDefault),
+  "research_instructions": zod.string().max(createResearchRunBodyResearchInstructionsMax).default(createResearchRunBodyResearchInstructionsDefault),
+  "runtime_connection_id": zod.union([zod.string().max(createResearchRunBodyRuntimeConnectionIdOneMax),zod.null()]).default(createResearchRunBodyRuntimeConnectionIdDefault),
   "template_version_id": zod.union([zod.string().max(createResearchRunBodyTemplateVersionIdOneMax),zod.null()]).default(createResearchRunBodyTemplateVersionIdDefault),
   "ticker": zod.string().min(1).max(createResearchRunBodyTickerMax)
 }).describe('Legacy-compatible inputs; a service must enforce the current-time boundary.')
@@ -2517,6 +2558,7 @@ export const CreateResearchRunBody = zod.object({
 export const createResearchRunResponseErrorDefault = null;
 export const createResearchRunResponseEventsItemIdMin = 0;
 
+export const createResearchRunResponseExecutionModeDefault = `builtin_workflow`;
 export const createResearchRunResponseFinishedAtDefault = null;
 export const createResearchRunResponseHoldingStateDefault = `unknown`;
 export const createResearchRunResponseHorizonDefault = null;
@@ -2524,6 +2566,7 @@ export const createResearchRunResponseMarkdownUrlDefault = null;
 export const createResearchRunResponseMaxLlmCallsDefault = null;
 export const createResearchRunResponseMaxRuntimeSecondsDefault = null;
 export const createResearchRunResponseMaxTokensTotalDefault = null;
+export const createResearchRunResponseMaxToolCallsDefault = null;
 export const createResearchRunResponseObjectiveDefault = null;
 export const createResearchRunResponseQualityCheckedAtDefault = null;
 export const createResearchRunResponseQualityEvidenceCountMin = 0;
@@ -2535,6 +2578,19 @@ export const createResearchRunResponseRawRatingDefault = null;
 export const createResearchRunResponseReportUrlDefault = null;
 export const createResearchRunResponseRevisionMin = 0;
 
+export const createResearchRunResponseRuntimeConnectionIdDefault = null;
+export const createResearchRunResponseRuntimeExecutionOneAuthSourceDefault = `unknown`;
+export const createResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax = 240;
+
+export const createResearchRunResponseRuntimeExecutionOneEffectiveModelDefault = null;
+export const createResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax = 120;
+
+export const createResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault = null;
+export const createResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault = false;
+export const createResearchRunResponseRuntimeExecutionOneRequestedModelMax = 240;
+
+export const createResearchRunResponseRuntimeExecutionOneResumeSupportedDefault = false;
+export const createResearchRunResponseRuntimeExecutionDefault = null;
 export const createResearchRunResponseStartedAtDefault = null;
 export const createResearchRunResponseStatsAttemptCountDefault = 0;
 export const createResearchRunResponseStatsAttemptCountMin = 0;
@@ -2592,6 +2648,7 @@ export const CreateResearchRunResponse = zod.object({
   "time": zod.iso.datetime({"offset":true}),
   "type": zod.string()
 })).optional(),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(createResearchRunResponseExecutionModeDefault),
   "finished_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(createResearchRunResponseFinishedAtDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(createResearchRunResponseHoldingStateDefault),
   "horizon": zod.union([zod.enum(['short', 'medium', 'long']),zod.null()]).default(createResearchRunResponseHorizonDefault),
@@ -2601,6 +2658,7 @@ export const CreateResearchRunResponse = zod.object({
   "max_llm_calls": zod.union([zod.int(),zod.null()]).default(createResearchRunResponseMaxLlmCallsDefault),
   "max_runtime_seconds": zod.union([zod.int(),zod.null()]).default(createResearchRunResponseMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int(),zod.null()]).default(createResearchRunResponseMaxTokensTotalDefault),
+  "max_tool_calls": zod.union([zod.int(),zod.null()]).default(createResearchRunResponseMaxToolCallsDefault),
   "objective": zod.union([zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']),zod.null()]).default(createResearchRunResponseObjectiveDefault),
   "quality": zod.object({
   "available_categories": zod.array(zod.string()),
@@ -2615,7 +2673,7 @@ export const CreateResearchRunResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(createResearchRunResponseQualityRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(createResearchRunResponseQualityRuleVersionDefault),
   "scope_notice": zod.string().default(createResearchRunResponseQualityScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -2625,6 +2683,16 @@ export const CreateResearchRunResponse = zod.object({
   "report_url": zod.union([zod.string(),zod.null()]).default(createResearchRunResponseReportUrlDefault),
   "reports": zod.record(zod.string(), zod.string()).optional(),
   "revision": zod.int().min(createResearchRunResponseRevisionMin),
+  "runtime_connection_id": zod.union([zod.string(),zod.null()]).default(createResearchRunResponseRuntimeConnectionIdDefault),
+  "runtime_execution": zod.union([zod.object({
+  "auth_source": zod.enum(['runtime_login', 'model_connection', 'unknown']).default(createResearchRunResponseRuntimeExecutionOneAuthSourceDefault),
+  "effective_model": zod.union([zod.string().max(createResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax),zod.null()]).default(createResearchRunResponseRuntimeExecutionOneEffectiveModelDefault),
+  "effective_provider": zod.union([zod.string().max(createResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax),zod.null()]).default(createResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault),
+  "executor_version": zod.string(),
+  "llm_calls_known": zod.literal(false).default(createResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault).meta({ title: 'Llm Calls Known' }),
+  "requested_model": zod.string().max(createResearchRunResponseRuntimeExecutionOneRequestedModelMax),
+  "resume_supported": zod.literal(false).default(createResearchRunResponseRuntimeExecutionOneResumeSupportedDefault).meta({ title: 'Resume Supported' })
+}),zod.null()]).default(createResearchRunResponseRuntimeExecutionDefault),
   "stage": zod.string(),
   "started_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(createResearchRunResponseStartedAtDefault),
   "stats": zod.object({
@@ -2666,6 +2734,7 @@ export const GetResearchRunParams = zod.object({
 export const getResearchRunResponseErrorDefault = null;
 export const getResearchRunResponseEventsItemIdMin = 0;
 
+export const getResearchRunResponseExecutionModeDefault = `builtin_workflow`;
 export const getResearchRunResponseFinishedAtDefault = null;
 export const getResearchRunResponseHoldingStateDefault = `unknown`;
 export const getResearchRunResponseHorizonDefault = null;
@@ -2673,6 +2742,7 @@ export const getResearchRunResponseMarkdownUrlDefault = null;
 export const getResearchRunResponseMaxLlmCallsDefault = null;
 export const getResearchRunResponseMaxRuntimeSecondsDefault = null;
 export const getResearchRunResponseMaxTokensTotalDefault = null;
+export const getResearchRunResponseMaxToolCallsDefault = null;
 export const getResearchRunResponseObjectiveDefault = null;
 export const getResearchRunResponseQualityCheckedAtDefault = null;
 export const getResearchRunResponseQualityEvidenceCountMin = 0;
@@ -2684,6 +2754,19 @@ export const getResearchRunResponseRawRatingDefault = null;
 export const getResearchRunResponseReportUrlDefault = null;
 export const getResearchRunResponseRevisionMin = 0;
 
+export const getResearchRunResponseRuntimeConnectionIdDefault = null;
+export const getResearchRunResponseRuntimeExecutionOneAuthSourceDefault = `unknown`;
+export const getResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax = 240;
+
+export const getResearchRunResponseRuntimeExecutionOneEffectiveModelDefault = null;
+export const getResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax = 120;
+
+export const getResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault = null;
+export const getResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault = false;
+export const getResearchRunResponseRuntimeExecutionOneRequestedModelMax = 240;
+
+export const getResearchRunResponseRuntimeExecutionOneResumeSupportedDefault = false;
+export const getResearchRunResponseRuntimeExecutionDefault = null;
 export const getResearchRunResponseStartedAtDefault = null;
 export const getResearchRunResponseStatsAttemptCountDefault = 0;
 export const getResearchRunResponseStatsAttemptCountMin = 0;
@@ -2741,6 +2824,7 @@ export const GetResearchRunResponse = zod.object({
   "time": zod.iso.datetime({"offset":true}),
   "type": zod.string()
 })).optional(),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(getResearchRunResponseExecutionModeDefault),
   "finished_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(getResearchRunResponseFinishedAtDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(getResearchRunResponseHoldingStateDefault),
   "horizon": zod.union([zod.enum(['short', 'medium', 'long']),zod.null()]).default(getResearchRunResponseHorizonDefault),
@@ -2750,6 +2834,7 @@ export const GetResearchRunResponse = zod.object({
   "max_llm_calls": zod.union([zod.int(),zod.null()]).default(getResearchRunResponseMaxLlmCallsDefault),
   "max_runtime_seconds": zod.union([zod.int(),zod.null()]).default(getResearchRunResponseMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int(),zod.null()]).default(getResearchRunResponseMaxTokensTotalDefault),
+  "max_tool_calls": zod.union([zod.int(),zod.null()]).default(getResearchRunResponseMaxToolCallsDefault),
   "objective": zod.union([zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']),zod.null()]).default(getResearchRunResponseObjectiveDefault),
   "quality": zod.object({
   "available_categories": zod.array(zod.string()),
@@ -2764,7 +2849,7 @@ export const GetResearchRunResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(getResearchRunResponseQualityRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(getResearchRunResponseQualityRuleVersionDefault),
   "scope_notice": zod.string().default(getResearchRunResponseQualityScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -2774,6 +2859,16 @@ export const GetResearchRunResponse = zod.object({
   "report_url": zod.union([zod.string(),zod.null()]).default(getResearchRunResponseReportUrlDefault),
   "reports": zod.record(zod.string(), zod.string()).optional(),
   "revision": zod.int().min(getResearchRunResponseRevisionMin),
+  "runtime_connection_id": zod.union([zod.string(),zod.null()]).default(getResearchRunResponseRuntimeConnectionIdDefault),
+  "runtime_execution": zod.union([zod.object({
+  "auth_source": zod.enum(['runtime_login', 'model_connection', 'unknown']).default(getResearchRunResponseRuntimeExecutionOneAuthSourceDefault),
+  "effective_model": zod.union([zod.string().max(getResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax),zod.null()]).default(getResearchRunResponseRuntimeExecutionOneEffectiveModelDefault),
+  "effective_provider": zod.union([zod.string().max(getResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax),zod.null()]).default(getResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault),
+  "executor_version": zod.string(),
+  "llm_calls_known": zod.literal(false).default(getResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault).meta({ title: 'Llm Calls Known' }),
+  "requested_model": zod.string().max(getResearchRunResponseRuntimeExecutionOneRequestedModelMax),
+  "resume_supported": zod.literal(false).default(getResearchRunResponseRuntimeExecutionOneResumeSupportedDefault).meta({ title: 'Resume Supported' })
+}),zod.null()]).default(getResearchRunResponseRuntimeExecutionDefault),
   "stage": zod.string(),
   "started_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(getResearchRunResponseStartedAtDefault),
   "stats": zod.object({
@@ -2815,6 +2910,7 @@ export const CancelResearchRunParams = zod.object({
 export const cancelResearchRunResponseErrorDefault = null;
 export const cancelResearchRunResponseEventsItemIdMin = 0;
 
+export const cancelResearchRunResponseExecutionModeDefault = `builtin_workflow`;
 export const cancelResearchRunResponseFinishedAtDefault = null;
 export const cancelResearchRunResponseHoldingStateDefault = `unknown`;
 export const cancelResearchRunResponseHorizonDefault = null;
@@ -2822,6 +2918,7 @@ export const cancelResearchRunResponseMarkdownUrlDefault = null;
 export const cancelResearchRunResponseMaxLlmCallsDefault = null;
 export const cancelResearchRunResponseMaxRuntimeSecondsDefault = null;
 export const cancelResearchRunResponseMaxTokensTotalDefault = null;
+export const cancelResearchRunResponseMaxToolCallsDefault = null;
 export const cancelResearchRunResponseObjectiveDefault = null;
 export const cancelResearchRunResponseQualityCheckedAtDefault = null;
 export const cancelResearchRunResponseQualityEvidenceCountMin = 0;
@@ -2833,6 +2930,19 @@ export const cancelResearchRunResponseRawRatingDefault = null;
 export const cancelResearchRunResponseReportUrlDefault = null;
 export const cancelResearchRunResponseRevisionMin = 0;
 
+export const cancelResearchRunResponseRuntimeConnectionIdDefault = null;
+export const cancelResearchRunResponseRuntimeExecutionOneAuthSourceDefault = `unknown`;
+export const cancelResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax = 240;
+
+export const cancelResearchRunResponseRuntimeExecutionOneEffectiveModelDefault = null;
+export const cancelResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax = 120;
+
+export const cancelResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault = null;
+export const cancelResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault = false;
+export const cancelResearchRunResponseRuntimeExecutionOneRequestedModelMax = 240;
+
+export const cancelResearchRunResponseRuntimeExecutionOneResumeSupportedDefault = false;
+export const cancelResearchRunResponseRuntimeExecutionDefault = null;
 export const cancelResearchRunResponseStartedAtDefault = null;
 export const cancelResearchRunResponseStatsAttemptCountDefault = 0;
 export const cancelResearchRunResponseStatsAttemptCountMin = 0;
@@ -2890,6 +3000,7 @@ export const CancelResearchRunResponse = zod.object({
   "time": zod.iso.datetime({"offset":true}),
   "type": zod.string()
 })).optional(),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(cancelResearchRunResponseExecutionModeDefault),
   "finished_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(cancelResearchRunResponseFinishedAtDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(cancelResearchRunResponseHoldingStateDefault),
   "horizon": zod.union([zod.enum(['short', 'medium', 'long']),zod.null()]).default(cancelResearchRunResponseHorizonDefault),
@@ -2899,6 +3010,7 @@ export const CancelResearchRunResponse = zod.object({
   "max_llm_calls": zod.union([zod.int(),zod.null()]).default(cancelResearchRunResponseMaxLlmCallsDefault),
   "max_runtime_seconds": zod.union([zod.int(),zod.null()]).default(cancelResearchRunResponseMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int(),zod.null()]).default(cancelResearchRunResponseMaxTokensTotalDefault),
+  "max_tool_calls": zod.union([zod.int(),zod.null()]).default(cancelResearchRunResponseMaxToolCallsDefault),
   "objective": zod.union([zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']),zod.null()]).default(cancelResearchRunResponseObjectiveDefault),
   "quality": zod.object({
   "available_categories": zod.array(zod.string()),
@@ -2913,7 +3025,7 @@ export const CancelResearchRunResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(cancelResearchRunResponseQualityRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(cancelResearchRunResponseQualityRuleVersionDefault),
   "scope_notice": zod.string().default(cancelResearchRunResponseQualityScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -2923,6 +3035,16 @@ export const CancelResearchRunResponse = zod.object({
   "report_url": zod.union([zod.string(),zod.null()]).default(cancelResearchRunResponseReportUrlDefault),
   "reports": zod.record(zod.string(), zod.string()).optional(),
   "revision": zod.int().min(cancelResearchRunResponseRevisionMin),
+  "runtime_connection_id": zod.union([zod.string(),zod.null()]).default(cancelResearchRunResponseRuntimeConnectionIdDefault),
+  "runtime_execution": zod.union([zod.object({
+  "auth_source": zod.enum(['runtime_login', 'model_connection', 'unknown']).default(cancelResearchRunResponseRuntimeExecutionOneAuthSourceDefault),
+  "effective_model": zod.union([zod.string().max(cancelResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax),zod.null()]).default(cancelResearchRunResponseRuntimeExecutionOneEffectiveModelDefault),
+  "effective_provider": zod.union([zod.string().max(cancelResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax),zod.null()]).default(cancelResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault),
+  "executor_version": zod.string(),
+  "llm_calls_known": zod.literal(false).default(cancelResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault).meta({ title: 'Llm Calls Known' }),
+  "requested_model": zod.string().max(cancelResearchRunResponseRuntimeExecutionOneRequestedModelMax),
+  "resume_supported": zod.literal(false).default(cancelResearchRunResponseRuntimeExecutionOneResumeSupportedDefault).meta({ title: 'Resume Supported' })
+}),zod.null()]).default(cancelResearchRunResponseRuntimeExecutionDefault),
   "stage": zod.string(),
   "started_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(cancelResearchRunResponseStartedAtDefault),
   "stats": zod.object({
@@ -2980,6 +3102,7 @@ export const cloneResearchRunBodyOneDateMax = 10;
 
 export const cloneResearchRunBodyOneDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const cloneResearchRunBodyOneDepthDefault = 1;
+export const cloneResearchRunBodyOneExecutionModeDefault = `builtin_workflow`;
 export const cloneResearchRunBodyOneHoldingStateDefault = `unknown`;
 export const cloneResearchRunBodyOneHorizonDefault = `medium`;
 export const cloneResearchRunBodyOneLanguageDefault = `Chinese`;
@@ -2993,7 +3116,16 @@ export const cloneResearchRunBodyOneMaxRuntimeSecondsMax = 14400;
 export const cloneResearchRunBodyOneMaxTokensTotalOneMax = 10000000;
 
 export const cloneResearchRunBodyOneMaxTokensTotalDefault = null;
+export const cloneResearchRunBodyOneMaxToolCallsDefault = 40;
+export const cloneResearchRunBodyOneMaxToolCallsMax = 100;
+
 export const cloneResearchRunBodyOneObjectiveDefault = `general`;
+export const cloneResearchRunBodyOneResearchInstructionsDefault = ``;
+export const cloneResearchRunBodyOneResearchInstructionsMax = 4000;
+
+export const cloneResearchRunBodyOneRuntimeConnectionIdOneMax = 36;
+
+export const cloneResearchRunBodyOneRuntimeConnectionIdDefault = null;
 export const cloneResearchRunBodyOneTemplateVersionIdOneMax = 36;
 
 export const cloneResearchRunBodyOneTemplateVersionIdDefault = null;
@@ -3007,13 +3139,17 @@ export const CloneResearchRunBody = zod.union([zod.object({
   "context_ids": zod.array(zod.string()).max(cloneResearchRunBodyOneContextIdsMax).optional(),
   "date": zod.string().min(cloneResearchRunBodyOneDateMin).max(cloneResearchRunBodyOneDateMax).regex(cloneResearchRunBodyOneDateRegExp),
   "depth": zod.union([zod.literal(1),zod.literal(2),zod.literal(3)]).default(cloneResearchRunBodyOneDepthDefault),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(cloneResearchRunBodyOneExecutionModeDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(cloneResearchRunBodyOneHoldingStateDefault),
   "horizon": zod.enum(['short', 'medium', 'long']).default(cloneResearchRunBodyOneHorizonDefault),
   "language": zod.enum(['Chinese', 'English']).default(cloneResearchRunBodyOneLanguageDefault),
   "max_llm_calls": zod.int().min(1).max(cloneResearchRunBodyOneMaxLlmCallsMax).default(cloneResearchRunBodyOneMaxLlmCallsDefault),
   "max_runtime_seconds": zod.int().min(cloneResearchRunBodyOneMaxRuntimeSecondsMin).max(cloneResearchRunBodyOneMaxRuntimeSecondsMax).default(cloneResearchRunBodyOneMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int().min(1).max(cloneResearchRunBodyOneMaxTokensTotalOneMax),zod.null()]).default(cloneResearchRunBodyOneMaxTokensTotalDefault),
+  "max_tool_calls": zod.int().min(1).max(cloneResearchRunBodyOneMaxToolCallsMax).default(cloneResearchRunBodyOneMaxToolCallsDefault),
   "objective": zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']).default(cloneResearchRunBodyOneObjectiveDefault),
+  "research_instructions": zod.string().max(cloneResearchRunBodyOneResearchInstructionsMax).default(cloneResearchRunBodyOneResearchInstructionsDefault),
+  "runtime_connection_id": zod.union([zod.string().max(cloneResearchRunBodyOneRuntimeConnectionIdOneMax),zod.null()]).default(cloneResearchRunBodyOneRuntimeConnectionIdDefault),
   "template_version_id": zod.union([zod.string().max(cloneResearchRunBodyOneTemplateVersionIdOneMax),zod.null()]).default(cloneResearchRunBodyOneTemplateVersionIdDefault),
   "ticker": zod.string().min(1).max(cloneResearchRunBodyOneTickerMax)
 }).describe('Legacy-compatible inputs; a service must enforce the current-time boundary.'),zod.null()])
@@ -3021,6 +3157,7 @@ export const CloneResearchRunBody = zod.union([zod.object({
 export const cloneResearchRunResponseErrorDefault = null;
 export const cloneResearchRunResponseEventsItemIdMin = 0;
 
+export const cloneResearchRunResponseExecutionModeDefault = `builtin_workflow`;
 export const cloneResearchRunResponseFinishedAtDefault = null;
 export const cloneResearchRunResponseHoldingStateDefault = `unknown`;
 export const cloneResearchRunResponseHorizonDefault = null;
@@ -3028,6 +3165,7 @@ export const cloneResearchRunResponseMarkdownUrlDefault = null;
 export const cloneResearchRunResponseMaxLlmCallsDefault = null;
 export const cloneResearchRunResponseMaxRuntimeSecondsDefault = null;
 export const cloneResearchRunResponseMaxTokensTotalDefault = null;
+export const cloneResearchRunResponseMaxToolCallsDefault = null;
 export const cloneResearchRunResponseObjectiveDefault = null;
 export const cloneResearchRunResponseQualityCheckedAtDefault = null;
 export const cloneResearchRunResponseQualityEvidenceCountMin = 0;
@@ -3039,6 +3177,19 @@ export const cloneResearchRunResponseRawRatingDefault = null;
 export const cloneResearchRunResponseReportUrlDefault = null;
 export const cloneResearchRunResponseRevisionMin = 0;
 
+export const cloneResearchRunResponseRuntimeConnectionIdDefault = null;
+export const cloneResearchRunResponseRuntimeExecutionOneAuthSourceDefault = `unknown`;
+export const cloneResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax = 240;
+
+export const cloneResearchRunResponseRuntimeExecutionOneEffectiveModelDefault = null;
+export const cloneResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax = 120;
+
+export const cloneResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault = null;
+export const cloneResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault = false;
+export const cloneResearchRunResponseRuntimeExecutionOneRequestedModelMax = 240;
+
+export const cloneResearchRunResponseRuntimeExecutionOneResumeSupportedDefault = false;
+export const cloneResearchRunResponseRuntimeExecutionDefault = null;
 export const cloneResearchRunResponseStartedAtDefault = null;
 export const cloneResearchRunResponseStatsAttemptCountDefault = 0;
 export const cloneResearchRunResponseStatsAttemptCountMin = 0;
@@ -3096,6 +3247,7 @@ export const CloneResearchRunResponse = zod.object({
   "time": zod.iso.datetime({"offset":true}),
   "type": zod.string()
 })).optional(),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(cloneResearchRunResponseExecutionModeDefault),
   "finished_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(cloneResearchRunResponseFinishedAtDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(cloneResearchRunResponseHoldingStateDefault),
   "horizon": zod.union([zod.enum(['short', 'medium', 'long']),zod.null()]).default(cloneResearchRunResponseHorizonDefault),
@@ -3105,6 +3257,7 @@ export const CloneResearchRunResponse = zod.object({
   "max_llm_calls": zod.union([zod.int(),zod.null()]).default(cloneResearchRunResponseMaxLlmCallsDefault),
   "max_runtime_seconds": zod.union([zod.int(),zod.null()]).default(cloneResearchRunResponseMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int(),zod.null()]).default(cloneResearchRunResponseMaxTokensTotalDefault),
+  "max_tool_calls": zod.union([zod.int(),zod.null()]).default(cloneResearchRunResponseMaxToolCallsDefault),
   "objective": zod.union([zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']),zod.null()]).default(cloneResearchRunResponseObjectiveDefault),
   "quality": zod.object({
   "available_categories": zod.array(zod.string()),
@@ -3119,7 +3272,7 @@ export const CloneResearchRunResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(cloneResearchRunResponseQualityRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(cloneResearchRunResponseQualityRuleVersionDefault),
   "scope_notice": zod.string().default(cloneResearchRunResponseQualityScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -3129,6 +3282,16 @@ export const CloneResearchRunResponse = zod.object({
   "report_url": zod.union([zod.string(),zod.null()]).default(cloneResearchRunResponseReportUrlDefault),
   "reports": zod.record(zod.string(), zod.string()).optional(),
   "revision": zod.int().min(cloneResearchRunResponseRevisionMin),
+  "runtime_connection_id": zod.union([zod.string(),zod.null()]).default(cloneResearchRunResponseRuntimeConnectionIdDefault),
+  "runtime_execution": zod.union([zod.object({
+  "auth_source": zod.enum(['runtime_login', 'model_connection', 'unknown']).default(cloneResearchRunResponseRuntimeExecutionOneAuthSourceDefault),
+  "effective_model": zod.union([zod.string().max(cloneResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax),zod.null()]).default(cloneResearchRunResponseRuntimeExecutionOneEffectiveModelDefault),
+  "effective_provider": zod.union([zod.string().max(cloneResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax),zod.null()]).default(cloneResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault),
+  "executor_version": zod.string(),
+  "llm_calls_known": zod.literal(false).default(cloneResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault).meta({ title: 'Llm Calls Known' }),
+  "requested_model": zod.string().max(cloneResearchRunResponseRuntimeExecutionOneRequestedModelMax),
+  "resume_supported": zod.literal(false).default(cloneResearchRunResponseRuntimeExecutionOneResumeSupportedDefault).meta({ title: 'Resume Supported' })
+}),zod.null()]).default(cloneResearchRunResponseRuntimeExecutionDefault),
   "stage": zod.string(),
   "started_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(cloneResearchRunResponseStartedAtDefault),
   "stats": zod.object({
@@ -3256,6 +3419,18 @@ export const getResearchEventsResponseEventsItemFivePayloadTraceIdDefault = null
 export const getResearchEventsResponseEventsItemFiveSchemaVersionDefault = `1`;
 export const getResearchEventsResponseEventsItemSixPayloadLatestEventIdDefault = null;
 export const getResearchEventsResponseEventsItemSixSchemaVersionDefault = `1`;
+export const getResearchEventsResponseEventsItemSevenPayloadLabelMax = 240;
+
+export const getResearchEventsResponseEventsItemSevenPayloadModelOneMax = 200;
+
+export const getResearchEventsResponseEventsItemSevenPayloadModelDefault = null;
+export const getResearchEventsResponseEventsItemSevenPayloadProviderOneMax = 120;
+
+export const getResearchEventsResponseEventsItemSevenPayloadProviderDefault = null;
+export const getResearchEventsResponseEventsItemSevenPayloadToolOneMax = 80;
+
+export const getResearchEventsResponseEventsItemSevenPayloadToolDefault = null;
+export const getResearchEventsResponseEventsItemSevenSchemaVersionDefault = `1`;
 
 
 export const GetResearchEventsResponse = zod.object({
@@ -3353,6 +3528,21 @@ export const GetResearchEventsResponse = zod.object({
   "seq": zod.int().min(1),
   "timestamp": zod.iso.datetime({"offset":true}),
   "type": zod.enum(['resync_required'])
+}),zod.object({
+  "attempt_id": zod.union([zod.uuid(),zod.null()]),
+  "event_id": zod.string(),
+  "payload": zod.object({
+  "event": zod.enum(['preparing', 'session_started', 'tool_started', 'tool_completed', 'message_completed', 'usage', 'completed']),
+  "label": zod.string().max(getResearchEventsResponseEventsItemSevenPayloadLabelMax),
+  "model": zod.union([zod.string().max(getResearchEventsResponseEventsItemSevenPayloadModelOneMax),zod.null()]).default(getResearchEventsResponseEventsItemSevenPayloadModelDefault),
+  "provider": zod.union([zod.string().max(getResearchEventsResponseEventsItemSevenPayloadProviderOneMax),zod.null()]).default(getResearchEventsResponseEventsItemSevenPayloadProviderDefault),
+  "tool": zod.union([zod.string().max(getResearchEventsResponseEventsItemSevenPayloadToolOneMax),zod.null()]).default(getResearchEventsResponseEventsItemSevenPayloadToolDefault)
+}),
+  "run_id": zod.uuid(),
+  "schema_version": zod.literal("1").default(getResearchEventsResponseEventsItemSevenSchemaVersionDefault).meta({ title: 'Schema Version' }),
+  "seq": zod.int().min(1),
+  "timestamp": zod.iso.datetime({"offset":true}),
+  "type": zod.enum(['runtime'])
 })]).describe('Stored event data; SSE framing and reconnection remain a separate transport.'))
 })
 
@@ -3452,7 +3642,7 @@ export const GetResearchEvidenceResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(getResearchEvidenceResponseQualityRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(getResearchEvidenceResponseQualityRuleVersionDefault),
   "scope_notice": zod.string().default(getResearchEvidenceResponseQualityScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -3480,6 +3670,7 @@ export const getResearchManifestResponseRequestDateMax = 10;
 
 export const getResearchManifestResponseRequestDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
 export const getResearchManifestResponseRequestDepthDefault = 1;
+export const getResearchManifestResponseRequestExecutionModeDefault = `builtin_workflow`;
 export const getResearchManifestResponseRequestHoldingStateDefault = `unknown`;
 export const getResearchManifestResponseRequestHorizonDefault = `medium`;
 export const getResearchManifestResponseRequestLanguageDefault = `Chinese`;
@@ -3493,7 +3684,16 @@ export const getResearchManifestResponseRequestMaxRuntimeSecondsMax = 14400;
 export const getResearchManifestResponseRequestMaxTokensTotalOneMax = 10000000;
 
 export const getResearchManifestResponseRequestMaxTokensTotalDefault = null;
+export const getResearchManifestResponseRequestMaxToolCallsDefault = 40;
+export const getResearchManifestResponseRequestMaxToolCallsMax = 100;
+
 export const getResearchManifestResponseRequestObjectiveDefault = `general`;
+export const getResearchManifestResponseRequestResearchInstructionsDefault = ``;
+export const getResearchManifestResponseRequestResearchInstructionsMax = 4000;
+
+export const getResearchManifestResponseRequestRuntimeConnectionIdOneMax = 36;
+
+export const getResearchManifestResponseRequestRuntimeConnectionIdDefault = null;
 export const getResearchManifestResponseRequestTemplateVersionIdOneMax = 36;
 
 export const getResearchManifestResponseRequestTemplateVersionIdDefault = null;
@@ -3513,13 +3713,17 @@ export const GetResearchManifestResponse = zod.object({
   "context_ids": zod.array(zod.string()).max(getResearchManifestResponseRequestContextIdsMax).optional(),
   "date": zod.string().min(getResearchManifestResponseRequestDateMin).max(getResearchManifestResponseRequestDateMax).regex(getResearchManifestResponseRequestDateRegExp),
   "depth": zod.union([zod.literal(1),zod.literal(2),zod.literal(3)]).default(getResearchManifestResponseRequestDepthDefault),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(getResearchManifestResponseRequestExecutionModeDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(getResearchManifestResponseRequestHoldingStateDefault),
   "horizon": zod.enum(['short', 'medium', 'long']).default(getResearchManifestResponseRequestHorizonDefault),
   "language": zod.enum(['Chinese', 'English']).default(getResearchManifestResponseRequestLanguageDefault),
   "max_llm_calls": zod.int().min(1).max(getResearchManifestResponseRequestMaxLlmCallsMax).default(getResearchManifestResponseRequestMaxLlmCallsDefault),
   "max_runtime_seconds": zod.int().min(getResearchManifestResponseRequestMaxRuntimeSecondsMin).max(getResearchManifestResponseRequestMaxRuntimeSecondsMax).default(getResearchManifestResponseRequestMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int().min(1).max(getResearchManifestResponseRequestMaxTokensTotalOneMax),zod.null()]).default(getResearchManifestResponseRequestMaxTokensTotalDefault),
+  "max_tool_calls": zod.int().min(1).max(getResearchManifestResponseRequestMaxToolCallsMax).default(getResearchManifestResponseRequestMaxToolCallsDefault),
   "objective": zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']).default(getResearchManifestResponseRequestObjectiveDefault),
+  "research_instructions": zod.string().max(getResearchManifestResponseRequestResearchInstructionsMax).default(getResearchManifestResponseRequestResearchInstructionsDefault),
+  "runtime_connection_id": zod.union([zod.string().max(getResearchManifestResponseRequestRuntimeConnectionIdOneMax),zod.null()]).default(getResearchManifestResponseRequestRuntimeConnectionIdDefault),
   "template_version_id": zod.union([zod.string().max(getResearchManifestResponseRequestTemplateVersionIdOneMax),zod.null()]).default(getResearchManifestResponseRequestTemplateVersionIdDefault),
   "ticker": zod.string().min(1).max(getResearchManifestResponseRequestTickerMax)
 }).describe('Legacy-compatible inputs; a service must enforce the current-time boundary.'),
@@ -3556,7 +3760,7 @@ export const GetResearchQualityResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(getResearchQualityResponseRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(getResearchQualityResponseRuleVersionDefault),
   "scope_notice": zod.string().default(getResearchQualityResponseScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -3593,6 +3797,7 @@ export const ResumeResearchRunParams = zod.object({
 export const resumeResearchRunResponseErrorDefault = null;
 export const resumeResearchRunResponseEventsItemIdMin = 0;
 
+export const resumeResearchRunResponseExecutionModeDefault = `builtin_workflow`;
 export const resumeResearchRunResponseFinishedAtDefault = null;
 export const resumeResearchRunResponseHoldingStateDefault = `unknown`;
 export const resumeResearchRunResponseHorizonDefault = null;
@@ -3600,6 +3805,7 @@ export const resumeResearchRunResponseMarkdownUrlDefault = null;
 export const resumeResearchRunResponseMaxLlmCallsDefault = null;
 export const resumeResearchRunResponseMaxRuntimeSecondsDefault = null;
 export const resumeResearchRunResponseMaxTokensTotalDefault = null;
+export const resumeResearchRunResponseMaxToolCallsDefault = null;
 export const resumeResearchRunResponseObjectiveDefault = null;
 export const resumeResearchRunResponseQualityCheckedAtDefault = null;
 export const resumeResearchRunResponseQualityEvidenceCountMin = 0;
@@ -3611,6 +3817,19 @@ export const resumeResearchRunResponseRawRatingDefault = null;
 export const resumeResearchRunResponseReportUrlDefault = null;
 export const resumeResearchRunResponseRevisionMin = 0;
 
+export const resumeResearchRunResponseRuntimeConnectionIdDefault = null;
+export const resumeResearchRunResponseRuntimeExecutionOneAuthSourceDefault = `unknown`;
+export const resumeResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax = 240;
+
+export const resumeResearchRunResponseRuntimeExecutionOneEffectiveModelDefault = null;
+export const resumeResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax = 120;
+
+export const resumeResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault = null;
+export const resumeResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault = false;
+export const resumeResearchRunResponseRuntimeExecutionOneRequestedModelMax = 240;
+
+export const resumeResearchRunResponseRuntimeExecutionOneResumeSupportedDefault = false;
+export const resumeResearchRunResponseRuntimeExecutionDefault = null;
 export const resumeResearchRunResponseStartedAtDefault = null;
 export const resumeResearchRunResponseStatsAttemptCountDefault = 0;
 export const resumeResearchRunResponseStatsAttemptCountMin = 0;
@@ -3668,6 +3887,7 @@ export const ResumeResearchRunResponse = zod.object({
   "time": zod.iso.datetime({"offset":true}),
   "type": zod.string()
 })).optional(),
+  "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(resumeResearchRunResponseExecutionModeDefault),
   "finished_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(resumeResearchRunResponseFinishedAtDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(resumeResearchRunResponseHoldingStateDefault),
   "horizon": zod.union([zod.enum(['short', 'medium', 'long']),zod.null()]).default(resumeResearchRunResponseHorizonDefault),
@@ -3677,6 +3897,7 @@ export const ResumeResearchRunResponse = zod.object({
   "max_llm_calls": zod.union([zod.int(),zod.null()]).default(resumeResearchRunResponseMaxLlmCallsDefault),
   "max_runtime_seconds": zod.union([zod.int(),zod.null()]).default(resumeResearchRunResponseMaxRuntimeSecondsDefault),
   "max_tokens_total": zod.union([zod.int(),zod.null()]).default(resumeResearchRunResponseMaxTokensTotalDefault),
+  "max_tool_calls": zod.union([zod.int(),zod.null()]).default(resumeResearchRunResponseMaxToolCallsDefault),
   "objective": zod.union([zod.enum(['general', 'technical', 'earnings', 'thematic', 'risk_review']),zod.null()]).default(resumeResearchRunResponseObjectiveDefault),
   "quality": zod.object({
   "available_categories": zod.array(zod.string()),
@@ -3691,7 +3912,7 @@ export const ResumeResearchRunResponse = zod.object({
 })),
   "missing_categories": zod.array(zod.string()),
   "required_categories": zod.array(zod.string()),
-  "rule_version": zod.literal("research-quality-v1").default(resumeResearchRunResponseQualityRuleVersionDefault).meta({ title: 'Rule Version' }),
+  "rule_version": zod.enum(['research-quality-v1', 'local-agent-evidence-v1']).default(resumeResearchRunResponseQualityRuleVersionDefault),
   "scope_notice": zod.string().default(resumeResearchRunResponseQualityScopeNoticeDefault),
   "status": zod.enum(['usable', 'degraded', 'insufficient', 'unverified']),
   "validated_price": zod.boolean()
@@ -3701,6 +3922,16 @@ export const ResumeResearchRunResponse = zod.object({
   "report_url": zod.union([zod.string(),zod.null()]).default(resumeResearchRunResponseReportUrlDefault),
   "reports": zod.record(zod.string(), zod.string()).optional(),
   "revision": zod.int().min(resumeResearchRunResponseRevisionMin),
+  "runtime_connection_id": zod.union([zod.string(),zod.null()]).default(resumeResearchRunResponseRuntimeConnectionIdDefault),
+  "runtime_execution": zod.union([zod.object({
+  "auth_source": zod.enum(['runtime_login', 'model_connection', 'unknown']).default(resumeResearchRunResponseRuntimeExecutionOneAuthSourceDefault),
+  "effective_model": zod.union([zod.string().max(resumeResearchRunResponseRuntimeExecutionOneEffectiveModelOneMax),zod.null()]).default(resumeResearchRunResponseRuntimeExecutionOneEffectiveModelDefault),
+  "effective_provider": zod.union([zod.string().max(resumeResearchRunResponseRuntimeExecutionOneEffectiveProviderOneMax),zod.null()]).default(resumeResearchRunResponseRuntimeExecutionOneEffectiveProviderDefault),
+  "executor_version": zod.string(),
+  "llm_calls_known": zod.literal(false).default(resumeResearchRunResponseRuntimeExecutionOneLlmCallsKnownDefault).meta({ title: 'Llm Calls Known' }),
+  "requested_model": zod.string().max(resumeResearchRunResponseRuntimeExecutionOneRequestedModelMax),
+  "resume_supported": zod.literal(false).default(resumeResearchRunResponseRuntimeExecutionOneResumeSupportedDefault).meta({ title: 'Resume Supported' })
+}),zod.null()]).default(resumeResearchRunResponseRuntimeExecutionDefault),
   "stage": zod.string(),
   "started_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).default(resumeResearchRunResponseStartedAtDefault),
   "stats": zod.object({
@@ -3730,6 +3961,284 @@ export const ResumeResearchRunResponse = zod.object({
   "status": zod.enum(['pending', 'queued', 'running', 'cancelling', 'cancelled', 'completed', 'failed', 'interrupted']),
   "ticker": zod.string()
 }).describe('Safe shape of the existing run store, including its pending state.')
+
+
+/**
+ * @summary Connections
+ */
+export const listRuntimeConnectionsResponseConnectionsItemAuthStatusDefault = `unknown`;
+export const listRuntimeConnectionsResponseConnectionsItemCapabilitiesCancelDefault = false;
+export const listRuntimeConnectionsResponseConnectionsItemCapabilitiesDynamicToolsDefault = false;
+export const listRuntimeConnectionsResponseConnectionsItemCapabilitiesModelDiscoveryDefault = false;
+export const listRuntimeConnectionsResponseConnectionsItemCapabilitiesResumeDefault = false;
+export const listRuntimeConnectionsResponseConnectionsItemExecutionHostDefault = `server_local`;
+export const listRuntimeConnectionsResponseConnectionsItemTransportDefault = `stdio`;
+
+export const ListRuntimeConnectionsResponse = zod.object({
+  "connections": zod.array(zod.object({
+  "auth_mode": zod.enum(['runtime_login', 'model_connection']),
+  "auth_status": zod.enum(['authorized', 'not_authorized', 'unknown']).default(listRuntimeConnectionsResponseConnectionsItemAuthStatusDefault),
+  "capabilities": zod.object({
+  "cancel": zod.boolean().default(listRuntimeConnectionsResponseConnectionsItemCapabilitiesCancelDefault),
+  "dynamic_tools": zod.boolean().default(listRuntimeConnectionsResponseConnectionsItemCapabilitiesDynamicToolsDefault),
+  "model_discovery": zod.boolean().default(listRuntimeConnectionsResponseConnectionsItemCapabilitiesModelDiscoveryDefault),
+  "resume": zod.boolean().default(listRuntimeConnectionsResponseConnectionsItemCapabilitiesResumeDefault)
+}).optional(),
+  "checked_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "enabled": zod.boolean(),
+  "executable_path": zod.union([zod.string(),zod.null()]),
+  "execution_host": zod.literal("server_local").default(listRuntimeConnectionsResponseConnectionsItemExecutionHostDefault).meta({ title: 'Execution Host' }),
+  "id": zod.string(),
+  "login_command": zod.union([zod.string(),zod.null()]).optional(),
+  "message": zod.string(),
+  "model_id": zod.string(),
+  "model_profile_id": zod.union([zod.string(),zod.null()]),
+  "models": zod.array(zod.object({
+  "id": zod.string()
+})).optional(),
+  "name": zod.string(),
+  "program_version": zod.union([zod.string(),zod.null()]).optional(),
+  "readiness": zod.enum(['not_checked', 'ready', 'failed', 'stale']),
+  "reasoning_effort": zod.union([zod.enum(['low', 'medium', 'high', 'xhigh', 'max']),zod.null()]),
+  "revision": zod.int(),
+  "runtime_type": zod.literal("codex").meta({ title: 'Runtime Type' }),
+  "transport": zod.literal("stdio").default(listRuntimeConnectionsResponseConnectionsItemTransportDefault).meta({ title: 'Transport' }),
+  "updated_at": zod.iso.datetime({"offset":true})
+}))
+})
+
+
+/**
+ * @summary Create
+ */
+export const createRuntimeConnectionBodyAuthModeDefault = `runtime_login`;
+export const createRuntimeConnectionBodyEnabledDefault = false;
+export const createRuntimeConnectionBodyExecutablePathOneMax = 1000;
+
+export const createRuntimeConnectionBodyModelIdMax = 240;
+
+
+export const createRuntimeConnectionBodyModelIdRegExp = new RegExp('^[^\\s]+$');
+export const createRuntimeConnectionBodyModelProfileIdOneMax = 36;
+
+export const createRuntimeConnectionBodyNameMax = 120;
+
+export const createRuntimeConnectionBodyRuntimeTypeDefault = `codex`;
+
+export const CreateRuntimeConnectionBody = zod.object({
+  "auth_mode": zod.enum(['runtime_login', 'model_connection']).default(createRuntimeConnectionBodyAuthModeDefault),
+  "enabled": zod.boolean().default(createRuntimeConnectionBodyEnabledDefault),
+  "executable_path": zod.union([zod.string().max(createRuntimeConnectionBodyExecutablePathOneMax),zod.null()]).optional(),
+  "model_id": zod.string().min(1).max(createRuntimeConnectionBodyModelIdMax).regex(createRuntimeConnectionBodyModelIdRegExp),
+  "model_profile_id": zod.union([zod.string().max(createRuntimeConnectionBodyModelProfileIdOneMax),zod.null()]).optional(),
+  "name": zod.string().min(1).max(createRuntimeConnectionBodyNameMax),
+  "reasoning_effort": zod.union([zod.enum(['low', 'medium', 'high', 'xhigh', 'max']),zod.null()]).optional(),
+  "runtime_type": zod.literal("codex").default(createRuntimeConnectionBodyRuntimeTypeDefault).meta({ title: 'Runtime Type' })
+})
+
+export const createRuntimeConnectionResponseAuthStatusDefault = `unknown`;
+export const createRuntimeConnectionResponseCapabilitiesCancelDefault = false;
+export const createRuntimeConnectionResponseCapabilitiesDynamicToolsDefault = false;
+export const createRuntimeConnectionResponseCapabilitiesModelDiscoveryDefault = false;
+export const createRuntimeConnectionResponseCapabilitiesResumeDefault = false;
+export const createRuntimeConnectionResponseExecutionHostDefault = `server_local`;
+export const createRuntimeConnectionResponseTransportDefault = `stdio`;
+
+export const CreateRuntimeConnectionResponse = zod.object({
+  "auth_mode": zod.enum(['runtime_login', 'model_connection']),
+  "auth_status": zod.enum(['authorized', 'not_authorized', 'unknown']).default(createRuntimeConnectionResponseAuthStatusDefault),
+  "capabilities": zod.object({
+  "cancel": zod.boolean().default(createRuntimeConnectionResponseCapabilitiesCancelDefault),
+  "dynamic_tools": zod.boolean().default(createRuntimeConnectionResponseCapabilitiesDynamicToolsDefault),
+  "model_discovery": zod.boolean().default(createRuntimeConnectionResponseCapabilitiesModelDiscoveryDefault),
+  "resume": zod.boolean().default(createRuntimeConnectionResponseCapabilitiesResumeDefault)
+}).optional(),
+  "checked_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "enabled": zod.boolean(),
+  "executable_path": zod.union([zod.string(),zod.null()]),
+  "execution_host": zod.literal("server_local").default(createRuntimeConnectionResponseExecutionHostDefault).meta({ title: 'Execution Host' }),
+  "id": zod.string(),
+  "login_command": zod.union([zod.string(),zod.null()]).optional(),
+  "message": zod.string(),
+  "model_id": zod.string(),
+  "model_profile_id": zod.union([zod.string(),zod.null()]),
+  "models": zod.array(zod.object({
+  "id": zod.string()
+})).optional(),
+  "name": zod.string(),
+  "program_version": zod.union([zod.string(),zod.null()]).optional(),
+  "readiness": zod.enum(['not_checked', 'ready', 'failed', 'stale']),
+  "reasoning_effort": zod.union([zod.enum(['low', 'medium', 'high', 'xhigh', 'max']),zod.null()]),
+  "revision": zod.int(),
+  "runtime_type": zod.literal("codex").meta({ title: 'Runtime Type' }),
+  "transport": zod.literal("stdio").default(createRuntimeConnectionResponseTransportDefault).meta({ title: 'Transport' }),
+  "updated_at": zod.iso.datetime({"offset":true})
+})
+
+
+/**
+ * @summary Delete
+ */
+export const DeleteRuntimeConnectionParams = zod.object({
+  "connection_id": zod.uuid()
+})
+
+
+
+
+export const DeleteRuntimeConnectionQueryParams = zod.object({
+  "revision": zod.int().min(1)
+})
+
+export const DeleteRuntimeConnectionResponse = zod.void()
+
+
+/**
+ * @summary Update
+ */
+export const UpdateRuntimeConnectionParams = zod.object({
+  "connection_id": zod.uuid()
+})
+
+export const updateRuntimeConnectionBodyExecutablePathOneMax = 1000;
+
+export const updateRuntimeConnectionBodyModelIdOneMax = 240;
+
+
+export const updateRuntimeConnectionBodyModelIdOneRegExp = new RegExp('^[^\\s]+$');
+export const updateRuntimeConnectionBodyModelProfileIdOneMax = 36;
+
+export const updateRuntimeConnectionBodyNameOneMax = 120;
+
+
+
+
+export const UpdateRuntimeConnectionBody = zod.object({
+  "auth_mode": zod.union([zod.enum(['runtime_login', 'model_connection']),zod.null()]).optional(),
+  "enabled": zod.union([zod.boolean(),zod.null()]).optional(),
+  "executable_path": zod.union([zod.string().max(updateRuntimeConnectionBodyExecutablePathOneMax),zod.null()]).optional(),
+  "model_id": zod.union([zod.string().min(1).max(updateRuntimeConnectionBodyModelIdOneMax).regex(updateRuntimeConnectionBodyModelIdOneRegExp),zod.null()]).optional(),
+  "model_profile_id": zod.union([zod.string().max(updateRuntimeConnectionBodyModelProfileIdOneMax),zod.null()]).optional(),
+  "name": zod.union([zod.string().min(1).max(updateRuntimeConnectionBodyNameOneMax),zod.null()]).optional(),
+  "reasoning_effort": zod.union([zod.enum(['low', 'medium', 'high', 'xhigh', 'max']),zod.null()]).optional(),
+  "revision": zod.int().min(1)
+})
+
+export const updateRuntimeConnectionResponseAuthStatusDefault = `unknown`;
+export const updateRuntimeConnectionResponseCapabilitiesCancelDefault = false;
+export const updateRuntimeConnectionResponseCapabilitiesDynamicToolsDefault = false;
+export const updateRuntimeConnectionResponseCapabilitiesModelDiscoveryDefault = false;
+export const updateRuntimeConnectionResponseCapabilitiesResumeDefault = false;
+export const updateRuntimeConnectionResponseExecutionHostDefault = `server_local`;
+export const updateRuntimeConnectionResponseTransportDefault = `stdio`;
+
+export const UpdateRuntimeConnectionResponse = zod.object({
+  "auth_mode": zod.enum(['runtime_login', 'model_connection']),
+  "auth_status": zod.enum(['authorized', 'not_authorized', 'unknown']).default(updateRuntimeConnectionResponseAuthStatusDefault),
+  "capabilities": zod.object({
+  "cancel": zod.boolean().default(updateRuntimeConnectionResponseCapabilitiesCancelDefault),
+  "dynamic_tools": zod.boolean().default(updateRuntimeConnectionResponseCapabilitiesDynamicToolsDefault),
+  "model_discovery": zod.boolean().default(updateRuntimeConnectionResponseCapabilitiesModelDiscoveryDefault),
+  "resume": zod.boolean().default(updateRuntimeConnectionResponseCapabilitiesResumeDefault)
+}).optional(),
+  "checked_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "enabled": zod.boolean(),
+  "executable_path": zod.union([zod.string(),zod.null()]),
+  "execution_host": zod.literal("server_local").default(updateRuntimeConnectionResponseExecutionHostDefault).meta({ title: 'Execution Host' }),
+  "id": zod.string(),
+  "login_command": zod.union([zod.string(),zod.null()]).optional(),
+  "message": zod.string(),
+  "model_id": zod.string(),
+  "model_profile_id": zod.union([zod.string(),zod.null()]),
+  "models": zod.array(zod.object({
+  "id": zod.string()
+})).optional(),
+  "name": zod.string(),
+  "program_version": zod.union([zod.string(),zod.null()]).optional(),
+  "readiness": zod.enum(['not_checked', 'ready', 'failed', 'stale']),
+  "reasoning_effort": zod.union([zod.enum(['low', 'medium', 'high', 'xhigh', 'max']),zod.null()]),
+  "revision": zod.int(),
+  "runtime_type": zod.literal("codex").meta({ title: 'Runtime Type' }),
+  "transport": zod.literal("stdio").default(updateRuntimeConnectionResponseTransportDefault).meta({ title: 'Transport' }),
+  "updated_at": zod.iso.datetime({"offset":true})
+})
+
+
+/**
+ * @summary Test
+ */
+export const TestRuntimeConnectionParams = zod.object({
+  "connection_id": zod.uuid()
+})
+
+
+
+
+export const TestRuntimeConnectionBody = zod.object({
+  "revision": zod.int().min(1)
+})
+
+export const testRuntimeConnectionResponseConnectionAuthStatusDefault = `unknown`;
+export const testRuntimeConnectionResponseConnectionCapabilitiesCancelDefault = false;
+export const testRuntimeConnectionResponseConnectionCapabilitiesDynamicToolsDefault = false;
+export const testRuntimeConnectionResponseConnectionCapabilitiesModelDiscoveryDefault = false;
+export const testRuntimeConnectionResponseConnectionCapabilitiesResumeDefault = false;
+export const testRuntimeConnectionResponseConnectionExecutionHostDefault = `server_local`;
+export const testRuntimeConnectionResponseConnectionTransportDefault = `stdio`;
+
+export const TestRuntimeConnectionResponse = zod.object({
+  "connection": zod.object({
+  "auth_mode": zod.enum(['runtime_login', 'model_connection']),
+  "auth_status": zod.enum(['authorized', 'not_authorized', 'unknown']).default(testRuntimeConnectionResponseConnectionAuthStatusDefault),
+  "capabilities": zod.object({
+  "cancel": zod.boolean().default(testRuntimeConnectionResponseConnectionCapabilitiesCancelDefault),
+  "dynamic_tools": zod.boolean().default(testRuntimeConnectionResponseConnectionCapabilitiesDynamicToolsDefault),
+  "model_discovery": zod.boolean().default(testRuntimeConnectionResponseConnectionCapabilitiesModelDiscoveryDefault),
+  "resume": zod.boolean().default(testRuntimeConnectionResponseConnectionCapabilitiesResumeDefault)
+}).optional(),
+  "checked_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "enabled": zod.boolean(),
+  "executable_path": zod.union([zod.string(),zod.null()]),
+  "execution_host": zod.literal("server_local").default(testRuntimeConnectionResponseConnectionExecutionHostDefault).meta({ title: 'Execution Host' }),
+  "id": zod.string(),
+  "login_command": zod.union([zod.string(),zod.null()]).optional(),
+  "message": zod.string(),
+  "model_id": zod.string(),
+  "model_profile_id": zod.union([zod.string(),zod.null()]),
+  "models": zod.array(zod.object({
+  "id": zod.string()
+})).optional(),
+  "name": zod.string(),
+  "program_version": zod.union([zod.string(),zod.null()]).optional(),
+  "readiness": zod.enum(['not_checked', 'ready', 'failed', 'stale']),
+  "reasoning_effort": zod.union([zod.enum(['low', 'medium', 'high', 'xhigh', 'max']),zod.null()]),
+  "revision": zod.int(),
+  "runtime_type": zod.literal("codex").meta({ title: 'Runtime Type' }),
+  "transport": zod.literal("stdio").default(testRuntimeConnectionResponseConnectionTransportDefault).meta({ title: 'Transport' }),
+  "updated_at": zod.iso.datetime({"offset":true})
+}),
+  "message": zod.string(),
+  "success": zod.boolean()
+})
+
+
+/**
+ * @summary Types
+ */
+export const ListRuntimeTypesResponse = zod.object({
+  "types": zod.array(zod.object({
+  "host_access": zod.boolean(),
+  "id": zod.enum(['codex', 'claude_code', 'opencode']),
+  "implemented": zod.boolean(),
+  "message": zod.string(),
+  "name": zod.string(),
+  "transport": zod.string()
+}))
+})
 
 
 /**

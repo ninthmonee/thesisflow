@@ -21,6 +21,7 @@ from .research_context_router import create_research_context_router
 from .research_data_router import create_research_data_router
 from .research_evidence_router import create_research_evidence_router
 from .research_router import create_research_router
+from .runtime_router import create_runtime_router
 from .schemas import (
     CONTRACT_MODELS,
     ApplicationInfo,
@@ -166,10 +167,12 @@ def create_api_router(
     viewpoint_service_reader: Callable | None = None,
     professional_pulse_service_reader: Callable | None = None,
     authentication_service_reader: Callable | None = None,
+    runtime_service_reader: Callable | None = None,
 ) -> APIRouter:
     """Readers are injected at runtime; schema export supplies none and performs no IO."""
     router = APIRouter(prefix="/api/v1", tags=["system"])
     router.include_router(create_auth_router(authentication_service_reader, prefix=""))
+    router.include_router(create_runtime_router(runtime_service_reader, prefix=""))
 
     @router.get("/health", response_model=HealthResponse, operation_id="getHealth")
     def health() -> HealthResponse:

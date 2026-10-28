@@ -62,7 +62,7 @@ def test_bundle_restore_drill_preserves_data_but_disables_account_reuse(state, t
     result = create_bundle(root, bundle)
     assert result["credentials_included"] is False and bundle.stat().st_mode & 0o777 == 0o600
     metadata = verify_bundle(bundle)
-    assert metadata["schema_revision"] == "0011_accounts_sessions"
+    assert metadata["schema_revision"] == "0012_agent_runtimes"
     with zipfile.ZipFile(bundle) as archive:
         assert ".env" not in archive.namelist()
         assert all(b"DO-NOT-READ-OR-PACKAGE" not in archive.read(name) for name in archive.namelist())

@@ -53,6 +53,7 @@ import type {
   DataSettingsUpdate,
   DataStatusResponse,
   DeleteModelConnectionParams,
+  DeleteRuntimeConnectionParams,
   DeleteWatchlistParams,
   ETFFlowsResponse,
   GetETFFlowsParams,
@@ -113,7 +114,13 @@ import type {
   RunEvents,
   RunPage,
   RunSnapshot,
+  RuntimeConnectionCreate,
+  RuntimeConnectionList,
+  RuntimeConnectionUpdate,
+  RuntimeConnectionView,
   RuntimeReadiness,
+  RuntimeTestResult,
+  RuntimeTypeList,
   SearchInstrumentsParams,
   SearchResponse,
   StreamResearchEventsParams,
@@ -6798,6 +6805,557 @@ export const useResumeResearchRun = <TError = ApiError,
       > => {
       return useMutation(getResumeResearchRunMutationOptions(options), queryClient);
     }
+
+export const getListRuntimeConnectionsUrl = () => {
+
+
+
+
+  return `/api/v1/runtime-connections`
+}
+
+/**
+ * @summary Connections
+ */
+export const listRuntimeConnections = async ( options?: Parameters<typeof apiFetch>[1]): Promise<RuntimeConnectionList> => {
+
+  return apiFetch<RuntimeConnectionList>(getListRuntimeConnectionsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListRuntimeConnectionsQueryKey = () => {
+    return [
+    `/api/v1/runtime-connections`
+    ] as const;
+    }
+
+
+export const getListRuntimeConnectionsQueryOptions = <TData = Awaited<ReturnType<typeof listRuntimeConnections>>, TError = ApiError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeConnections>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListRuntimeConnectionsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listRuntimeConnections>>> = ({ signal }) => listRuntimeConnections({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listRuntimeConnections>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListRuntimeConnectionsQueryResult = NonNullable<Awaited<ReturnType<typeof listRuntimeConnections>>>
+export type ListRuntimeConnectionsQueryError = ApiError
+
+
+export function useListRuntimeConnections<TData = Awaited<ReturnType<typeof listRuntimeConnections>>, TError = ApiError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeConnections>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listRuntimeConnections>>,
+          TError,
+          Awaited<ReturnType<typeof listRuntimeConnections>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListRuntimeConnections<TData = Awaited<ReturnType<typeof listRuntimeConnections>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeConnections>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listRuntimeConnections>>,
+          TError,
+          Awaited<ReturnType<typeof listRuntimeConnections>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListRuntimeConnections<TData = Awaited<ReturnType<typeof listRuntimeConnections>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeConnections>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Connections
+ */
+
+export function useListRuntimeConnections<TData = Awaited<ReturnType<typeof listRuntimeConnections>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeConnections>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListRuntimeConnectionsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateRuntimeConnectionUrl = () => {
+
+
+
+
+  return `/api/v1/runtime-connections`
+}
+
+/**
+ * @summary Create
+ */
+export const createRuntimeConnection = async (runtimeConnectionCreate: RuntimeConnectionCreate, options?: Parameters<typeof apiFetch>[1]): Promise<RuntimeConnectionView> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiFetch<RuntimeConnectionView>(getCreateRuntimeConnectionUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(runtimeConnectionCreate)
+  }
+);}
+
+
+
+
+
+export const getCreateRuntimeConnectionMutationKey = () => ['createRuntimeConnection'] as const;
+
+export const getCreateRuntimeConnectionMutationOptions = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRuntimeConnection>>, TError,CreateRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createRuntimeConnection>>, TError,CreateRuntimeConnectionMutationVariables, TContext> => {
+
+const mutationKey = getCreateRuntimeConnectionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createRuntimeConnection>>, CreateRuntimeConnectionMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createRuntimeConnection(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateRuntimeConnectionMutationResult = NonNullable<Awaited<ReturnType<typeof createRuntimeConnection>>>
+    export type CreateRuntimeConnectionMutationBody = RuntimeConnectionCreate
+    export type CreateRuntimeConnectionMutationError = ApiError
+    export type CreateRuntimeConnectionMutationVariables = {data: RuntimeConnectionCreate}
+
+    /**
+ * @summary Create
+ */
+export const useCreateRuntimeConnection = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRuntimeConnection>>, TError,CreateRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createRuntimeConnection>>,
+        TError,
+        CreateRuntimeConnectionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateRuntimeConnectionMutationOptions(options), queryClient);
+    }
+
+export const getDeleteRuntimeConnectionUrl = (connectionId: string,
+    params: DeleteRuntimeConnectionParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/runtime-connections/${connectionId}?${stringifiedParams}` : `/api/v1/runtime-connections/${connectionId}`
+}
+
+/**
+ * @summary Delete
+ */
+export const deleteRuntimeConnection = async (connectionId: string,
+    params: DeleteRuntimeConnectionParams, options?: Parameters<typeof apiFetch>[1]): Promise<void> => {
+
+  return apiFetch<void>(getDeleteRuntimeConnectionUrl(connectionId,params),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteRuntimeConnectionMutationKey = () => ['deleteRuntimeConnection'] as const;
+
+export const getDeleteRuntimeConnectionMutationOptions = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRuntimeConnection>>, TError,DeleteRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteRuntimeConnection>>, TError,DeleteRuntimeConnectionMutationVariables, TContext> => {
+
+const mutationKey = getDeleteRuntimeConnectionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteRuntimeConnection>>, DeleteRuntimeConnectionMutationVariables> = (props) => {
+          const {connectionId,params} = props ?? {};
+
+          return  deleteRuntimeConnection(connectionId,params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteRuntimeConnectionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteRuntimeConnection>>>
+
+    export type DeleteRuntimeConnectionMutationError = ApiError
+    export type DeleteRuntimeConnectionMutationVariables = {connectionId: string;params: DeleteRuntimeConnectionParams}
+
+    /**
+ * @summary Delete
+ */
+export const useDeleteRuntimeConnection = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRuntimeConnection>>, TError,DeleteRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteRuntimeConnection>>,
+        TError,
+        DeleteRuntimeConnectionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getDeleteRuntimeConnectionMutationOptions(options), queryClient);
+    }
+
+export const getUpdateRuntimeConnectionUrl = (connectionId: string,) => {
+
+
+
+
+  return `/api/v1/runtime-connections/${connectionId}`
+}
+
+/**
+ * @summary Update
+ */
+export const updateRuntimeConnection = async (connectionId: string,
+    runtimeConnectionUpdate: RuntimeConnectionUpdate, options?: Parameters<typeof apiFetch>[1]): Promise<RuntimeConnectionView> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiFetch<RuntimeConnectionView>(getUpdateRuntimeConnectionUrl(connectionId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(runtimeConnectionUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateRuntimeConnectionMutationKey = () => ['updateRuntimeConnection'] as const;
+
+export const getUpdateRuntimeConnectionMutationOptions = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateRuntimeConnection>>, TError,UpdateRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateRuntimeConnection>>, TError,UpdateRuntimeConnectionMutationVariables, TContext> => {
+
+const mutationKey = getUpdateRuntimeConnectionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateRuntimeConnection>>, UpdateRuntimeConnectionMutationVariables> = (props) => {
+          const {connectionId,data} = props ?? {};
+
+          return  updateRuntimeConnection(connectionId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateRuntimeConnectionMutationResult = NonNullable<Awaited<ReturnType<typeof updateRuntimeConnection>>>
+    export type UpdateRuntimeConnectionMutationBody = RuntimeConnectionUpdate
+    export type UpdateRuntimeConnectionMutationError = ApiError
+    export type UpdateRuntimeConnectionMutationVariables = {connectionId: string;data: RuntimeConnectionUpdate}
+
+    /**
+ * @summary Update
+ */
+export const useUpdateRuntimeConnection = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateRuntimeConnection>>, TError,UpdateRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateRuntimeConnection>>,
+        TError,
+        UpdateRuntimeConnectionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateRuntimeConnectionMutationOptions(options), queryClient);
+    }
+
+export const getTestRuntimeConnectionUrl = (connectionId: string,) => {
+
+
+
+
+  return `/api/v1/runtime-connections/${connectionId}/test`
+}
+
+/**
+ * @summary Test
+ */
+export const testRuntimeConnection = async (connectionId: string,
+    revisionRequest: RevisionRequest, options?: Parameters<typeof apiFetch>[1]): Promise<RuntimeTestResult> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiFetch<RuntimeTestResult>(getTestRuntimeConnectionUrl(connectionId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(revisionRequest)
+  }
+);}
+
+
+
+
+
+export const getTestRuntimeConnectionMutationKey = () => ['testRuntimeConnection'] as const;
+
+export const getTestRuntimeConnectionMutationOptions = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof testRuntimeConnection>>, TError,TestRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof testRuntimeConnection>>, TError,TestRuntimeConnectionMutationVariables, TContext> => {
+
+const mutationKey = getTestRuntimeConnectionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof testRuntimeConnection>>, TestRuntimeConnectionMutationVariables> = (props) => {
+          const {connectionId,data} = props ?? {};
+
+          return  testRuntimeConnection(connectionId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TestRuntimeConnectionMutationResult = NonNullable<Awaited<ReturnType<typeof testRuntimeConnection>>>
+    export type TestRuntimeConnectionMutationBody = RevisionRequest
+    export type TestRuntimeConnectionMutationError = ApiError
+    export type TestRuntimeConnectionMutationVariables = {connectionId: string;data: RevisionRequest}
+
+    /**
+ * @summary Test
+ */
+export const useTestRuntimeConnection = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof testRuntimeConnection>>, TError,TestRuntimeConnectionMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof testRuntimeConnection>>,
+        TError,
+        TestRuntimeConnectionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTestRuntimeConnectionMutationOptions(options), queryClient);
+    }
+
+export const getListRuntimeTypesUrl = () => {
+
+
+
+
+  return `/api/v1/runtime-types`
+}
+
+/**
+ * @summary Types
+ */
+export const listRuntimeTypes = async ( options?: Parameters<typeof apiFetch>[1]): Promise<RuntimeTypeList> => {
+
+  return apiFetch<RuntimeTypeList>(getListRuntimeTypesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListRuntimeTypesQueryKey = () => {
+    return [
+    `/api/v1/runtime-types`
+    ] as const;
+    }
+
+
+export const getListRuntimeTypesQueryOptions = <TData = Awaited<ReturnType<typeof listRuntimeTypes>>, TError = ApiError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeTypes>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListRuntimeTypesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listRuntimeTypes>>> = ({ signal }) => listRuntimeTypes({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listRuntimeTypes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListRuntimeTypesQueryResult = NonNullable<Awaited<ReturnType<typeof listRuntimeTypes>>>
+export type ListRuntimeTypesQueryError = ApiError
+
+
+export function useListRuntimeTypes<TData = Awaited<ReturnType<typeof listRuntimeTypes>>, TError = ApiError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeTypes>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listRuntimeTypes>>,
+          TError,
+          Awaited<ReturnType<typeof listRuntimeTypes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListRuntimeTypes<TData = Awaited<ReturnType<typeof listRuntimeTypes>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeTypes>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listRuntimeTypes>>,
+          TError,
+          Awaited<ReturnType<typeof listRuntimeTypes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListRuntimeTypes<TData = Awaited<ReturnType<typeof listRuntimeTypes>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeTypes>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Types
+ */
+
+export function useListRuntimeTypes<TData = Awaited<ReturnType<typeof listRuntimeTypes>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRuntimeTypes>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListRuntimeTypesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListThemesUrl = (params?: ListThemesParams,) => {
   const normalizedParams = new URLSearchParams();

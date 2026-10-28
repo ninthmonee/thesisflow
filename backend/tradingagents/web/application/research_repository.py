@@ -30,6 +30,8 @@ STAGES = {
     "risk": 4,
     "portfolio": 5,
     "completed": 6,
+    "runtime_running": 1,
+    "runtime_validating": 5,
 }
 STAGE_LABELS = {
     "initializing": "正在初始化模型与标的信息",
@@ -39,6 +41,8 @@ STAGE_LABELS = {
     "risk": "风险团队正在评估交易建议",
     "portfolio": "组合经理正在形成最终决策",
     "completed": "分析完成",
+    "runtime_running": "本地Agent正在进行独立研究",
+    "runtime_validating": "正在校验本地Agent报告与证据",
 }
 
 

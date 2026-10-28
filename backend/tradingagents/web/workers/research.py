@@ -16,7 +16,7 @@ from uuid import uuid4
 
 from langchain_core.callbacks import BaseCallbackHandler
 
-from tradingagents.agents.rating import RATING_REVIEW, run_rating
+from tradingagents.agents.rating import run_rating
 from tradingagents.dataflows.config import run_config
 from tradingagents.dataflows.credentials import data_credentials_scope
 from tradingagents.dataflows.date_window import date_timezone_scope
@@ -24,6 +24,7 @@ from tradingagents.dataflows.evidence import EvidenceCaptureError, evidence_scop
 from tradingagents.dataflows.execution_budget import execution_budget_scope
 from tradingagents.web.api.model_schemas import ModelConfigurationError
 from tradingagents.web.api.research_data_schemas import ResearchDataConnectionError
+from tradingagents.web.api.runtime_schemas import RuntimeConfigurationError
 from tradingagents.web.application.research import REPORT_LABELS, SAFE_RUNTIME_KEYS, ResearchService
 from tradingagents.web.application.research_evidence import ResearchEvidenceStore
 from tradingagents.web.domain.tasks import (
@@ -36,7 +37,7 @@ from tradingagents.web.domain.tasks import (
 from tradingagents.web.infrastructure.runtime_contract import verify_graph_contract
 from tradingagents.web.infrastructure.worker_health import WorkerHeartbeatStore
 
-from .checkpoints import CheckpointFiles, file_hash
+from .checkpoints import CheckpointFiles
 
 
 def safe_failure(exception: Exception) -> tuple[str, str]:
@@ -45,7 +46,7 @@ def safe_failure(exception: Exception) -> tuple[str, str]:
             "research_evidence_capture_failed",
             "工具证据捕获失败；已有模型报告保留，未发布有效结论",
         )
-    if isinstance(exception, (ResearchError, ModelConfigurationError, ResearchDataConnectionError)):
+    if isinstance(exception, (ResearchError, ModelConfigurationError, ResearchDataConnectionError, RuntimeConfigurationError)):
         return exception.code, exception.message
     if isinstance(exception, TimeoutError) or type(exception).__name__ in {
         "APITimeoutError",
@@ -70,11 +71,17 @@ class ResearchWorker:
         lease_seconds: float = 90,
         heartbeat_interval: float | None = None,
         max_run_seconds: float = 3600,
+        runtime_service_factory=None,
+        runtime_adapter_factory=None,
+        runtime_tool_invoker=None,
     ):
         if not 1 <= lease_seconds <= 3600 or max_run_seconds <= 0:
             raise ValueError("invalid lease or execution timeout")
         self.service, self.config_resolver = service, config_resolver
         self.graph_factory = graph_factory
+        self.runtime_service_factory = runtime_service_factory
+        self.runtime_adapter_factory = runtime_adapter_factory
+        self.runtime_tool_invoker = runtime_tool_invoker
         self.worker_id = worker_id or f"research-worker-{uuid4()}"
         self.lease_seconds = lease_seconds
         self.heartbeat_interval = heartbeat_interval or min(10, lease_seconds / 3)
@@ -204,18 +211,12 @@ class ResearchWorker:
         pulse = threading.Thread(target=heartbeat, name=f"lease-{claim.attempt_id}", daemon=True)
         pulse.start()
         callback = WorkerCallbacks(self.service, claim, active, started, prior_stats=prior_stats)
-        graph = None
-        checkpoint_context = None
+        executor = None
 
         def capture_checkpoint():
-            if checkpoint_context is None:
-                return
-            self.service.tasks.active_status(claim)
-            manifest_hash, ticker, signature, thread_id = checkpoint_context
-            reference = self.checkpoints.publish(claim, manifest_hash, ticker, signature, thread_id)
-            if reference:
-                self.service.tasks.publish(claim, checkpoint_ref=reference)
-                self.checkpoints.prune_previous(claim, reference)
+            capture = getattr(executor, "capture_checkpoint", None)
+            if callable(capture):
+                capture()
 
         try:
             manifest_record = self.service.tasks.manifest(claim)
@@ -233,16 +234,9 @@ class ResearchWorker:
             model_validator = getattr(options.get("role_model_resolver"), "verify", None)
             data_resolver = options.pop("__data_connection_resolver", None)
             data_validator = getattr(data_resolver, "verify", None)
-            factory = self.graph_factory
-            if factory is None:
-                from tradingagents.graph.trading_graph import TradingAgentsGraph
+            from tradingagents.web.executors.base import ResearchExecutionContext
 
-                factory = TradingAgentsGraph
-            parameters = inspect.signature(factory).parameters
-            if not any(
-                parameter.kind == inspect.Parameter.VAR_KEYWORD for parameter in parameters.values()
-            ):
-                options = {key: value for key, value in options.items() if key in parameters}
+            context = ResearchExecutionContext(claim, manifest, manifest_hash, config, options, callback, active, evidence_session)
             with (
                 date_timezone_scope("America/New_York"),
                 execution_budget_scope(callback),
@@ -251,91 +245,18 @@ class ResearchWorker:
                 run_config(config),
             ):
                 active()
-                graph = factory(request["analysts"], config=config, callbacks=[callback], **options)
-                signature_method = getattr(graph, "_run_signature", None)
-                signature = (
-                    signature_method(manifest["asset_type"]) if callable(signature_method) else ""
-                )
-                if claim.checkpoint_ref and not signature:
-                    raise ResearchError(
-                        "checkpoint_unsupported", "当前执行图不支持完整检查点恢复，请重新研究"
-                    )
-                metadata = self.checkpoints.restore(
-                    claim, manifest_hash, request["ticker"], signature
-                )
-                initial = graph.create_run_state(
-                    request["ticker"], request["date"], manifest["asset_type"]
-                )
-                final_state = dict(initial)
-                arguments = graph.propagator.get_graph_args(callbacks=[callback])
-                thread_id = graph.begin_checkpoint(
-                    request["ticker"], request["date"], manifest["asset_type"]
-                )
-                if thread_id is not None:
-                    arguments.setdefault("config", {}).setdefault("configurable", {})[
-                        "thread_id"
-                    ] = thread_id
-                if signature and thread_id:
-                    checkpoint_context = (manifest_hash, request["ticker"], signature, thread_id)
-                if metadata is not None:
-                    if thread_id != metadata["thread_id"] or not getattr(graph, "_resuming", False):
-                        raise ResearchError(
-                            "checkpoint_incompatible", "执行图未接受完整检查点，请重新研究"
-                        )
-                    state = graph.graph.get_state(arguments.get("config", {}))
-                    if not isinstance(state.values, dict):
-                        raise ResearchError("checkpoint_invalid", "检查点缺少可恢复的图状态")
-                    final_state.update(state.values)
-                self.service.tasks.publish(claim, stage="analysts")
-                for _messages, chunk in graph.stream_run(
-                    graph.checkpoint_input(initial), **arguments
-                ):
-                    active()
-                    if not isinstance(chunk, dict):
-                        continue
-                    final_state.update(chunk)
-                    callback.publish_reports(final_state)
-                    capture_checkpoint()
-                active()
-                if not final_state.get("final_trade_decision"):
-                    raise ResearchError("decision_missing", "执行图结束时缺少最终决策，研究未完成")
-                callback.publish_reports(final_state)
-                quality = self.evidence.finalize(claim)
-                export_state = deepcopy(final_state)
-                if not quality.eligible_for_rating:
-                    export_state["final_rating"] = RATING_REVIEW
-                    notice = "**数据资格未通过：以下为保留的原始模型输出，评级、价格目标和仓位均未经有效结论资格确认。**\n\n"
-                    for key in ("trader_investment_plan", "final_trade_decision"):
-                        if export_state.get(key):
-                            export_state[key] = notice + export_state[key]
-                output = self.checkpoints.attempt_directory(claim) / "report"
-                graph.save_reports(export_state, request["ticker"], save_path=output, html=True)
-                for kind, filename in (
-                    ("html", "complete_report.html"),
-                    ("markdown", "complete_report.md"),
-                ):
-                    path = output / filename
-                    if path.is_file() and not path.is_symlink():
-                        path.chmod(0o600)
-                        self.service.tasks.register_export(
-                            claim,
-                            f"_export_{kind}",
-                            str(path.relative_to(self.service.artifacts_root)),
-                            file_hash(path),
-                        )
-                active()
-                memory_state = {
-                    **final_state,
-                    "final_rating": run_rating(final_state)
-                    if quality.eligible_for_rating
-                    else RATING_REVIEW,
-                }
-                graph.record_decision(request["ticker"], request["date"], memory_state)
-                self.service.tasks.finish(claim, "completed", stats=callback.stats())
-                with suppress(Exception):
-                    graph.clear_checkpoint_on_success(
-                        request["ticker"], request["date"], manifest["asset_type"]
-                    )
+                if manifest.get("selection", {}).get("execution_mode") == "local_agent":
+                    from tradingagents.web.executors.local_agent import LocalAgentExecutor
+
+                    self.service.tasks.publish(claim, stage="runtime_running")
+                    executor = LocalAgentExecutor(self, service_factory=self.runtime_service_factory,
+                        adapter_factory=self.runtime_adapter_factory,
+                        tool_invoker=self.runtime_tool_invoker)
+                else:
+                    from tradingagents.web.executors.builtin import BuiltinWorkflowExecutor
+
+                    executor = BuiltinWorkflowExecutor(self)
+                executor.run(context)
         except LeaseLost:
             # A newer worker or the reaper owns the task; never overwrite it.
             pass
@@ -359,9 +280,10 @@ class ResearchWorker:
         finally:
             stopped.set()
             pulse.join(timeout=max(1, self.heartbeat_interval + 0.5))
-            if graph is not None:
+            close = getattr(executor, "close", None)
+            if callable(close):
                 with suppress(Exception):
-                    graph.end_checkpoint()
+                    close()
             if self._health_token is not None:
                 with suppress(Exception):
                     self.worker_health.heartbeat(self.worker_id, self._health_token)
@@ -407,6 +329,8 @@ class WorkerCallbacks(BaseCallbackHandler):
         self.budget = {}
         self.usage_reported_calls = 0
         self.budget_exceeded = False
+        self.external_runtime = False
+        self.external_usage_reported = False
 
     def check_budget(self):
         with self.lock:
@@ -431,7 +355,7 @@ class WorkerCallbacks(BaseCallbackHandler):
 
     def stats(self) -> dict[str, Any]:
         with self.lock:
-            return {
+            result = {
                 **self.counts,
                 "usage_reported_calls": self.usage_reported_calls,
                 "uncertain_calls": max(0, self.counts["llm_calls"] - self.usage_reported_calls),
@@ -443,6 +367,9 @@ class WorkerCallbacks(BaseCallbackHandler):
                 else "unknown",
                 "elapsed_seconds": max(0, round(time.monotonic() - self.started, 1)),
             }
+            if self.external_runtime:
+                result.update(usage_quality="partial" if self.external_usage_reported else "unknown")
+            return result
 
     def on_chat_model_start(self, serialized, messages, **kwargs):
         self.on_llm_start(serialized, [], **kwargs)

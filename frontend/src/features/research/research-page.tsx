@@ -59,6 +59,10 @@ import { ResearchContextPicker } from "./research-context";
 import { ResearchViewpoints } from "./research-viewpoints";
 import { ResearchComparisonPanel } from "./research-comparison";
 import { useAuth } from "../auth/auth-context";
+import { listRuntimeConnections } from "../runtimes/runtime-api";
+import { isRuntimeResearch, runtimeManifestSummary, runtimeReady } from "../runtimes/runtime-state";
+import type { RuntimeResearchRequest } from "../runtimes/runtime-state";
+import { RuntimeExecutionPanel } from "../runtimes/runtime-execution-panel";
 import styles from "../../shared/ui/workbench.module.css";
 
 const analystChoices = [
@@ -97,6 +101,8 @@ const stageLabels: Record<string, string> = {
   trading: "交易提案",
   risk: "风险讨论",
   portfolio: "最终决策",
+  runtime_running: "本地 Agent 研究",
+  runtime_validating: "Agent 报告校验",
   completed: "研究完成",
   interrupted: "已中断",
   cancelled: "已取消",
@@ -115,6 +121,12 @@ const reportLabels: Record<string, string> = {
   conservative_history: "保守风险观点",
   final_trade_decision: "最终决策",
   memory_note: "历史经验状态",
+  runtime_summary: "Agent研究概览",
+  runtime_analysis: "Agent研究分析",
+  runtime_bull_case: "Agent多头观点",
+  runtime_bear_case: "Agent空头观点",
+  runtime_risks: "Agent风险与失效条件",
+  runtime_evidence: "Agent证据引用",
 };
 function failureMessage(error: unknown) {
   return error instanceof ApiError ? error.message : "操作未完成，请稍后重试";
@@ -131,7 +143,7 @@ export function ResearchPage({ bootstrap }: { bootstrap: BootstrapResponse }) {
   const [search] = useSearchParams();
   return (
     <ResearchCreateForm
-      key={`${search.get("from_run") ?? "new"}:${search.get("prefill") ?? "current"}:${search.getAll("context").join(",")}`}
+      key={`${search.get("from_run") ?? "new"}:${search.get("prefill") ?? "current"}:${search.getAll("context").join(",")}:${search.get("execution_mode") ?? "builtin"}:${search.get("runtime_connection_id") ?? "none"}`}
       bootstrap={bootstrap}
     />
   );
@@ -143,8 +155,10 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
   const scope = scopeForWorkspace(bootstrap.workspace),
     navigate = useNavigate();
   const [search] = useSearchParams(),
-    [form] = Form.useForm<CreateResearchRequest>();
+    [form] = Form.useForm<RuntimeResearchRequest>();
   const fromRun = search.get("from_run");
+  const initialRuntimeMode =
+    !fromRun && canUseLocalConfiguration && search.get("execution_mode") === "local_agent";
   const prefillMode = search.get("prefill") === "original" ? "original" : "current";
   const contextSignature = search.getAll("context").join(",");
   const urlContexts = useMemo(
@@ -166,6 +180,24 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
   const workflowDepth: CreateResearchRequest["depth"] | undefined = Form.useWatch("depth", form);
   const selectedDate: string | undefined = Form.useWatch("date", form);
   const selectedTicker: string | undefined = Form.useWatch("ticker", form);
+  const executionMode: RuntimeResearchRequest["execution_mode"] = Form.useWatch(
+    "execution_mode",
+    form,
+  );
+  const runtimeConnectionId: string | null | undefined = Form.useWatch(
+    "runtime_connection_id",
+    form,
+  );
+  const localAgent = executionMode === "local_agent";
+  const runtimes = useQuery({
+    queryKey: queryKeys.resource(scope, "runtime-connections"),
+    queryFn: ({ signal }) => listRuntimeConnections(signal),
+    enabled: canUseLocalConfiguration,
+    retry: shouldRetryQuery,
+  });
+  const selectedRuntime = runtimes.data?.connections.find(
+    (item) => item.id === runtimeConnectionId,
+  );
   const workflowTemplateId: CreateResearchRequest["template_version_id"] = Form.useWatch(
     "template_version_id",
     form,
@@ -197,12 +229,17 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
     enabled: !!fromRun,
     retry: shouldRetryQuery,
   });
+  const sourceIsRuntime = isRuntimeResearch(sourceManifest.data);
   const sourceLoading =
     !!fromRun &&
-    (sourceRun.isPending || sourceManifest.isPending || settings.isPending || templates.isPending);
+    (sourceRun.isPending ||
+      sourceManifest.isPending ||
+      (!sourceIsRuntime && (settings.isPending || templates.isPending)));
   const sourceError =
     !!fromRun &&
-    (sourceRun.isError || sourceManifest.isError || settings.isError || templates.isError);
+    (sourceRun.isError ||
+      sourceManifest.isError ||
+      (!sourceIsRuntime && (settings.isError || templates.isError)));
   const historicalTemplate = sourceManifest.data
     ? templates.data?.templates.find((item) => item.id === sourceTemplateId(sourceManifest.data))
     : undefined;
@@ -228,9 +265,12 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
       ((!workflowTemplateId || workflowTemplateId === CURRENT_MODEL_CONFIGURATION) &&
         canUseLocalConfiguration &&
         bootstrap.model.configured));
+  const executionReady = localAgent
+    ? canUseLocalConfiguration && runtimes.isSuccess && runtimeReady(selectedRuntime)
+    : modelSelectionReady;
   const queryTicker = search.get("ticker");
   useEffect(() => {
-    if (!settings.data || presetApplied.current || fromRun) return;
+    if (!settings.data || presetApplied.current || fromRun || localAgent) return;
     presetApplied.current = true;
     const preset = settings.data.default_template;
     if (
@@ -244,14 +284,13 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
         language: preset.language,
       });
     }
-  }, [settings.data, form, fromRun]);
+  }, [settings.data, form, fromRun, localAgent]);
   useEffect(() => {
     if (
       !fromRun ||
       !sourceManifest.data ||
       !sourceRun.data ||
-      !settings.data ||
-      !templates.data ||
+      (!isRuntimeResearch(sourceManifest.data) && (!settings.data || !templates.data)) ||
       presetApplied.current
     )
       return;
@@ -260,8 +299,8 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
       sourceManifest.data,
       prefillMode,
       bootstrap.today ?? "",
-      templates.data.templates,
-      settings.data.default_template,
+      templates.data?.templates ?? [],
+      settings.data?.default_template,
     );
     form.setFieldsValue(values);
     const contexts = researchContextIds([...urlContexts.ids, ...(values.context_ids ?? [])]);
@@ -282,8 +321,8 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
   useEffect(() => {
     if (queryTicker && !fromRun) form.setFieldValue("ticker", queryTicker.toUpperCase());
   }, [queryTicker, fromRun, form]);
-  async function submit(values: CreateResearchRequest) {
-    if (sourceLoading || sourceError || !contextReady || !modelSelectionReady) return;
+  async function submit(values: RuntimeResearchRequest) {
+    if (sourceLoading || sourceError || !contextReady || !executionReady) return;
     const body = researchRequest({ ...values, context_ids: contextIds });
     const fingerprint = JSON.stringify([scope, body]);
     if (idempotency.current?.fingerprint !== fingerprint)
@@ -307,7 +346,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
       <div className={styles.heading}>
         <small>TRADINGAGENTS EQUITY RESEARCH</small>
         <h1>启动个股研究</h1>
-        <p>四类分析师、多空辩论、交易提案、风险讨论与最终决策完整保留。研究将在服务端继续执行。</p>
+        <p>选择内置多角色流程或已连接的本地 Agent 执行个股研究，过程与报告保存到同一研究记录。</p>
       </div>
       {error && <Alert type="error" title={error} showIcon />}
       <RuntimeReadinessNotice scope={scope} />
@@ -318,7 +357,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
           title={
             prefillMode === "current"
               ? "重新研究预填 · 更新到今天，使用当前配置"
-              : "重新研究预填 · 原日期与可读取的原模板"
+              : "重新研究预填 · 原日期与可读取的原执行配置"
           }
           description={
             sourceLoading ? (
@@ -327,31 +366,40 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
               "原研究或配置无法读取，暂不能启动。请返回原任务重试。"
             ) : sourceManifest.data ? (
               <div>
-                <p>
-                  来自 <Link to={`/runs/${fromRun}`}>{sourceRun.data?.ticker} · 原研究</Link>
-                  。预填不会启动模型，请核对后点击启动。
-                </p>
-                <p>
-                  日期：{sourceManifest.data.request.date} → {selectedDate || "待选择"}；模板：
-                  {historicalTemplate
-                    ? `${historicalTemplate.name} v${historicalTemplate.version}`
-                    : "历史本机配置 / 原模板不可读取"}{" "}
-                  →{" "}
-                  {workflowTemplate
-                    ? `${workflowTemplate.name} v${workflowTemplate.version}`
-                    : workflowTemplateId === CURRENT_MODEL_CONFIGURATION
-                      ? "显式使用当前本机配置"
-                      : "待明确选择"}
-                </p>
-                <p>原模型：{modelBindingSummary(modelsFromManifest(sourceManifest.data))}</p>
-                <p>
-                  本次模型：{modelBindingSummary(workflowModels)}
-                  。模板引用会在启动时重新检查，原始工具输入未全部冻结，不保证相同结果。过去日期仅用于日级回顾研究，不代表已验证当时可得的全部数据。
-                </p>
-                {prefillMode === "original" && !workflowTemplateId && (
+                {sourceIsRuntime ? (
                   <p>
-                    原模板不可读取或属于历史本机配置；请选择一个模板，或明确选择当前配置，才可启动。
+                    本次沿用本地 Agent
+                    研究方式，请重新核对运行环境、模型与预算。原执行步骤不会被当成 12 角色路径。
                   </p>
+                ) : (
+                  <>
+                    <p>
+                      来自 <Link to={`/runs/${fromRun}`}>{sourceRun.data?.ticker} · 原研究</Link>
+                      。预填不会启动模型，请核对后点击启动。
+                    </p>
+                    <p>
+                      日期：{sourceManifest.data.request.date} → {selectedDate || "待选择"}；模板：
+                      {historicalTemplate
+                        ? `${historicalTemplate.name} v${historicalTemplate.version}`
+                        : "历史本机配置 / 原模板不可读取"}{" "}
+                      →{" "}
+                      {workflowTemplate
+                        ? `${workflowTemplate.name} v${workflowTemplate.version}`
+                        : workflowTemplateId === CURRENT_MODEL_CONFIGURATION
+                          ? "显式使用当前本机配置"
+                          : "待明确选择"}
+                    </p>
+                    <p>原模型：{modelBindingSummary(modelsFromManifest(sourceManifest.data))}</p>
+                    <p>
+                      本次模型：{modelBindingSummary(workflowModels)}
+                      。模板引用会在启动时重新检查，原始工具输入未全部冻结，不保证相同结果。过去日期仅用于日级回顾研究，不代表已验证当时可得的全部数据。
+                    </p>
+                    {prefillMode === "original" && !workflowTemplateId && (
+                      <p>
+                        原模板不可读取或属于历史本机配置；请选择一个模板，或明确选择当前配置，才可启动。
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             ) : null
@@ -371,22 +419,47 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
               layout="vertical"
               initialValues={{
                 ticker: queryTicker ?? "",
+                execution_mode: initialRuntimeMode ? "local_agent" : "builtin_workflow",
+                runtime_connection_id: initialRuntimeMode
+                  ? search.get("runtime_connection_id")
+                  : null,
                 date: bootstrap.today ?? "",
                 analysts: bootstrap.defaults.analysts,
                 depth: bootstrap.defaults.depth,
                 language: bootstrap.defaults.language,
-                checkpoint: true,
+                checkpoint: !initialRuntimeMode,
                 template_version_id: fromRun ? undefined : CURRENT_MODEL_CONFIGURATION,
                 objective: "general",
                 horizon: "medium",
                 holding_state: "unknown",
                 max_llm_calls: 80,
                 max_runtime_seconds: 1800,
+                max_tool_calls: 40,
               }}
               onFinish={(values) => {
                 void submit(values);
               }}
             >
+              <Form.Item label="执行方式" name="execution_mode" rules={[{ required: true }]}>
+                <Select
+                  options={[
+                    { value: "builtin_workflow", label: "TradingAgents · 内置 12 角色研究" },
+                    {
+                      value: "local_agent",
+                      label: "本地 Agent · 独立研究",
+                      disabled: !canUseLocalConfiguration,
+                    },
+                  ]}
+                  onChange={(value: RuntimeResearchRequest["execution_mode"]) =>
+                    form.setFieldValue("checkpoint", value !== "local_agent")
+                  }
+                />
+              </Form.Item>
+              {!canUseLocalConfiguration && (
+                <p className={styles.muted}>
+                  当前账号可使用自己的模型进行内置研究；主人的本机 Runtime 不向其他账号开放。
+                </p>
+              )}
               <Form.Item
                 label="股票代码"
                 name="ticker"
@@ -413,68 +486,134 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
               >
                 <Input type="date" min="1970-01-01" max={bootstrap.today ?? undefined} />
               </Form.Item>
-              <Form.Item
-                label="模型与研究模板"
-                name="template_version_id"
-                rules={
-                  fromRun
-                    ? [{ required: true, message: "请明确选择本次使用的模板或当前配置" }]
-                    : undefined
-                }
-              >
-                <Select
-                  loading={templates.isPending}
-                  options={[
-                    {
-                      value: CURRENT_MODEL_CONFIGURATION,
-                      label: settings.data?.default_template
-                        ? `明确使用当前默认配置 v${settings.data.default_template.version}`
-                        : canUseLocalConfiguration
-                          ? "明确使用当前本机 quick / deep 配置（兼容来源）"
-                          : "尚未配置个人模型，请先在模型设置中保存模板",
-                      disabled: !settings.data?.default_template && !canUseLocalConfiguration,
-                    },
-                    ...(templates.data?.templates ?? []).map((item) => ({
-                      value: item.id,
-                      label: `${item.name} · v${item.version}`,
-                    })),
-                  ]}
-                  onChange={(value: string) => {
-                    const template = templates.data?.templates.find((item) => item.id === value);
-                    if (template)
-                      form.setFieldsValue({
-                        analysts: template.analysts,
-                        depth: template.depth,
-                        language: template.language,
-                      });
-                  }}
-                />
-              </Form.Item>
-              <p className={styles.muted}>
-                {settings.data?.default_template
-                  ? `已保存默认配置 v${settings.data.default_template.version}，可选择对应模板使用角色绑定。`
-                  : canUseLocalConfiguration
-                    ? "主人账号可使用已配置的本机模型；新模型需先检测。"
-                    : "请配置自己的模型供应商和凭据，检测后保存研究模板。此账号不会继承主人的模型授权。"}{" "}
-                <Link to="/settings/models">管理模型</Link>
-              </p>
-              <Form.Item
-                label="分析师"
-                name="analysts"
-                rules={[{ required: true, type: "array", min: 1, message: "至少选择一类分析师" }]}
-              >
-                <Checkbox.Group options={analystChoices} />
-              </Form.Item>
-              <div className={styles.columns}>
-                <Form.Item label="研究深度" name="depth">
-                  <Select
-                    options={[
-                      { value: 1, label: "快速 · 1 轮" },
-                      { value: 2, label: "标准 · 2 轮" },
-                      { value: 3, label: "深入 · 3 轮" },
+              {localAgent ? (
+                <>
+                  <Form.Item
+                    label="本地运行环境"
+                    name="runtime_connection_id"
+                    rules={[{ required: true, message: "请选择已启用且检测通过的运行环境" }]}
+                  >
+                    <Select
+                      loading={runtimes.isPending}
+                      placeholder="选择已检测的 Codex 运行环境"
+                      options={(runtimes.data?.connections ?? []).map((item) => ({
+                        value: item.id,
+                        label: `${item.name} / ${item.model_id}${runtimeReady(item) ? "" : " · 尚未就绪"}`,
+                        disabled: !runtimeReady(item),
+                      }))}
+                    />
+                  </Form.Item>
+                  {runtimes.isError && (
+                    <Alert showIcon type="error" title={failureMessage(runtimes.error)} />
+                  )}
+                  {runtimeConnectionId && runtimes.isSuccess && !selectedRuntime && (
+                    <Alert
+                      showIcon
+                      type="warning"
+                      title="原运行环境已删除或当前账号不可读取，请重新选择运行环境。"
+                    />
+                  )}
+                  <p className={styles.muted}>
+                    <Link to="/settings/runtimes">配置或检测运行环境</Link> · 本机指运行后端和
+                    worker 的电脑，研究使用该连接冻结的模型和认证。
+                  </p>
+                  {selectedRuntime && (
+                    <Alert
+                      showIcon
+                      type={runtimeReady(selectedRuntime) ? "info" : "warning"}
+                      title={`${selectedRuntime.name} · ${selectedRuntime.model_id}`}
+                      description={`${selectedRuntime.auth_mode === "runtime_login" ? "使用本连接专属 Codex 登录" : "使用当前账号配置的 Responses 模型连接"} · ${selectedRuntime.message}`}
+                    />
+                  )}
+                  <Form.Item
+                    name="research_instructions"
+                    label="补充研究要求（可选）"
+                    rules={[{ max: 4000, message: "研究要求最多 4000 个字符" }]}
+                    extra="例如重点核查 HBM 供需、光互联订单与估值风险。要求会随本次研究保存，不会授予额外工具或目录权限。"
+                  >
+                    <Input.TextArea
+                      rows={4}
+                      maxLength={4000}
+                      showCount
+                      placeholder="说明关注的问题、希望比较的角度和需要核实的假设"
+                    />
+                  </Form.Item>
+                  <p className={styles.muted}>
+                    允许调用本系统的价格、技术指标、财报、新闻、宏观与冻结补充资料工具。报告按已捕获的来源证据评估；未接通的数据保持缺失。
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Form.Item
+                    label="模型与研究模板"
+                    name="template_version_id"
+                    rules={
+                      fromRun
+                        ? [{ required: true, message: "请明确选择本次使用的模板或当前配置" }]
+                        : undefined
+                    }
+                  >
+                    <Select
+                      loading={templates.isPending}
+                      options={[
+                        {
+                          value: CURRENT_MODEL_CONFIGURATION,
+                          label: settings.data?.default_template
+                            ? `明确使用当前默认配置 v${settings.data.default_template.version}`
+                            : canUseLocalConfiguration
+                              ? "明确使用当前本机 quick / deep 配置（兼容来源）"
+                              : "尚未配置个人模型，请先在模型设置中保存模板",
+                          disabled: !settings.data?.default_template && !canUseLocalConfiguration,
+                        },
+                        ...(templates.data?.templates ?? []).map((item) => ({
+                          value: item.id,
+                          label: `${item.name} · v${item.version}`,
+                        })),
+                      ]}
+                      onChange={(value: string) => {
+                        const template = templates.data?.templates.find(
+                          (item) => item.id === value,
+                        );
+                        if (template)
+                          form.setFieldsValue({
+                            analysts: template.analysts,
+                            depth: template.depth,
+                            language: template.language,
+                          });
+                      }}
+                    />
+                  </Form.Item>
+                  <p className={styles.muted}>
+                    {settings.data?.default_template
+                      ? `已保存默认配置 v${settings.data.default_template.version}，可选择对应模板使用角色绑定。`
+                      : canUseLocalConfiguration
+                        ? "主人账号可使用已配置的本机模型；新模型需先检测。"
+                        : "请配置自己的模型供应商和凭据，检测后保存研究模板。此账号不会继承主人的模型授权。"}{" "}
+                    <Link to="/settings/models">管理模型</Link>
+                  </p>
+                  <Form.Item
+                    label="分析师"
+                    name="analysts"
+                    rules={[
+                      { required: true, type: "array", min: 1, message: "至少选择一类分析师" },
                     ]}
-                  />
-                </Form.Item>
+                  >
+                    <Checkbox.Group options={analystChoices} />
+                  </Form.Item>
+                </>
+              )}
+              <div className={styles.columns}>
+                {!localAgent && (
+                  <Form.Item label="研究深度" name="depth">
+                    <Select
+                      options={[
+                        { value: 1, label: "快速 · 1 轮" },
+                        { value: 2, label: "标准 · 2 轮" },
+                        { value: 3, label: "深入 · 3 轮" },
+                      ]}
+                    />
+                  </Form.Item>
+                )}
                 <Form.Item label="报告语言" name="language">
                   <Select
                     options={[
@@ -484,9 +623,19 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                   />
                 </Form.Item>
               </div>
-              <Form.Item name="checkpoint" valuePropName="checked">
-                <Checkbox>保存检查点，允许兼容状态恢复</Checkbox>
-              </Form.Item>
+              {!localAgent && (
+                <Form.Item name="checkpoint" valuePropName="checked">
+                  <Checkbox>保存检查点，允许兼容状态恢复</Checkbox>
+                </Form.Item>
+              )}
+              {localAgent && (
+                <Alert
+                  showIcon
+                  type="info"
+                  title="本地 Agent 独立研究"
+                  description="显示 Runtime 实际上报的步骤和工具。当前不提供会话恢复；失败后可先核对参数再创建新的研究。内部模型请求次数可能未知，工具、执行时间和已报告用量分别记录。"
+                />
+              )}
               <Collapse
                 items={[
                   {
@@ -509,13 +658,23 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                           />
                         </Form.Item>
                         <div className={styles.columns}>
-                          <Form.Item
-                            name="max_llm_calls"
-                            label="模型请求次数上限"
-                            rules={[{ required: true }]}
-                          >
-                            <InputNumber min={1} max={500} precision={0} />
-                          </Form.Item>
+                          {localAgent ? (
+                            <Form.Item
+                              name="max_tool_calls"
+                              label="金融工具调用次数上限"
+                              rules={[{ required: true }]}
+                            >
+                              <InputNumber min={1} max={100} precision={0} />
+                            </Form.Item>
+                          ) : (
+                            <Form.Item
+                              name="max_llm_calls"
+                              label="模型请求次数上限"
+                              rules={[{ required: true }]}
+                            >
+                              <InputNumber min={1} max={500} precision={0} />
+                            </Form.Item>
+                          )}
                           <Form.Item
                             name="max_runtime_seconds"
                             label="执行时长上限（秒）"
@@ -562,56 +721,86 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                 type="primary"
                 htmlType="submit"
                 loading={busy}
-                disabled={sourceLoading || sourceError || !contextReady || !modelSelectionReady}
+                disabled={sourceLoading || sourceError || !contextReady || !executionReady}
               >
-                启动 TradingAgents 分析
+                {localAgent ? "启动本地 Agent 研究" : "启动 TradingAgents 分析"}
               </Button>
             </Form>
           </div>
         </section>
-        <section className={styles.panel}>
-          <div className={styles.toolbar}>
-            <h2>完整研究链路</h2>
-            <div className={styles.actions}>
-              <Tag>12 个角色</Tag>
-              <Button
-                size="small"
-                onClick={() =>
-                  workflowAnchor.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-                }
-              >
-                查看可视化路径
-              </Button>
+        {localAgent ? (
+          <section className={styles.panel}>
+            <div className={styles.toolbar}>
+              <h2>本地 Agent 研究路径</h2>
+              <Tag>实际运行步骤</Tag>
             </div>
-          </div>
-          <div className={styles.body}>
-            {[
-              ["分析师研究", "技术、基本面、新闻与情绪独立取证。"],
-              ["多空辩论", "双方依据交锋，研究经理形成汇总。"],
-              ["交易提案", "交易员提出条件与计划。"],
-              ["风险讨论", "激进、中立与保守观点分别审视风险。"],
-              ["最终决策", "保存判断、依据、分歧与完整报告。"],
-            ].map(([title, detail]) => (
-              <div className={styles.connection} key={title}>
-                <h3>{title}</h3>
-                <p className={styles.muted}>{detail}</p>
+            <div className={styles.body}>
+              {[
+                ["检查执行计划", "核对运行环境、实际模型、标的、日期、工具与预算。"],
+                ["调用金融工具", "由 Agent 选择受控工具，数据响应按来源和时间归档。"],
+                ["整理研究产物", "生成观点、依据、风险和待核实项，保持证据引用。"],
+                ["校验并归档报告", "结构、来源及研究资格分别校验，保存到现有研究记录。"],
+              ].map(([title, detail]) => (
+                <div className={styles.connection} key={title}>
+                  <h3>{title}</h3>
+                  <p className={styles.muted}>{detail}</p>
+                </div>
+              ))}
+              <p className={styles.muted}>
+                以上为执行方式说明，具体步骤以运行事件为准；不表示已经执行内置 12
+                角色。切换页面或关闭浏览器不取消任务。
+              </p>
+            </div>
+          </section>
+        ) : (
+          <section className={styles.panel}>
+            <div className={styles.toolbar}>
+              <h2>完整研究链路</h2>
+              <div className={styles.actions}>
+                <Tag>12 个角色</Tag>
+                <Button
+                  size="small"
+                  onClick={() =>
+                    workflowAnchor.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                >
+                  查看可视化路径
+                </Button>
               </div>
-            ))}
-            <p className={styles.muted}>点击下方路径中的角色，查看其职责、输入、输出与模型分配。</p>
-            <p className={styles.muted}>
-              切换页面或关闭浏览器不取消服务端任务。<Link to="/reports">查看研究记录</Link>
-            </p>
-          </div>
-        </section>
+            </div>
+            <div className={styles.body}>
+              {[
+                ["分析师研究", "技术、基本面、新闻与情绪独立取证。"],
+                ["多空辩论", "双方依据交锋，研究经理形成汇总。"],
+                ["交易提案", "交易员提出条件与计划。"],
+                ["风险讨论", "激进、中立与保守观点分别审视风险。"],
+                ["最终决策", "保存判断、依据、分歧与完整报告。"],
+              ].map(([title, detail]) => (
+                <div className={styles.connection} key={title}>
+                  <h3>{title}</h3>
+                  <p className={styles.muted}>{detail}</p>
+                </div>
+              ))}
+              <p className={styles.muted}>
+                点击下方路径中的角色，查看其职责、输入、输出与模型分配。
+              </p>
+              <p className={styles.muted}>
+                切换页面或关闭浏览器不取消服务端任务。<Link to="/reports">查看研究记录</Link>
+              </p>
+            </div>
+          </section>
+        )}
       </div>
-      <div ref={workflowAnchor} id="research-workflow">
-        <ResearchWorkflow
-          bootstrap={bootstrap}
-          analysts={workflowAnalysts ?? bootstrap.defaults.analysts}
-          depth={workflowDepth ?? bootstrap.defaults.depth}
-          models={workflowModels}
-        />
-      </div>
+      {!localAgent && (
+        <div ref={workflowAnchor} id="research-workflow">
+          <ResearchWorkflow
+            bootstrap={bootstrap}
+            analysts={workflowAnalysts ?? bootstrap.defaults.analysts}
+            depth={workflowDepth ?? bootstrap.defaults.depth}
+            models={workflowModels}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -714,6 +903,8 @@ function RunDetailContent({
     ];
   const complete = data.status === "completed",
     active = !terminalStatuses.has(data.status);
+  const runtimeResearch = isRuntimeResearch(manifest.data);
+  const runtimeSummary = runtimeManifestSummary(manifest.data);
   return (
     <div className={styles.stack}>
       <div className={styles.heading}>
@@ -725,7 +916,13 @@ function RunDetailContent({
           </Tag>
         </h1>
         <p>
-          {data.date} · {data.depth} 轮研究 · {safeDate(data.created_at)}
+          {data.date} ·{" "}
+          {manifest.isSuccess
+            ? runtimeResearch
+              ? "本地 Agent 独立研究"
+              : `${data.depth} 轮内置研究`
+            : "执行方式待确认"}{" "}
+          · {safeDate(data.created_at)}
         </p>
       </div>
       {(error || data.error) && (
@@ -762,21 +959,33 @@ function RunDetailContent({
                 取消任务
               </Button>
             )}
-            {["interrupted", "failed", "cancelled"].includes(data.status) && (
-              <Button
-                disabled={busy || !data.checkpoint}
-                onClick={() => {
-                  void action("resume");
-                }}
-              >
-                继续兼容检查点
-              </Button>
-            )}
+            {manifest.isSuccess &&
+              !runtimeResearch &&
+              ["interrupted", "failed", "cancelled"].includes(data.status) && (
+                <Button
+                  disabled={busy || !data.checkpoint}
+                  onClick={() => {
+                    void action("resume");
+                  }}
+                >
+                  继续兼容检查点
+                </Button>
+              )}
             <Dropdown
               menu={{
                 items: [
-                  { key: "current", label: "更新到今天，使用当前配置…" },
-                  { key: "original", label: "按原日期 / 原模板预填…" },
+                  {
+                    key: "current",
+                    label: runtimeResearch
+                      ? "更新到今天，核对 Runtime 配置…"
+                      : "更新到今天，使用当前配置…",
+                  },
+                  {
+                    key: "original",
+                    label: runtimeResearch
+                      ? "按原日期 / 原 Runtime 预填…"
+                      : "按原日期 / 原模板预填…",
+                  },
                 ],
                 onClick: ({ key }) => {
                   void navigate(
@@ -798,7 +1007,10 @@ function RunDetailContent({
                 ? "—"
                 : `${Math.floor(data.stats.elapsed_seconds)} 秒`,
             ],
-            ["累计模型请求", formattedNumber(data.stats?.llm_calls)],
+            [
+              "累计模型请求",
+              runtimeResearch ? "内部请求总数未知" : formattedNumber(data.stats?.llm_calls),
+            ],
             ["累计数据工具", formattedNumber(data.stats?.tool_calls)],
             [
               "已报告输入 Tokens",
@@ -817,7 +1029,9 @@ function RunDetailContent({
           ))}
         </div>
         <p className={styles.note}>
-          取消在可中止边界生效。恢复原研究与重新研究分开操作，检查点不兼容时会说明原因。
+          {runtimeResearch
+            ? "取消在可中止边界生效。当前不支持 Runtime 会话恢复；重新研究会创建新的任务。"
+            : "取消在可中止边界生效。恢复原研究与重新研究分开操作，检查点不兼容时会说明原因。"}
         </p>
         <p className={styles.note}>
           累计用量：{data.stats?.attempt_count ?? "未知"} 次尝试 ·{" "}
@@ -826,15 +1040,20 @@ function RunDetailContent({
             : data.stats?.usage_quality === "partial"
               ? "上游用量仅部分返回"
               : "上游用量完整性未知"}{" "}
-          · 不确定外部请求 {data.stats?.uncertain_calls ?? "未知"}
+          ·{" "}
+          {runtimeResearch
+            ? "内部模型请求数未知"
+            : `不确定外部请求 ${data.stats?.uncertain_calls ?? "未知"}`}
           。未知用量不等于零，不据此推算费用。
         </p>
         {data.stats?.current_attempt && (
           <p className={styles.note}>
-            当前尝试 #{data.stats.current_attempt.attempt_no ?? "未知"}：模型请求{" "}
-            {data.stats.current_attempt.llm_calls} · 工具 {data.stats.current_attempt.tool_calls} ·
-            已报告输入/输出Token {data.stats.current_attempt.tokens_in} /{" "}
-            {data.stats.current_attempt.tokens_out} · 耗时{" "}
+            当前尝试 #{data.stats.current_attempt.attempt_no ?? "未知"}：
+            {runtimeResearch
+              ? "内部模型请求数未知"
+              : `模型请求 ${data.stats.current_attempt.llm_calls}`}{" "}
+            · 工具 {data.stats.current_attempt.tool_calls} · 已报告输入/输出Token{" "}
+            {data.stats.current_attempt.tokens_in} / {data.stats.current_attempt.tokens_out} · 耗时{" "}
             {Math.floor(data.stats.current_attempt.elapsed_seconds)} 秒；上方数字为跨尝试累计。
           </p>
         )}
@@ -843,8 +1062,10 @@ function RunDetailContent({
           {objectiveChoices.find((item) => item.value === data.objective)?.label ??
             "历史未记录"} ·{" "}
           {horizonChoices.find((item) => item.value === data.horizon)?.label ?? "期限未记录"} ·
-          模型请求上限 {data.max_llm_calls ?? "历史未记录"} / 执行时长{" "}
-          {data.max_runtime_seconds ?? "历史未记录"} 秒。
+          {runtimeResearch
+            ? `金融工具上限 ${(manifest.data?.request as RuntimeResearchRequest | undefined)?.max_tool_calls ?? "历史未记录"}`
+            : `模型请求上限 ${data.max_llm_calls ?? "历史未记录"}`}{" "}
+          / 执行时长 {data.max_runtime_seconds ?? "历史未记录"} 秒。
         </p>
       </section>
       <section className={styles.panel}>
@@ -900,7 +1121,9 @@ function RunDetailContent({
                       </p>
                     )}
                     <section>
-                      <h3>已保存的最终决策 · 模型原文</h3>
+                      <h3>
+                        {runtimeResearch ? "已保存的Agent原始结论" : "已保存的最终决策 · 模型原文"}
+                      </h3>
                       <p className={styles.muted}>
                         原文中的评级、价位和仓位需结合上方独立数据资格判断；保留文本不表示其已通过验证。
                       </p>
@@ -914,7 +1137,11 @@ function RunDetailContent({
                     </section>
                     <section>
                       <h3>模型与配置来源</h3>
-                      <p>{modelBindingSummary(modelsFromManifest(manifest.data))}</p>
+                      <p>
+                        {runtimeResearch
+                          ? `${runtimeSummary.name ?? "运行环境未知"} / 请求模型：${runtimeSummary.model ?? "未知"}`
+                          : modelBindingSummary(modelsFromManifest(manifest.data))}
+                      </p>
                       <p className={styles.muted}>
                         历史配置只读自本次运行清单；缺失信息保持未知。数据覆盖与原始证据尚未汇总时，请结合阶段报告和运行配置核查。
                       </p>
@@ -950,8 +1177,22 @@ function RunDetailContent({
               },
               {
                 key: "workflow",
-                label: "研究决策路径",
-                children: (
+                label: runtimeResearch ? "Agent 执行路径" : "研究决策路径",
+                children: manifest.isError ? (
+                  <Alert
+                    showIcon
+                    type="warning"
+                    title="执行方式暂时无法确认，请刷新运行配置后重试。"
+                  />
+                ) : !manifest.data ? (
+                  <Spin />
+                ) : runtimeResearch ? (
+                  <RuntimeExecutionPanel
+                    run={data}
+                    manifest={manifest.data}
+                    events={active ? events.events : []}
+                  />
+                ) : (
                   <ResearchWorkflow
                     bootstrap={bootstrap}
                     run={data}
@@ -994,13 +1235,20 @@ function RunDetailContent({
                   <Collapse
                     items={keys.map((key) => ({
                       key,
-                      label: reportLabels[key] ?? key,
+                      label:
+                        runtimeResearch && key === "final_trade_decision"
+                          ? "Agent原始结论"
+                          : (reportLabels[key] ?? key),
                       children: <pre className={styles.reportText}>{reports[key]}</pre>,
                     }))}
                     defaultActiveKey={["final_trade_decision", "investment_plan"]}
                   />
                 ) : (
-                  <p className={styles.muted}>等待分析师提交报告，完成的章节会逐步出现。</p>
+                  <p className={styles.muted}>
+                    {runtimeResearch
+                      ? "等待 Agent 保存研究报告，已有产出会逐步显示。"
+                      : "等待分析师提交报告，完成的章节会逐步出现。"}
+                  </p>
                 ),
               },
               {
@@ -1022,12 +1270,12 @@ function RunDetailContent({
                 label: "执行动态",
                 children: (
                   <div className={styles.eventLog}>
-                    {events.events.length
+                    {active && events.events.length
                       ? events.events.map((event) => (
                           <div key={event.event_id}>
                             <time>{safeDate(event.timestamp)}</time>
                             <span>
-                              {event.type === "progress"
+                              {event.type === "progress" || event.type === "runtime"
                                 ? event.payload.label
                                 : event.type === "report"
                                   ? `${reportLabels[event.payload.section] ?? event.payload.section}已更新`

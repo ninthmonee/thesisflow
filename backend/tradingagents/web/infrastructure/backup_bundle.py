@@ -182,6 +182,7 @@ def restore_bundle(bundle, destination):
                 "model_profiles": "test_status='untested',tested_at=NULL,config_hash=NULL",
                 "research_data_connections": "credential_ref=NULL,user_agent_ref=NULL,credential_source='keychain',enabled=0,test_status='untested',tested_at=NULL,revision=revision+1",
                 "market_data_connections": "credential_ref='rebind-required',secondary_credential_ref=NULL,enabled=0,test_results='{}',tested_at=NULL,revision=revision+1",
+                "agent_runtime_connections": "enabled=0,readiness='stale',probe_result='{}',checked_at=NULL,revision=revision+1",
             }
             for table, assignments in reset.items():
                 if table in tables:

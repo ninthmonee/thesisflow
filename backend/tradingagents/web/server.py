@@ -605,6 +605,7 @@ def create_app(
     research_data_tester=None,
     durable_research: bool = False,
     authentication_required: bool = True,
+    runtime_probe=None,
 ) -> FastAPI:
     # The supported account mode always uses the scoped persistent queue.
     # Explicit legacy mode is retained for offline compatibility tests only.
@@ -629,6 +630,7 @@ def create_app(
     )
     from tradingagents.web.application.research_evidence import ResearchEvidenceStore
     from tradingagents.web.application.runtime import create_selection_resolver
+    from tradingagents.web.application.runtime_connections import RuntimeConnectionService
     from tradingagents.web.application.runtime_readiness import RuntimeReadinessService
     from tradingagents.web.application.themes import ThemesService
     from tradingagents.web.application.tracking import WatchlistTrackingService
@@ -719,7 +721,14 @@ def create_app(
 
     def select_models(request):
         bundle = scoped_services()
-        chosen = dict(bundle.resolve_models(request))
+        if request.execution_mode == "local_agent":
+            from tradingagents.web.domain.agent_research import EXECUTOR_VERSION, evidence_policy
+
+            chosen = {"execution_mode": "local_agent", "executor_version": EXECUTOR_VERSION,
+                "runtime_snapshot": bundle.runtime_service.freeze_for_run(request.runtime_connection_id),
+                "evidence_policy": evidence_policy(request.objective)}
+        else:
+            chosen = dict(bundle.resolve_models(request))
         chosen["context_inputs"] = bundle.research_context_service.freeze(
             request.context_ids, ticker=request.ticker, analysis_date=request.date
         )
@@ -756,6 +765,7 @@ def create_app(
     data_service.apply_saved_settings()
 
     local_services = SimpleNamespace(
+        runtime_service=RuntimeConnectionService(database, workspace, secret_store=secret_store, probe=runtime_probe),
         model_service=model_service, watchlist_service=watchlist_service,
         research_service=research_service, research_data_service=research_data_service,
         research_evidence_service=research_evidence_service, readiness_service=readiness_service,
@@ -771,6 +781,7 @@ def create_app(
         model_tester=model_tester, instrument_search=instrument_search, market_provider=market_provider,
         market_clock=market_clock, alternative_providers=alternative_providers,
         research_data_tester=research_data_tester,
+        runtime_probe=runtime_probe,
     ))
 
     def current_scope():
@@ -876,6 +887,7 @@ def create_app(
     app.state.store = store
     app.state.database = database
     app.state.model_service = model_service
+    app.state.runtime_service = local_services.runtime_service
     app.state.watchlist_service = watchlist_service
     app.state.research_service = research_service
     app.state.research_evidence_service = research_evidence_service
@@ -929,6 +941,7 @@ def create_app(
             viewpoint_service_reader=lambda: scoped_services().viewpoint_service,
             professional_pulse_service_reader=lambda: scoped_services().professional_pulse_service,
             authentication_service_reader=(lambda: authentication) if authentication_required else None,
+            runtime_service_reader=lambda: scoped_services().runtime_service,
         )
     )
     if authentication_required:

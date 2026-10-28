@@ -62,6 +62,7 @@ def create_runtime_resolver(
 
     def resolve(manifest: Mapping[str, Any], *, callbacks=None) -> dict:
         selection = manifest.get("selection", {})
+        external = selection.get("execution_mode") == "local_agent"
         workspace = LocalWorkspace(
             user_id=manifest["owner_id"],
             workspace_id=manifest["workspace_id"],
@@ -76,7 +77,7 @@ def create_runtime_resolver(
         # endpoints, keys, headers and local paths never become their graph config.
         config = (
             {key: deepcopy(value) for key, value in baseline.items() if key in SAFE_RUNTIME_KEYS}
-            if "model_snapshot" in selection else deepcopy(baseline)
+            if "model_snapshot" in selection or external else deepcopy(baseline)
         )
         frozen = manifest.get("runtime", {})
         config.update(
@@ -89,7 +90,7 @@ def create_runtime_resolver(
             max_risk_discuss_rounds=request.get("depth", 1),
             checkpoint_enabled=bool(request.get("checkpoint", True)),
         )
-        if "model_snapshot" not in selection and requires_explicit_model_binding(database):
+        if not external and "model_snapshot" not in selection and requires_explicit_model_binding(database):
             raise ModelConfigurationError(
                 "recovery_credentials_rebind_required", "恢复的旧本机授权任务不能自动复用账号，请配置模型模板后重新研究。", 409
             )
@@ -107,6 +108,8 @@ def create_runtime_resolver(
                     "research_data_configuration_changed", "旧研究未冻结数据配置，请重新研究", 409
                 )
         config["__data_connection_resolver"] = data_service.build_runtime_resolver(frozen_data)
+        if external:
+            return config
         if "model_snapshot" in selection:
             snapshot = deepcopy(selection["model_snapshot"])
             if (

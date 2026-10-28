@@ -12,6 +12,7 @@ import tradingagents
 from tradingagents.agents.context import build_instrument_context, resolve_instrument_identity
 from tradingagents.agents.rating import run_rating
 from tradingagents.agents.research_intent import (
+    investment_system_context,
     research_holding_context,
     research_intent_context,
     supplemental_research_context,
@@ -320,6 +321,7 @@ class TradingAgentsGraph:
         request = getattr(self, "config", {}).get("research_request")
         instrument_context = self.resolve_instrument_context(company_name, asset_type, trade_date)
         instrument_context += research_intent_context(request)
+        instrument_context += investment_system_context(getattr(self, "config", {}).get("investment_system_prompt"))
         instrument_context += supplemental_research_context(getattr(self, "config", {}).get("research_context"))
         return self.propagator.create_initial_state(
             company_name,

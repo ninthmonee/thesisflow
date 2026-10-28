@@ -58,6 +58,7 @@ import { ResearchEvidencePanel } from "./research-evidence";
 import { ResearchContextPicker } from "./research-context";
 import { ResearchViewpoints } from "./research-viewpoints";
 import { ResearchComparisonPanel } from "./research-comparison";
+import { InvestmentResearchFields, InvestmentRunPanel } from "./investment-research";
 import { useAuth } from "../auth/auth-context";
 import { listRuntimeConnections } from "../runtimes/runtime-api";
 import { isRuntimeResearch, runtimeManifestSummary, runtimeReady } from "../runtimes/runtime-state";
@@ -121,6 +122,7 @@ const reportLabels: Record<string, string> = {
   conservative_history: "保守风险观点",
   final_trade_decision: "最终决策",
   memory_note: "历史经验状态",
+  investment_system_checklist: "投资体系 · 六问与纪律",
   runtime_summary: "Agent研究概览",
   runtime_analysis: "Agent研究分析",
   runtime_bull_case: "Agent多头观点",
@@ -170,6 +172,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
     [contextWarning, setContextWarning] = useState(urlContexts.warning);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState<string>();
+  const [investmentReady, setInvestmentReady] = useState(false);
   const idempotency = useRef<{ fingerprint: string; key: string } | undefined>(undefined);
   const presetApplied = useRef(false);
   const workflowAnchor = useRef<HTMLDivElement>(null);
@@ -322,7 +325,8 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
     if (queryTicker && !fromRun) form.setFieldValue("ticker", queryTicker.toUpperCase());
   }, [queryTicker, fromRun, form]);
   async function submit(values: RuntimeResearchRequest) {
-    if (sourceLoading || sourceError || !contextReady || !executionReady) return;
+    if (sourceLoading || sourceError || !contextReady || !executionReady || !investmentReady)
+      return;
     const body = researchRequest({ ...values, context_ids: contextIds });
     const fingerprint = JSON.stringify([scope, body]);
     if (idempotency.current?.fingerprint !== fingerprint)
@@ -430,8 +434,10 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                 checkpoint: !initialRuntimeMode,
                 template_version_id: fromRun ? undefined : CURRENT_MODEL_CONFIGURATION,
                 objective: "general",
-                horizon: "medium",
+                horizon: "long",
                 holding_state: "unknown",
+                apply_investment_system: true,
+                investment_plan_id: fromRun ? null : search.get("investment_plan_id"),
                 max_llm_calls: 80,
                 max_runtime_seconds: 1800,
                 max_tool_calls: 40,
@@ -628,6 +634,13 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                   <Checkbox>保存检查点，允许兼容状态恢复</Checkbox>
                 </Form.Item>
               )}
+              <InvestmentResearchFields
+                form={form}
+                scope={scope}
+                ticker={selectedTicker ?? ""}
+                analysisDate={selectedDate ?? ""}
+                onReady={setInvestmentReady}
+              />
               {localAgent && (
                 <Alert
                   showIcon
@@ -721,7 +734,13 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                 type="primary"
                 htmlType="submit"
                 loading={busy}
-                disabled={sourceLoading || sourceError || !contextReady || !executionReady}
+                disabled={
+                  sourceLoading ||
+                  sourceError ||
+                  !contextReady ||
+                  !executionReady ||
+                  !investmentReady
+                }
               >
                 {localAgent ? "启动本地 Agent 研究" : "启动 TradingAgents 分析"}
               </Button>
@@ -1215,6 +1234,11 @@ function RunDetailContent({
                 key: "viewpoints",
                 label: "我的观点与复核",
                 children: <ResearchViewpoints scope={scope} run={data} />,
+              },
+              {
+                key: "investment-system",
+                label: "投资体系与纪律",
+                children: <InvestmentRunPanel manifest={manifest.data} run={data} />,
               },
               {
                 key: "comparison",

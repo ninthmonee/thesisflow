@@ -21,6 +21,7 @@ export interface CreateResearchRequest {
      * @maxItems 4
      */
   analysts?: CreateResearchRequestAnalystsItem[];
+  apply_investment_system?: boolean;
   checkpoint?: boolean | null;
   /** @maxItems 5 */
   context_ids?: string[];
@@ -34,6 +35,7 @@ export interface CreateResearchRequest {
   execution_mode?: CreateResearchRequestExecutionMode;
   holding_state?: CreateResearchRequestHoldingState;
   horizon?: CreateResearchRequestHorizon;
+  investment_plan_id?: string | null;
   language?: CreateResearchRequestLanguage;
   /**
      * @minimum 1

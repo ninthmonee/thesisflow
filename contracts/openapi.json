@@ -1541,6 +1541,11 @@
             "title": "Analysts",
             "type": "array"
           },
+          "apply_investment_system": {
+            "default": false,
+            "title": "Apply Investment System",
+            "type": "boolean"
+          },
           "checkpoint": {
             "anyOf": [
               {
@@ -1606,6 +1611,19 @@
             ],
             "title": "Horizon",
             "type": "string"
+          },
+          "investment_plan_id": {
+            "anyOf": [
+              {
+                "maxLength": 36,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Investment Plan Id"
           },
           "language": {
             "default": "Chinese",
@@ -2788,6 +2806,1468 @@
           "timezone"
         ],
         "title": "InstrumentResponse",
+        "type": "object"
+      },
+      "InvestmentActionRules": {
+        "additionalProperties": false,
+        "properties": {
+          "add": {
+            "default": "新证据支持原假设且价格与组合风险仍符合规则时，才考虑分批加仓。",
+            "maxLength": 4000,
+            "title": "Add",
+            "type": "string"
+          },
+          "buy": {
+            "default": "先完成周期、公司质量、估值和风险检查；满足自己的条件后分批建仓。",
+            "maxLength": 4000,
+            "title": "Buy",
+            "type": "string"
+          },
+          "exit": {
+            "default": "核心假设失效、风险越过本人边界或机会成本变化时，按预先记录的条件退出。",
+            "maxLength": 4000,
+            "title": "Exit",
+            "type": "string"
+          },
+          "reduce": {
+            "default": "估值过高、集中度超限、现金需求变化或证据减弱时，复核并考虑减仓。",
+            "maxLength": 4000,
+            "title": "Reduce",
+            "type": "string"
+          },
+          "review": {
+            "default": "定期核对证据、估值、仓位与错误；分别记录判断质量、执行纪律与结果。",
+            "maxLength": 4000,
+            "title": "Review",
+            "type": "string"
+          }
+        },
+        "title": "InvestmentActionRules",
+        "type": "object"
+      },
+      "InvestmentEvaluation": {
+        "additionalProperties": false,
+        "properties": {
+          "bear_return_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bear Return Pct"
+          },
+          "bull_return_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bull Return Pct"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/InvestmentRuleCheck"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "eligible_for_rating": {
+            "const": false,
+            "default": false,
+            "title": "Eligible For Rating",
+            "type": "boolean"
+          },
+          "gross_expected_return_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Expected Return Pct"
+          },
+          "margin_of_safety_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Of Safety Pct"
+          },
+          "net_expected_return_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Expected Return Pct"
+          },
+          "notices": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Notices",
+            "type": "array"
+          },
+          "planned_cash_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned Cash Pct"
+          },
+          "planned_cash_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planned Cash Usd"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/InvestmentQuestion"
+            },
+            "title": "Questions",
+            "type": "array"
+          },
+          "reward_risk_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reward Risk Ratio"
+          },
+          "scenario_portfolio_loss_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario Portfolio Loss Pct"
+          },
+          "scope_notice": {
+            "default": "仅按用户自填假设计算纪律与情景；不验证公允价值、概率或盈利能力，不构成买卖判断或执行交易。",
+            "title": "Scope Notice",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "incomplete",
+              "breach",
+              "within_configured_limits"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "stop_reference_loss_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Reference Loss Pct"
+          },
+          "zero_value_portfolio_loss_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zero Value Portfolio Loss Pct"
+          }
+        },
+        "required": [
+          "status",
+          "checks",
+          "questions",
+          "notices"
+        ],
+        "title": "InvestmentEvaluation",
+        "type": "object"
+      },
+      "InvestmentPlanList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InvestmentPlanView"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "InvestmentPlanList",
+        "type": "object"
+      },
+      "InvestmentPlanUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "action_rules": {
+            "$ref": "#/components/schemas/InvestmentActionRules"
+          },
+          "analysis_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Analysis Date",
+            "type": "string"
+          },
+          "business": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Business",
+            "type": "string"
+          },
+          "entry_price": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Price"
+          },
+          "estimated_cost_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Cost Pct"
+          },
+          "evidence_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Evidence Notes",
+            "type": "string"
+          },
+          "fair_value": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fair Value"
+          },
+          "industry_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Industry Cycle",
+            "type": "string"
+          },
+          "invalidation": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Invalidation",
+            "type": "string"
+          },
+          "macro_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Macro Cycle",
+            "type": "string"
+          },
+          "mark_reviewed": {
+            "default": false,
+            "title": "Mark Reviewed",
+            "type": "boolean"
+          },
+          "moat": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Moat",
+            "type": "string"
+          },
+          "quality": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Quality",
+            "type": "string"
+          },
+          "rebase_policy": {
+            "default": false,
+            "title": "Rebase Policy",
+            "type": "boolean"
+          },
+          "review_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Review Notes",
+            "type": "string"
+          },
+          "review_on": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review On"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "risk_inputs": {
+            "$ref": "#/components/schemas/InvestmentRiskInputs"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "scenarios": {
+            "$ref": "#/components/schemas/InvestmentScenarios"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "watching",
+              "holding",
+              "reviewed",
+              "archived"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "stop_loss_price": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Loss Price"
+          },
+          "theme": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Theme",
+            "type": "string"
+          },
+          "ticker": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Ticker",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Title",
+            "type": "string"
+          },
+          "valuation": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Valuation",
+            "type": "string"
+          },
+          "valuation_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Valuation Cycle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "analysis_date",
+          "revision"
+        ],
+        "title": "InvestmentPlanUpdate",
+        "type": "object"
+      },
+      "InvestmentPlanView": {
+        "additionalProperties": false,
+        "properties": {
+          "action_rules": {
+            "$ref": "#/components/schemas/InvestmentActionRules"
+          },
+          "analysis_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Analysis Date",
+            "type": "string"
+          },
+          "business": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Business",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "entry_price": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Price"
+          },
+          "estimated_cost_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Cost Pct"
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/InvestmentEvaluation"
+          },
+          "evidence_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Evidence Notes",
+            "type": "string"
+          },
+          "fair_value": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fair Value"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "industry_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Industry Cycle",
+            "type": "string"
+          },
+          "invalidation": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Invalidation",
+            "type": "string"
+          },
+          "macro_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Macro Cycle",
+            "type": "string"
+          },
+          "moat": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Moat",
+            "type": "string"
+          },
+          "policy_snapshot": {
+            "$ref": "#/components/schemas/InvestmentPolicyView"
+          },
+          "quality": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Quality",
+            "type": "string"
+          },
+          "review_due": {
+            "title": "Review Due",
+            "type": "boolean"
+          },
+          "review_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Review Notes",
+            "type": "string"
+          },
+          "review_on": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review On"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "risk_inputs": {
+            "$ref": "#/components/schemas/InvestmentRiskInputs"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "scenarios": {
+            "$ref": "#/components/schemas/InvestmentScenarios"
+          },
+          "scope_notice": {
+            "default": "用户手动维护的研究与决策记录；holding为本人标签，不代表已连接券商或核实真实持仓。",
+            "title": "Scope Notice",
+            "type": "string"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "watching",
+              "holding",
+              "reviewed",
+              "archived"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "stop_loss_price": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Loss Price"
+          },
+          "theme": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Theme",
+            "type": "string"
+          },
+          "ticker": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Ticker",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "valuation": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Valuation",
+            "type": "string"
+          },
+          "valuation_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Valuation Cycle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "analysis_date",
+          "id",
+          "revision",
+          "policy_snapshot",
+          "evaluation",
+          "review_due",
+          "reviewed_at",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "InvestmentPlanView",
+        "type": "object"
+      },
+      "InvestmentPlanWrite": {
+        "additionalProperties": false,
+        "properties": {
+          "action_rules": {
+            "$ref": "#/components/schemas/InvestmentActionRules"
+          },
+          "analysis_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Analysis Date",
+            "type": "string"
+          },
+          "business": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Business",
+            "type": "string"
+          },
+          "entry_price": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Price"
+          },
+          "estimated_cost_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Cost Pct"
+          },
+          "evidence_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Evidence Notes",
+            "type": "string"
+          },
+          "fair_value": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fair Value"
+          },
+          "industry_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Industry Cycle",
+            "type": "string"
+          },
+          "invalidation": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Invalidation",
+            "type": "string"
+          },
+          "macro_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Macro Cycle",
+            "type": "string"
+          },
+          "moat": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Moat",
+            "type": "string"
+          },
+          "quality": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Quality",
+            "type": "string"
+          },
+          "review_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Review Notes",
+            "type": "string"
+          },
+          "review_on": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review On"
+          },
+          "risk_inputs": {
+            "$ref": "#/components/schemas/InvestmentRiskInputs"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "scenarios": {
+            "$ref": "#/components/schemas/InvestmentScenarios"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "watching",
+              "holding",
+              "reviewed",
+              "archived"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "stop_loss_price": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 1e-06,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Loss Price"
+          },
+          "theme": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Theme",
+            "type": "string"
+          },
+          "ticker": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Ticker",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Title",
+            "type": "string"
+          },
+          "valuation": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Valuation",
+            "type": "string"
+          },
+          "valuation_cycle": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Valuation Cycle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "analysis_date"
+        ],
+        "title": "InvestmentPlanWrite",
+        "type": "object"
+      },
+      "InvestmentPolicyUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "action_rules": {
+            "$ref": "#/components/schemas/InvestmentActionRules"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "life_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Life Notes",
+            "type": "string"
+          },
+          "name": {
+            "default": "我的投资体系",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "objective": {
+            "default": "长期可持续的财富增长",
+            "maxLength": 2000,
+            "title": "Objective",
+            "type": "string"
+          },
+          "principles": {
+            "$ref": "#/components/schemas/InvestmentPrinciples"
+          },
+          "review_interval_days": {
+            "anyOf": [
+              {
+                "maximum": 3650.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Interval Days"
+          },
+          "revision": {
+            "minimum": 0.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "risk_limits": {
+            "$ref": "#/components/schemas/InvestmentRiskLimits"
+          },
+          "style": {
+            "default": "long_term",
+            "enum": [
+              "long_term",
+              "left_side",
+              "trend",
+              "swing"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "tax_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Tax Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "title": "InvestmentPolicyUpdate",
+        "type": "object"
+      },
+      "InvestmentPolicyView": {
+        "additionalProperties": false,
+        "properties": {
+          "action_rules": {
+            "$ref": "#/components/schemas/InvestmentActionRules"
+          },
+          "enabled": {
+            "default": true,
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "life_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Life Notes",
+            "type": "string"
+          },
+          "name": {
+            "default": "我的投资体系",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "objective": {
+            "default": "长期可持续的财富增长",
+            "maxLength": 2000,
+            "title": "Objective",
+            "type": "string"
+          },
+          "principles": {
+            "$ref": "#/components/schemas/InvestmentPrinciples"
+          },
+          "review_interval_days": {
+            "anyOf": [
+              {
+                "maximum": 3650.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review Interval Days"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "risk_limits": {
+            "$ref": "#/components/schemas/InvestmentRiskLimits"
+          },
+          "saved": {
+            "title": "Saved",
+            "type": "boolean"
+          },
+          "scope_notice": {
+            "default": "个人可编辑的投资纪律；空阈值表示尚未设置，不等于无限风险或已通过检查。",
+            "title": "Scope Notice",
+            "type": "string"
+          },
+          "style": {
+            "default": "long_term",
+            "enum": [
+              "long_term",
+              "left_side",
+              "trend",
+              "swing"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "tax_notes": {
+            "default": "",
+            "maxLength": 4000,
+            "title": "Tax Notes",
+            "type": "string"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "revision",
+          "saved"
+        ],
+        "title": "InvestmentPolicyView",
+        "type": "object"
+      },
+      "InvestmentPrinciples": {
+        "additionalProperties": false,
+        "properties": {
+          "cycles": {
+            "default": "先研究宏观、行业与估值周期，再选资产；记录证据、阶段判断和相反信号。",
+            "maxLength": 4000,
+            "title": "Cycles",
+            "type": "string"
+          },
+          "discipline": {
+            "default": "选择适合自己的长期、左侧、趋势或波段方法；遵守买入、加仓、减仓、退出与复盘规则。",
+            "maxLength": 4000,
+            "title": "Discipline",
+            "type": "string"
+          },
+          "goal": {
+            "default": "长期财富增长；先活下来，再追求收益，让本金、收益与时间共同积累。",
+            "maxLength": 4000,
+            "title": "Goal",
+            "type": "string"
+          },
+          "life": {
+            "default": "投资服务于生活；确定支出、生活现金、税务、流动性与资产分散优先于高波动投资。",
+            "maxLength": 4000,
+            "title": "Life",
+            "type": "string"
+          },
+          "probability": {
+            "default": "用概率和情景代替确定预测；判断正确时多赚，错误时少亏，持续检验期望值。",
+            "maxLength": 4000,
+            "title": "Probability",
+            "type": "string"
+          },
+          "quality": {
+            "default": "好赛道与好公司：核查持续增长、自由现金流、护城河、定价权、管理层及行业地位。",
+            "maxLength": 4000,
+            "title": "Quality",
+            "type": "string"
+          },
+          "sizing": {
+            "default": "分批建仓，控制单股和主题集中度，保留现金；先问判断错误会亏多少。",
+            "maxLength": 4000,
+            "title": "Sizing",
+            "type": "string"
+          },
+          "valuation": {
+            "default": "好公司也要好价格；分别判断质量、估值与安全边际，为错误留出空间。",
+            "maxLength": 4000,
+            "title": "Valuation",
+            "type": "string"
+          }
+        },
+        "title": "InvestmentPrinciples",
+        "type": "object"
+      },
+      "InvestmentQuestion": {
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "title": "Answer",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "recorded",
+              "missing"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "question",
+          "status",
+          "answer"
+        ],
+        "title": "InvestmentQuestion",
+        "type": "object"
+      },
+      "InvestmentRiskInputs": {
+        "additionalProperties": false,
+        "properties": {
+          "available_cash_usd": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available Cash Usd"
+          },
+          "capital_total_usd": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capital Total Usd"
+          },
+          "current_drawdown_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Drawdown Pct"
+          },
+          "current_position_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Position Pct"
+          },
+          "current_theme_exposure_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Theme Exposure Pct"
+          },
+          "essential_cash_usd": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Essential Cash Usd"
+          },
+          "target_position_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Position Pct"
+          },
+          "target_theme_exposure_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Theme Exposure Pct"
+          },
+          "unlevered_long_only": {
+            "default": true,
+            "title": "Unlevered Long Only",
+            "type": "boolean"
+          }
+        },
+        "title": "InvestmentRiskInputs",
+        "type": "object"
+      },
+      "InvestmentRiskLimits": {
+        "additionalProperties": false,
+        "properties": {
+          "max_drawdown_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown Pct"
+          },
+          "max_loss_per_idea_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Loss Per Idea Pct"
+          },
+          "max_single_position_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Single Position Pct"
+          },
+          "max_theme_exposure_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Theme Exposure Pct"
+          },
+          "min_cash_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Cash Pct"
+          },
+          "min_reward_risk": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1000.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Reward Risk"
+          },
+          "minimum_margin_of_safety_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minimum Margin Of Safety Pct"
+          }
+        },
+        "title": "InvestmentRiskLimits",
+        "type": "object"
+      },
+      "InvestmentRuleCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "actual": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "within_limit",
+              "breach",
+              "unknown",
+              "not_applicable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "status",
+          "message"
+        ],
+        "title": "InvestmentRuleCheck",
+        "type": "object"
+      },
+      "InvestmentScenario": {
+        "additionalProperties": false,
+        "properties": {
+          "probability_pct": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Probability Pct"
+          },
+          "target_price": {
+            "anyOf": [
+              {
+                "maximum": 1000000000000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Price"
+          },
+          "thesis": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Thesis",
+            "type": "string"
+          }
+        },
+        "title": "InvestmentScenario",
+        "type": "object"
+      },
+      "InvestmentScenarios": {
+        "additionalProperties": false,
+        "properties": {
+          "base": {
+            "$ref": "#/components/schemas/InvestmentScenario"
+          },
+          "bear": {
+            "$ref": "#/components/schemas/InvestmentScenario"
+          },
+          "bull": {
+            "$ref": "#/components/schemas/InvestmentScenario"
+          }
+        },
+        "title": "InvestmentScenarios",
         "type": "object"
       },
       "LegacyDataSourceStatus": {
@@ -12611,6 +14091,515 @@
         "tags": [
           "system",
           "watchlists"
+        ]
+      }
+    },
+    "/api/v1/investment-plans": {
+      "get": {
+        "operationId": "listInvestmentPlans",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ticker",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ticker"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentPlanList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Plans",
+        "tags": [
+          "system",
+          "investment-system"
+        ]
+      },
+      "post": {
+        "operationId": "createInvestmentPlan",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentPlanWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentPlanView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Create Plan",
+        "tags": [
+          "system",
+          "investment-system"
+        ]
+      }
+    },
+    "/api/v1/investment-plans/{plan_id}": {
+      "get": {
+        "operationId": "getInvestmentPlan",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentPlanView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Plan",
+        "tags": [
+          "system",
+          "investment-system"
+        ]
+      },
+      "patch": {
+        "operationId": "updateInvestmentPlan",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Plan Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentPlanUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentPlanView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Update Plan",
+        "tags": [
+          "system",
+          "investment-system"
+        ]
+      }
+    },
+    "/api/v1/investment-policy": {
+      "get": {
+        "operationId": "getInvestmentPolicy",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentPolicyView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Policy",
+        "tags": [
+          "system",
+          "investment-system"
+        ]
+      },
+      "put": {
+        "operationId": "updateInvestmentPolicy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentPolicyUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvestmentPolicyView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Update Policy",
+        "tags": [
+          "system",
+          "investment-system"
         ]
       }
     },

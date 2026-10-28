@@ -8,6 +8,11 @@ from .auth_models import (
     AuthenticationSettingsRecord,
 )
 from .data_settings_model import DataSettingsRecord
+from .investment_models import (
+    InvestmentPlanRecord,
+    InvestmentPolicyRecord,
+    InvestmentPolicyVersionRecord,
+)
 from .models import Base
 from .research_data_model import ResearchDataConnectionRecord
 from .runtime_models import AgentRuntimeConnection
@@ -23,6 +28,9 @@ __all__ = [
     "AuthenticationRateLimitRecord",
     "AuthenticationSettingsRecord",
     "DataSettingsRecord",
+    "InvestmentPlanRecord",
+    "InvestmentPolicyRecord",
+    "InvestmentPolicyVersionRecord",
     "AlternativeDataConnection",
     "ResearchDataConnectionRecord",
     "AgentRuntimeConnection",

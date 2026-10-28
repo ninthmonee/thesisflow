@@ -707,6 +707,2124 @@ export const SearchInstrumentsResponse = zod.object({
 
 
 /**
+ * @summary Plans
+ */
+export const listInvestmentPlansQueryTickerOneMax = 32;
+
+export const listInvestmentPlansQueryIncludeArchivedDefault = false;
+
+export const ListInvestmentPlansQueryParams = zod.object({
+  "ticker": zod.union([zod.string().max(listInvestmentPlansQueryTickerOneMax),zod.null()]).optional(),
+  "include_archived": zod.boolean().default(listInvestmentPlansQueryIncludeArchivedDefault)
+})
+
+export const listInvestmentPlansResponseItemsItemActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const listInvestmentPlansResponseItemsItemActionRulesAddMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const listInvestmentPlansResponseItemsItemActionRulesBuyMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const listInvestmentPlansResponseItemsItemActionRulesExitMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const listInvestmentPlansResponseItemsItemActionRulesReduceMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const listInvestmentPlansResponseItemsItemActionRulesReviewMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemAnalysisDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const listInvestmentPlansResponseItemsItemBusinessDefault = ``;
+export const listInvestmentPlansResponseItemsItemBusinessMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemEntryPriceOneMin = 0.000001;
+export const listInvestmentPlansResponseItemsItemEntryPriceOneMax = 1000000000000;
+
+export const listInvestmentPlansResponseItemsItemEstimatedCostPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemEstimatedCostPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemEvaluationEligibleForRatingDefault = false;
+export const listInvestmentPlansResponseItemsItemEvaluationScopeNoticeDefault = `\u4EC5\u6309\u7528\u6237\u81EA\u586B\u5047\u8BBE\u8BA1\u7B97\u7EAA\u5F8B\u4E0E\u60C5\u666F\uFF1B\u4E0D\u9A8C\u8BC1\u516C\u5141\u4EF7\u503C\u3001\u6982\u7387\u6216\u76C8\u5229\u80FD\u529B\uFF0C\u4E0D\u6784\u6210\u4E70\u5356\u5224\u65AD\u6216\u6267\u884C\u4EA4\u6613\u3002`;
+export const listInvestmentPlansResponseItemsItemEvidenceNotesDefault = ``;
+export const listInvestmentPlansResponseItemsItemEvidenceNotesMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemFairValueOneMin = 0.000001;
+export const listInvestmentPlansResponseItemsItemFairValueOneMax = 1000000000000;
+
+export const listInvestmentPlansResponseItemsItemIndustryCycleDefault = ``;
+export const listInvestmentPlansResponseItemsItemIndustryCycleMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemInvalidationDefault = ``;
+export const listInvestmentPlansResponseItemsItemInvalidationMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemMacroCycleDefault = ``;
+export const listInvestmentPlansResponseItemsItemMacroCycleMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemMoatDefault = ``;
+export const listInvestmentPlansResponseItemsItemMoatMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesAddMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesBuyMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesExitMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReduceMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReviewMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotEnabledDefault = true;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotLifeNotesDefault = ``;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotLifeNotesMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotNameDefault = `\u6211\u7684\u6295\u8D44\u4F53\u7CFB`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotNameMax = 120;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotObjectiveDefault = `\u957F\u671F\u53EF\u6301\u7EED\u7684\u8D22\u5BCC\u589E\u957F`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotObjectiveMax = 2000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesCyclesDefault = `\u5148\u7814\u7A76\u5B8F\u89C2\u3001\u884C\u4E1A\u4E0E\u4F30\u503C\u5468\u671F\uFF0C\u518D\u9009\u8D44\u4EA7\uFF1B\u8BB0\u5F55\u8BC1\u636E\u3001\u9636\u6BB5\u5224\u65AD\u548C\u76F8\u53CD\u4FE1\u53F7\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesCyclesMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesDisciplineDefault = `\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u957F\u671F\u3001\u5DE6\u4FA7\u3001\u8D8B\u52BF\u6216\u6CE2\u6BB5\u65B9\u6CD5\uFF1B\u9075\u5B88\u4E70\u5165\u3001\u52A0\u4ED3\u3001\u51CF\u4ED3\u3001\u9000\u51FA\u4E0E\u590D\u76D8\u89C4\u5219\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesDisciplineMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesGoalDefault = `\u957F\u671F\u8D22\u5BCC\u589E\u957F\uFF1B\u5148\u6D3B\u4E0B\u6765\uFF0C\u518D\u8FFD\u6C42\u6536\u76CA\uFF0C\u8BA9\u672C\u91D1\u3001\u6536\u76CA\u4E0E\u65F6\u95F4\u5171\u540C\u79EF\u7D2F\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesGoalMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesLifeDefault = `\u6295\u8D44\u670D\u52A1\u4E8E\u751F\u6D3B\uFF1B\u786E\u5B9A\u652F\u51FA\u3001\u751F\u6D3B\u73B0\u91D1\u3001\u7A0E\u52A1\u3001\u6D41\u52A8\u6027\u4E0E\u8D44\u4EA7\u5206\u6563\u4F18\u5148\u4E8E\u9AD8\u6CE2\u52A8\u6295\u8D44\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesLifeMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesProbabilityDefault = `\u7528\u6982\u7387\u548C\u60C5\u666F\u4EE3\u66FF\u786E\u5B9A\u9884\u6D4B\uFF1B\u5224\u65AD\u6B63\u786E\u65F6\u591A\u8D5A\uFF0C\u9519\u8BEF\u65F6\u5C11\u4E8F\uFF0C\u6301\u7EED\u68C0\u9A8C\u671F\u671B\u503C\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesProbabilityMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesQualityDefault = `\u597D\u8D5B\u9053\u4E0E\u597D\u516C\u53F8\uFF1A\u6838\u67E5\u6301\u7EED\u589E\u957F\u3001\u81EA\u7531\u73B0\u91D1\u6D41\u3001\u62A4\u57CE\u6CB3\u3001\u5B9A\u4EF7\u6743\u3001\u7BA1\u7406\u5C42\u53CA\u884C\u4E1A\u5730\u4F4D\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesQualityMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesSizingDefault = `\u5206\u6279\u5EFA\u4ED3\uFF0C\u63A7\u5236\u5355\u80A1\u548C\u4E3B\u9898\u96C6\u4E2D\u5EA6\uFF0C\u4FDD\u7559\u73B0\u91D1\uFF1B\u5148\u95EE\u5224\u65AD\u9519\u8BEF\u4F1A\u4E8F\u591A\u5C11\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesSizingMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesValuationDefault = `\u597D\u516C\u53F8\u4E5F\u8981\u597D\u4EF7\u683C\uFF1B\u5206\u522B\u5224\u65AD\u8D28\u91CF\u3001\u4F30\u503C\u4E0E\u5B89\u5168\u8FB9\u9645\uFF0C\u4E3A\u9519\u8BEF\u7559\u51FA\u7A7A\u95F4\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesValuationMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotReviewIntervalDaysOneMax = 3650;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxDrawdownPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxDrawdownPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxSinglePositionPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxSinglePositionPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxThemeExposurePctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxThemeExposurePctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinCashPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinCashPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin = 0;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinRewardRiskOneMax = 1000;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemPolicySnapshotScopeNoticeDefault = `\u4E2A\u4EBA\u53EF\u7F16\u8F91\u7684\u6295\u8D44\u7EAA\u5F8B\uFF1B\u7A7A\u9608\u503C\u8868\u793A\u5C1A\u672A\u8BBE\u7F6E\uFF0C\u4E0D\u7B49\u4E8E\u65E0\u9650\u98CE\u9669\u6216\u5DF2\u901A\u8FC7\u68C0\u67E5\u3002`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotStyleDefault = `long_term`;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotTaxNotesDefault = ``;
+export const listInvestmentPlansResponseItemsItemPolicySnapshotTaxNotesMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemQualityDefault = ``;
+export const listInvestmentPlansResponseItemsItemQualityMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemReviewNotesDefault = ``;
+export const listInvestmentPlansResponseItemsItemReviewNotesMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemReviewOnOneRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const listInvestmentPlansResponseItemsItemRiskInputsAvailableCashUsdOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsAvailableCashUsdOneMax = 1000000000000000;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsCapitalTotalUsdOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsCapitalTotalUsdOneMax = 1000000000000000;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsCurrentDrawdownPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsCurrentDrawdownPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsCurrentPositionPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsCurrentPositionPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsCurrentThemeExposurePctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsCurrentThemeExposurePctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsEssentialCashUsdOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsEssentialCashUsdOneMax = 1000000000000000;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsTargetPositionPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsTargetPositionPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsTargetThemeExposurePctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemRiskInputsTargetThemeExposurePctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemRiskInputsUnleveredLongOnlyDefault = true;
+export const listInvestmentPlansResponseItemsItemScenariosBaseProbabilityPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemScenariosBaseProbabilityPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemScenariosBaseTargetPriceOneMin = 0;
+export const listInvestmentPlansResponseItemsItemScenariosBaseTargetPriceOneMax = 1000000000000;
+
+export const listInvestmentPlansResponseItemsItemScenariosBaseThesisDefault = ``;
+export const listInvestmentPlansResponseItemsItemScenariosBaseThesisMax = 2000;
+
+export const listInvestmentPlansResponseItemsItemScenariosBearProbabilityPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemScenariosBearProbabilityPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemScenariosBearTargetPriceOneMin = 0;
+export const listInvestmentPlansResponseItemsItemScenariosBearTargetPriceOneMax = 1000000000000;
+
+export const listInvestmentPlansResponseItemsItemScenariosBearThesisDefault = ``;
+export const listInvestmentPlansResponseItemsItemScenariosBearThesisMax = 2000;
+
+export const listInvestmentPlansResponseItemsItemScenariosBullProbabilityPctOneMin = 0;
+export const listInvestmentPlansResponseItemsItemScenariosBullProbabilityPctOneMax = 100;
+
+export const listInvestmentPlansResponseItemsItemScenariosBullTargetPriceOneMin = 0;
+export const listInvestmentPlansResponseItemsItemScenariosBullTargetPriceOneMax = 1000000000000;
+
+export const listInvestmentPlansResponseItemsItemScenariosBullThesisDefault = ``;
+export const listInvestmentPlansResponseItemsItemScenariosBullThesisMax = 2000;
+
+export const listInvestmentPlansResponseItemsItemScopeNoticeDefault = `\u7528\u6237\u624B\u52A8\u7EF4\u62A4\u7684\u7814\u7A76\u4E0E\u51B3\u7B56\u8BB0\u5F55\uFF1Bholding\u4E3A\u672C\u4EBA\u6807\u7B7E\uFF0C\u4E0D\u4EE3\u8868\u5DF2\u8FDE\u63A5\u5238\u5546\u6216\u6838\u5B9E\u771F\u5B9E\u6301\u4ED3\u3002`;
+export const listInvestmentPlansResponseItemsItemStatusDefault = `draft`;
+export const listInvestmentPlansResponseItemsItemStopLossPriceOneMin = 0.000001;
+export const listInvestmentPlansResponseItemsItemStopLossPriceOneMax = 1000000000000;
+
+export const listInvestmentPlansResponseItemsItemThemeDefault = ``;
+export const listInvestmentPlansResponseItemsItemThemeMax = 120;
+
+export const listInvestmentPlansResponseItemsItemTickerMax = 32;
+
+export const listInvestmentPlansResponseItemsItemTitleDefault = ``;
+export const listInvestmentPlansResponseItemsItemTitleMax = 160;
+
+export const listInvestmentPlansResponseItemsItemValuationDefault = ``;
+export const listInvestmentPlansResponseItemsItemValuationMax = 4000;
+
+export const listInvestmentPlansResponseItemsItemValuationCycleDefault = ``;
+export const listInvestmentPlansResponseItemsItemValuationCycleMax = 4000;
+
+
+
+export const ListInvestmentPlansResponse = zod.object({
+  "items": zod.array(zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(listInvestmentPlansResponseItemsItemActionRulesAddMax).default(listInvestmentPlansResponseItemsItemActionRulesAddDefault),
+  "buy": zod.string().max(listInvestmentPlansResponseItemsItemActionRulesBuyMax).default(listInvestmentPlansResponseItemsItemActionRulesBuyDefault),
+  "exit": zod.string().max(listInvestmentPlansResponseItemsItemActionRulesExitMax).default(listInvestmentPlansResponseItemsItemActionRulesExitDefault),
+  "reduce": zod.string().max(listInvestmentPlansResponseItemsItemActionRulesReduceMax).default(listInvestmentPlansResponseItemsItemActionRulesReduceDefault),
+  "review": zod.string().max(listInvestmentPlansResponseItemsItemActionRulesReviewMax).default(listInvestmentPlansResponseItemsItemActionRulesReviewDefault)
+}).optional(),
+  "analysis_date": zod.string().regex(listInvestmentPlansResponseItemsItemAnalysisDateRegExp),
+  "business": zod.string().max(listInvestmentPlansResponseItemsItemBusinessMax).default(listInvestmentPlansResponseItemsItemBusinessDefault),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "entry_price": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemEntryPriceOneMin).max(listInvestmentPlansResponseItemsItemEntryPriceOneMax),zod.null()]).optional(),
+  "estimated_cost_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemEstimatedCostPctOneMin).max(listInvestmentPlansResponseItemsItemEstimatedCostPctOneMax),zod.null()]).optional(),
+  "evaluation": zod.object({
+  "bear_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "bull_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "checks": zod.array(zod.object({
+  "actual": zod.union([zod.number(),zod.null()]).optional(),
+  "key": zod.string(),
+  "label": zod.string(),
+  "limit": zod.union([zod.number(),zod.null()]).optional(),
+  "message": zod.string(),
+  "status": zod.enum(['within_limit', 'breach', 'unknown', 'not_applicable'])
+})),
+  "eligible_for_rating": zod.literal(false).default(listInvestmentPlansResponseItemsItemEvaluationEligibleForRatingDefault).meta({ title: 'Eligible For Rating' }),
+  "gross_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "margin_of_safety_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "net_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "notices": zod.array(zod.string()),
+  "planned_cash_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "planned_cash_usd": zod.union([zod.number(),zod.null()]).optional(),
+  "questions": zod.array(zod.object({
+  "answer": zod.string(),
+  "key": zod.string(),
+  "question": zod.string(),
+  "status": zod.enum(['recorded', 'missing'])
+})),
+  "reward_risk_ratio": zod.union([zod.number(),zod.null()]).optional(),
+  "scenario_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "scope_notice": zod.string().default(listInvestmentPlansResponseItemsItemEvaluationScopeNoticeDefault),
+  "status": zod.enum(['incomplete', 'breach', 'within_configured_limits']),
+  "stop_reference_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "zero_value_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional()
+}),
+  "evidence_notes": zod.string().max(listInvestmentPlansResponseItemsItemEvidenceNotesMax).default(listInvestmentPlansResponseItemsItemEvidenceNotesDefault),
+  "fair_value": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemFairValueOneMin).max(listInvestmentPlansResponseItemsItemFairValueOneMax),zod.null()]).optional(),
+  "id": zod.string(),
+  "industry_cycle": zod.string().max(listInvestmentPlansResponseItemsItemIndustryCycleMax).default(listInvestmentPlansResponseItemsItemIndustryCycleDefault),
+  "invalidation": zod.string().max(listInvestmentPlansResponseItemsItemInvalidationMax).default(listInvestmentPlansResponseItemsItemInvalidationDefault),
+  "macro_cycle": zod.string().max(listInvestmentPlansResponseItemsItemMacroCycleMax).default(listInvestmentPlansResponseItemsItemMacroCycleDefault),
+  "moat": zod.string().max(listInvestmentPlansResponseItemsItemMoatMax).default(listInvestmentPlansResponseItemsItemMoatDefault),
+  "policy_snapshot": zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesAddMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesAddDefault),
+  "buy": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesBuyMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesBuyDefault),
+  "exit": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesExitMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesExitDefault),
+  "reduce": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReduceMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReduceDefault),
+  "review": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReviewMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotActionRulesReviewDefault)
+}).optional(),
+  "enabled": zod.boolean().default(listInvestmentPlansResponseItemsItemPolicySnapshotEnabledDefault),
+  "life_notes": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotLifeNotesMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotLifeNotesDefault),
+  "name": zod.string().min(1).max(listInvestmentPlansResponseItemsItemPolicySnapshotNameMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotNameDefault),
+  "objective": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotObjectiveMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotObjectiveDefault),
+  "principles": zod.object({
+  "cycles": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesCyclesMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesCyclesDefault),
+  "discipline": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesDisciplineMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesDisciplineDefault),
+  "goal": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesGoalMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesGoalDefault),
+  "life": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesLifeMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesLifeDefault),
+  "probability": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesProbabilityMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesProbabilityDefault),
+  "quality": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesQualityMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesQualityDefault),
+  "sizing": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesSizingMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesSizingDefault),
+  "valuation": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesValuationMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotPrinciplesValuationDefault)
+}).optional(),
+  "review_interval_days": zod.union([zod.int().min(1).max(listInvestmentPlansResponseItemsItemPolicySnapshotReviewIntervalDaysOneMax),zod.null()]).optional(),
+  "revision": zod.int(),
+  "risk_limits": zod.object({
+  "max_drawdown_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxDrawdownPctOneMin).max(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxDrawdownPctOneMax),zod.null()]).optional(),
+  "max_loss_per_idea_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin).max(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax),zod.null()]).optional(),
+  "max_single_position_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxSinglePositionPctOneMin).max(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxSinglePositionPctOneMax),zod.null()]).optional(),
+  "max_theme_exposure_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxThemeExposurePctOneMin).max(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMaxThemeExposurePctOneMax),zod.null()]).optional(),
+  "min_cash_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinCashPctOneMin).max(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinCashPctOneMax),zod.null()]).optional(),
+  "min_reward_risk": zod.union([zod.number().gt(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin).max(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinRewardRiskOneMax),zod.null()]).optional(),
+  "minimum_margin_of_safety_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin).max(listInvestmentPlansResponseItemsItemPolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax),zod.null()]).optional()
+}).optional(),
+  "saved": zod.boolean(),
+  "scope_notice": zod.string().default(listInvestmentPlansResponseItemsItemPolicySnapshotScopeNoticeDefault),
+  "style": zod.enum(['long_term', 'left_side', 'trend', 'swing']).default(listInvestmentPlansResponseItemsItemPolicySnapshotStyleDefault),
+  "tax_notes": zod.string().max(listInvestmentPlansResponseItemsItemPolicySnapshotTaxNotesMax).default(listInvestmentPlansResponseItemsItemPolicySnapshotTaxNotesDefault),
+  "updated_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional()
+}),
+  "quality": zod.string().max(listInvestmentPlansResponseItemsItemQualityMax).default(listInvestmentPlansResponseItemsItemQualityDefault),
+  "review_due": zod.boolean(),
+  "review_notes": zod.string().max(listInvestmentPlansResponseItemsItemReviewNotesMax).default(listInvestmentPlansResponseItemsItemReviewNotesDefault),
+  "review_on": zod.union([zod.string().regex(listInvestmentPlansResponseItemsItemReviewOnOneRegExp),zod.null()]).optional(),
+  "reviewed_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "revision": zod.int(),
+  "risk_inputs": zod.object({
+  "available_cash_usd": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsAvailableCashUsdOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsAvailableCashUsdOneMax),zod.null()]).optional(),
+  "capital_total_usd": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsCapitalTotalUsdOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsCapitalTotalUsdOneMax),zod.null()]).optional(),
+  "current_drawdown_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsCurrentDrawdownPctOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsCurrentDrawdownPctOneMax),zod.null()]).optional(),
+  "current_position_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsCurrentPositionPctOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsCurrentPositionPctOneMax),zod.null()]).optional(),
+  "current_theme_exposure_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsCurrentThemeExposurePctOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsCurrentThemeExposurePctOneMax),zod.null()]).optional(),
+  "essential_cash_usd": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsEssentialCashUsdOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsEssentialCashUsdOneMax),zod.null()]).optional(),
+  "target_position_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsTargetPositionPctOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsTargetPositionPctOneMax),zod.null()]).optional(),
+  "target_theme_exposure_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemRiskInputsTargetThemeExposurePctOneMin).max(listInvestmentPlansResponseItemsItemRiskInputsTargetThemeExposurePctOneMax),zod.null()]).optional(),
+  "unlevered_long_only": zod.boolean().default(listInvestmentPlansResponseItemsItemRiskInputsUnleveredLongOnlyDefault)
+}).optional(),
+  "run_id": zod.union([zod.uuid(),zod.null()]).optional(),
+  "scenarios": zod.object({
+  "base": zod.object({
+  "probability_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemScenariosBaseProbabilityPctOneMin).max(listInvestmentPlansResponseItemsItemScenariosBaseProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemScenariosBaseTargetPriceOneMin).max(listInvestmentPlansResponseItemsItemScenariosBaseTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(listInvestmentPlansResponseItemsItemScenariosBaseThesisMax).default(listInvestmentPlansResponseItemsItemScenariosBaseThesisDefault)
+}).optional(),
+  "bear": zod.object({
+  "probability_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemScenariosBearProbabilityPctOneMin).max(listInvestmentPlansResponseItemsItemScenariosBearProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemScenariosBearTargetPriceOneMin).max(listInvestmentPlansResponseItemsItemScenariosBearTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(listInvestmentPlansResponseItemsItemScenariosBearThesisMax).default(listInvestmentPlansResponseItemsItemScenariosBearThesisDefault)
+}).optional(),
+  "bull": zod.object({
+  "probability_pct": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemScenariosBullProbabilityPctOneMin).max(listInvestmentPlansResponseItemsItemScenariosBullProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemScenariosBullTargetPriceOneMin).max(listInvestmentPlansResponseItemsItemScenariosBullTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(listInvestmentPlansResponseItemsItemScenariosBullThesisMax).default(listInvestmentPlansResponseItemsItemScenariosBullThesisDefault)
+}).optional()
+}).optional(),
+  "scope_notice": zod.string().default(listInvestmentPlansResponseItemsItemScopeNoticeDefault),
+  "status": zod.enum(['draft', 'watching', 'holding', 'reviewed', 'archived']).default(listInvestmentPlansResponseItemsItemStatusDefault),
+  "stop_loss_price": zod.union([zod.number().min(listInvestmentPlansResponseItemsItemStopLossPriceOneMin).max(listInvestmentPlansResponseItemsItemStopLossPriceOneMax),zod.null()]).optional(),
+  "theme": zod.string().max(listInvestmentPlansResponseItemsItemThemeMax).default(listInvestmentPlansResponseItemsItemThemeDefault),
+  "ticker": zod.string().min(1).max(listInvestmentPlansResponseItemsItemTickerMax),
+  "title": zod.string().max(listInvestmentPlansResponseItemsItemTitleMax).default(listInvestmentPlansResponseItemsItemTitleDefault),
+  "updated_at": zod.iso.datetime({"offset":true}),
+  "valuation": zod.string().max(listInvestmentPlansResponseItemsItemValuationMax).default(listInvestmentPlansResponseItemsItemValuationDefault),
+  "valuation_cycle": zod.string().max(listInvestmentPlansResponseItemsItemValuationCycleMax).default(listInvestmentPlansResponseItemsItemValuationCycleDefault)
+}))
+})
+
+
+/**
+ * @summary Create Plan
+ */
+export const createInvestmentPlanBodyActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const createInvestmentPlanBodyActionRulesAddMax = 4000;
+
+export const createInvestmentPlanBodyActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const createInvestmentPlanBodyActionRulesBuyMax = 4000;
+
+export const createInvestmentPlanBodyActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const createInvestmentPlanBodyActionRulesExitMax = 4000;
+
+export const createInvestmentPlanBodyActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const createInvestmentPlanBodyActionRulesReduceMax = 4000;
+
+export const createInvestmentPlanBodyActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const createInvestmentPlanBodyActionRulesReviewMax = 4000;
+
+export const createInvestmentPlanBodyAnalysisDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const createInvestmentPlanBodyBusinessDefault = ``;
+export const createInvestmentPlanBodyBusinessMax = 4000;
+
+export const createInvestmentPlanBodyEntryPriceOneMin = 0.000001;
+export const createInvestmentPlanBodyEntryPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanBodyEstimatedCostPctOneMin = 0;
+export const createInvestmentPlanBodyEstimatedCostPctOneMax = 100;
+
+export const createInvestmentPlanBodyEvidenceNotesDefault = ``;
+export const createInvestmentPlanBodyEvidenceNotesMax = 4000;
+
+export const createInvestmentPlanBodyFairValueOneMin = 0.000001;
+export const createInvestmentPlanBodyFairValueOneMax = 1000000000000;
+
+export const createInvestmentPlanBodyIndustryCycleDefault = ``;
+export const createInvestmentPlanBodyIndustryCycleMax = 4000;
+
+export const createInvestmentPlanBodyInvalidationDefault = ``;
+export const createInvestmentPlanBodyInvalidationMax = 4000;
+
+export const createInvestmentPlanBodyMacroCycleDefault = ``;
+export const createInvestmentPlanBodyMacroCycleMax = 4000;
+
+export const createInvestmentPlanBodyMoatDefault = ``;
+export const createInvestmentPlanBodyMoatMax = 4000;
+
+export const createInvestmentPlanBodyQualityDefault = ``;
+export const createInvestmentPlanBodyQualityMax = 4000;
+
+export const createInvestmentPlanBodyReviewNotesDefault = ``;
+export const createInvestmentPlanBodyReviewNotesMax = 4000;
+
+export const createInvestmentPlanBodyReviewOnOneRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const createInvestmentPlanBodyRiskInputsAvailableCashUsdOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsAvailableCashUsdOneMax = 1000000000000000;
+
+export const createInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMax = 1000000000000000;
+
+export const createInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMax = 100;
+
+export const createInvestmentPlanBodyRiskInputsCurrentPositionPctOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsCurrentPositionPctOneMax = 100;
+
+export const createInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMax = 100;
+
+export const createInvestmentPlanBodyRiskInputsEssentialCashUsdOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsEssentialCashUsdOneMax = 1000000000000000;
+
+export const createInvestmentPlanBodyRiskInputsTargetPositionPctOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsTargetPositionPctOneMax = 100;
+
+export const createInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMin = 0;
+export const createInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMax = 100;
+
+export const createInvestmentPlanBodyRiskInputsUnleveredLongOnlyDefault = true;
+export const createInvestmentPlanBodyScenariosBaseProbabilityPctOneMin = 0;
+export const createInvestmentPlanBodyScenariosBaseProbabilityPctOneMax = 100;
+
+export const createInvestmentPlanBodyScenariosBaseTargetPriceOneMin = 0;
+export const createInvestmentPlanBodyScenariosBaseTargetPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanBodyScenariosBaseThesisDefault = ``;
+export const createInvestmentPlanBodyScenariosBaseThesisMax = 2000;
+
+export const createInvestmentPlanBodyScenariosBearProbabilityPctOneMin = 0;
+export const createInvestmentPlanBodyScenariosBearProbabilityPctOneMax = 100;
+
+export const createInvestmentPlanBodyScenariosBearTargetPriceOneMin = 0;
+export const createInvestmentPlanBodyScenariosBearTargetPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanBodyScenariosBearThesisDefault = ``;
+export const createInvestmentPlanBodyScenariosBearThesisMax = 2000;
+
+export const createInvestmentPlanBodyScenariosBullProbabilityPctOneMin = 0;
+export const createInvestmentPlanBodyScenariosBullProbabilityPctOneMax = 100;
+
+export const createInvestmentPlanBodyScenariosBullTargetPriceOneMin = 0;
+export const createInvestmentPlanBodyScenariosBullTargetPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanBodyScenariosBullThesisDefault = ``;
+export const createInvestmentPlanBodyScenariosBullThesisMax = 2000;
+
+export const createInvestmentPlanBodyStatusDefault = `draft`;
+export const createInvestmentPlanBodyStopLossPriceOneMin = 0.000001;
+export const createInvestmentPlanBodyStopLossPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanBodyThemeDefault = ``;
+export const createInvestmentPlanBodyThemeMax = 120;
+
+export const createInvestmentPlanBodyTickerMax = 32;
+
+export const createInvestmentPlanBodyTitleDefault = ``;
+export const createInvestmentPlanBodyTitleMax = 160;
+
+export const createInvestmentPlanBodyValuationDefault = ``;
+export const createInvestmentPlanBodyValuationMax = 4000;
+
+export const createInvestmentPlanBodyValuationCycleDefault = ``;
+export const createInvestmentPlanBodyValuationCycleMax = 4000;
+
+
+
+export const CreateInvestmentPlanBody = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(createInvestmentPlanBodyActionRulesAddMax).default(createInvestmentPlanBodyActionRulesAddDefault),
+  "buy": zod.string().max(createInvestmentPlanBodyActionRulesBuyMax).default(createInvestmentPlanBodyActionRulesBuyDefault),
+  "exit": zod.string().max(createInvestmentPlanBodyActionRulesExitMax).default(createInvestmentPlanBodyActionRulesExitDefault),
+  "reduce": zod.string().max(createInvestmentPlanBodyActionRulesReduceMax).default(createInvestmentPlanBodyActionRulesReduceDefault),
+  "review": zod.string().max(createInvestmentPlanBodyActionRulesReviewMax).default(createInvestmentPlanBodyActionRulesReviewDefault)
+}).optional(),
+  "analysis_date": zod.string().regex(createInvestmentPlanBodyAnalysisDateRegExp),
+  "business": zod.string().max(createInvestmentPlanBodyBusinessMax).default(createInvestmentPlanBodyBusinessDefault),
+  "entry_price": zod.union([zod.number().min(createInvestmentPlanBodyEntryPriceOneMin).max(createInvestmentPlanBodyEntryPriceOneMax),zod.null()]).optional(),
+  "estimated_cost_pct": zod.union([zod.number().min(createInvestmentPlanBodyEstimatedCostPctOneMin).max(createInvestmentPlanBodyEstimatedCostPctOneMax),zod.null()]).optional(),
+  "evidence_notes": zod.string().max(createInvestmentPlanBodyEvidenceNotesMax).default(createInvestmentPlanBodyEvidenceNotesDefault),
+  "fair_value": zod.union([zod.number().min(createInvestmentPlanBodyFairValueOneMin).max(createInvestmentPlanBodyFairValueOneMax),zod.null()]).optional(),
+  "industry_cycle": zod.string().max(createInvestmentPlanBodyIndustryCycleMax).default(createInvestmentPlanBodyIndustryCycleDefault),
+  "invalidation": zod.string().max(createInvestmentPlanBodyInvalidationMax).default(createInvestmentPlanBodyInvalidationDefault),
+  "macro_cycle": zod.string().max(createInvestmentPlanBodyMacroCycleMax).default(createInvestmentPlanBodyMacroCycleDefault),
+  "moat": zod.string().max(createInvestmentPlanBodyMoatMax).default(createInvestmentPlanBodyMoatDefault),
+  "quality": zod.string().max(createInvestmentPlanBodyQualityMax).default(createInvestmentPlanBodyQualityDefault),
+  "review_notes": zod.string().max(createInvestmentPlanBodyReviewNotesMax).default(createInvestmentPlanBodyReviewNotesDefault),
+  "review_on": zod.union([zod.string().regex(createInvestmentPlanBodyReviewOnOneRegExp),zod.null()]).optional(),
+  "risk_inputs": zod.object({
+  "available_cash_usd": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsAvailableCashUsdOneMin).max(createInvestmentPlanBodyRiskInputsAvailableCashUsdOneMax),zod.null()]).optional(),
+  "capital_total_usd": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMin).max(createInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMax),zod.null()]).optional(),
+  "current_drawdown_pct": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMin).max(createInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMax),zod.null()]).optional(),
+  "current_position_pct": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsCurrentPositionPctOneMin).max(createInvestmentPlanBodyRiskInputsCurrentPositionPctOneMax),zod.null()]).optional(),
+  "current_theme_exposure_pct": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMin).max(createInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMax),zod.null()]).optional(),
+  "essential_cash_usd": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsEssentialCashUsdOneMin).max(createInvestmentPlanBodyRiskInputsEssentialCashUsdOneMax),zod.null()]).optional(),
+  "target_position_pct": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsTargetPositionPctOneMin).max(createInvestmentPlanBodyRiskInputsTargetPositionPctOneMax),zod.null()]).optional(),
+  "target_theme_exposure_pct": zod.union([zod.number().min(createInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMin).max(createInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMax),zod.null()]).optional(),
+  "unlevered_long_only": zod.boolean().default(createInvestmentPlanBodyRiskInputsUnleveredLongOnlyDefault)
+}).optional(),
+  "run_id": zod.union([zod.uuid(),zod.null()]).optional(),
+  "scenarios": zod.object({
+  "base": zod.object({
+  "probability_pct": zod.union([zod.number().min(createInvestmentPlanBodyScenariosBaseProbabilityPctOneMin).max(createInvestmentPlanBodyScenariosBaseProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(createInvestmentPlanBodyScenariosBaseTargetPriceOneMin).max(createInvestmentPlanBodyScenariosBaseTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(createInvestmentPlanBodyScenariosBaseThesisMax).default(createInvestmentPlanBodyScenariosBaseThesisDefault)
+}).optional(),
+  "bear": zod.object({
+  "probability_pct": zod.union([zod.number().min(createInvestmentPlanBodyScenariosBearProbabilityPctOneMin).max(createInvestmentPlanBodyScenariosBearProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(createInvestmentPlanBodyScenariosBearTargetPriceOneMin).max(createInvestmentPlanBodyScenariosBearTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(createInvestmentPlanBodyScenariosBearThesisMax).default(createInvestmentPlanBodyScenariosBearThesisDefault)
+}).optional(),
+  "bull": zod.object({
+  "probability_pct": zod.union([zod.number().min(createInvestmentPlanBodyScenariosBullProbabilityPctOneMin).max(createInvestmentPlanBodyScenariosBullProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(createInvestmentPlanBodyScenariosBullTargetPriceOneMin).max(createInvestmentPlanBodyScenariosBullTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(createInvestmentPlanBodyScenariosBullThesisMax).default(createInvestmentPlanBodyScenariosBullThesisDefault)
+}).optional()
+}).optional(),
+  "status": zod.enum(['draft', 'watching', 'holding', 'reviewed', 'archived']).default(createInvestmentPlanBodyStatusDefault),
+  "stop_loss_price": zod.union([zod.number().min(createInvestmentPlanBodyStopLossPriceOneMin).max(createInvestmentPlanBodyStopLossPriceOneMax),zod.null()]).optional(),
+  "theme": zod.string().max(createInvestmentPlanBodyThemeMax).default(createInvestmentPlanBodyThemeDefault),
+  "ticker": zod.string().min(1).max(createInvestmentPlanBodyTickerMax),
+  "title": zod.string().max(createInvestmentPlanBodyTitleMax).default(createInvestmentPlanBodyTitleDefault),
+  "valuation": zod.string().max(createInvestmentPlanBodyValuationMax).default(createInvestmentPlanBodyValuationDefault),
+  "valuation_cycle": zod.string().max(createInvestmentPlanBodyValuationCycleMax).default(createInvestmentPlanBodyValuationCycleDefault)
+})
+
+export const createInvestmentPlanResponseActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const createInvestmentPlanResponseActionRulesAddMax = 4000;
+
+export const createInvestmentPlanResponseActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const createInvestmentPlanResponseActionRulesBuyMax = 4000;
+
+export const createInvestmentPlanResponseActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const createInvestmentPlanResponseActionRulesExitMax = 4000;
+
+export const createInvestmentPlanResponseActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const createInvestmentPlanResponseActionRulesReduceMax = 4000;
+
+export const createInvestmentPlanResponseActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const createInvestmentPlanResponseActionRulesReviewMax = 4000;
+
+export const createInvestmentPlanResponseAnalysisDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const createInvestmentPlanResponseBusinessDefault = ``;
+export const createInvestmentPlanResponseBusinessMax = 4000;
+
+export const createInvestmentPlanResponseEntryPriceOneMin = 0.000001;
+export const createInvestmentPlanResponseEntryPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanResponseEstimatedCostPctOneMin = 0;
+export const createInvestmentPlanResponseEstimatedCostPctOneMax = 100;
+
+export const createInvestmentPlanResponseEvaluationEligibleForRatingDefault = false;
+export const createInvestmentPlanResponseEvaluationScopeNoticeDefault = `\u4EC5\u6309\u7528\u6237\u81EA\u586B\u5047\u8BBE\u8BA1\u7B97\u7EAA\u5F8B\u4E0E\u60C5\u666F\uFF1B\u4E0D\u9A8C\u8BC1\u516C\u5141\u4EF7\u503C\u3001\u6982\u7387\u6216\u76C8\u5229\u80FD\u529B\uFF0C\u4E0D\u6784\u6210\u4E70\u5356\u5224\u65AD\u6216\u6267\u884C\u4EA4\u6613\u3002`;
+export const createInvestmentPlanResponseEvidenceNotesDefault = ``;
+export const createInvestmentPlanResponseEvidenceNotesMax = 4000;
+
+export const createInvestmentPlanResponseFairValueOneMin = 0.000001;
+export const createInvestmentPlanResponseFairValueOneMax = 1000000000000;
+
+export const createInvestmentPlanResponseIndustryCycleDefault = ``;
+export const createInvestmentPlanResponseIndustryCycleMax = 4000;
+
+export const createInvestmentPlanResponseInvalidationDefault = ``;
+export const createInvestmentPlanResponseInvalidationMax = 4000;
+
+export const createInvestmentPlanResponseMacroCycleDefault = ``;
+export const createInvestmentPlanResponseMacroCycleMax = 4000;
+
+export const createInvestmentPlanResponseMoatDefault = ``;
+export const createInvestmentPlanResponseMoatMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotActionRulesAddMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotActionRulesBuyMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotActionRulesExitMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotActionRulesReduceMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotActionRulesReviewMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotEnabledDefault = true;
+export const createInvestmentPlanResponsePolicySnapshotLifeNotesDefault = ``;
+export const createInvestmentPlanResponsePolicySnapshotLifeNotesMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotNameDefault = `\u6211\u7684\u6295\u8D44\u4F53\u7CFB`;
+export const createInvestmentPlanResponsePolicySnapshotNameMax = 120;
+
+export const createInvestmentPlanResponsePolicySnapshotObjectiveDefault = `\u957F\u671F\u53EF\u6301\u7EED\u7684\u8D22\u5BCC\u589E\u957F`;
+export const createInvestmentPlanResponsePolicySnapshotObjectiveMax = 2000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesCyclesDefault = `\u5148\u7814\u7A76\u5B8F\u89C2\u3001\u884C\u4E1A\u4E0E\u4F30\u503C\u5468\u671F\uFF0C\u518D\u9009\u8D44\u4EA7\uFF1B\u8BB0\u5F55\u8BC1\u636E\u3001\u9636\u6BB5\u5224\u65AD\u548C\u76F8\u53CD\u4FE1\u53F7\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesCyclesMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineDefault = `\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u957F\u671F\u3001\u5DE6\u4FA7\u3001\u8D8B\u52BF\u6216\u6CE2\u6BB5\u65B9\u6CD5\uFF1B\u9075\u5B88\u4E70\u5165\u3001\u52A0\u4ED3\u3001\u51CF\u4ED3\u3001\u9000\u51FA\u4E0E\u590D\u76D8\u89C4\u5219\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesGoalDefault = `\u957F\u671F\u8D22\u5BCC\u589E\u957F\uFF1B\u5148\u6D3B\u4E0B\u6765\uFF0C\u518D\u8FFD\u6C42\u6536\u76CA\uFF0C\u8BA9\u672C\u91D1\u3001\u6536\u76CA\u4E0E\u65F6\u95F4\u5171\u540C\u79EF\u7D2F\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesGoalMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesLifeDefault = `\u6295\u8D44\u670D\u52A1\u4E8E\u751F\u6D3B\uFF1B\u786E\u5B9A\u652F\u51FA\u3001\u751F\u6D3B\u73B0\u91D1\u3001\u7A0E\u52A1\u3001\u6D41\u52A8\u6027\u4E0E\u8D44\u4EA7\u5206\u6563\u4F18\u5148\u4E8E\u9AD8\u6CE2\u52A8\u6295\u8D44\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesLifeMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityDefault = `\u7528\u6982\u7387\u548C\u60C5\u666F\u4EE3\u66FF\u786E\u5B9A\u9884\u6D4B\uFF1B\u5224\u65AD\u6B63\u786E\u65F6\u591A\u8D5A\uFF0C\u9519\u8BEF\u65F6\u5C11\u4E8F\uFF0C\u6301\u7EED\u68C0\u9A8C\u671F\u671B\u503C\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesQualityDefault = `\u597D\u8D5B\u9053\u4E0E\u597D\u516C\u53F8\uFF1A\u6838\u67E5\u6301\u7EED\u589E\u957F\u3001\u81EA\u7531\u73B0\u91D1\u6D41\u3001\u62A4\u57CE\u6CB3\u3001\u5B9A\u4EF7\u6743\u3001\u7BA1\u7406\u5C42\u53CA\u884C\u4E1A\u5730\u4F4D\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesQualityMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesSizingDefault = `\u5206\u6279\u5EFA\u4ED3\uFF0C\u63A7\u5236\u5355\u80A1\u548C\u4E3B\u9898\u96C6\u4E2D\u5EA6\uFF0C\u4FDD\u7559\u73B0\u91D1\uFF1B\u5148\u95EE\u5224\u65AD\u9519\u8BEF\u4F1A\u4E8F\u591A\u5C11\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesSizingMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesValuationDefault = `\u597D\u516C\u53F8\u4E5F\u8981\u597D\u4EF7\u683C\uFF1B\u5206\u522B\u5224\u65AD\u8D28\u91CF\u3001\u4F30\u503C\u4E0E\u5B89\u5168\u8FB9\u9645\uFF0C\u4E3A\u9519\u8BEF\u7559\u51FA\u7A7A\u95F4\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotPrinciplesValuationMax = 4000;
+
+export const createInvestmentPlanResponsePolicySnapshotReviewIntervalDaysOneMax = 3650;
+
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMin = 0;
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMax = 100;
+
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin = 0;
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax = 100;
+
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMin = 0;
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMax = 100;
+
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMin = 0;
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMax = 100;
+
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMin = 0;
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMax = 100;
+
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin = 0;
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneMax = 1000;
+
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin = 0;
+export const createInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax = 100;
+
+export const createInvestmentPlanResponsePolicySnapshotScopeNoticeDefault = `\u4E2A\u4EBA\u53EF\u7F16\u8F91\u7684\u6295\u8D44\u7EAA\u5F8B\uFF1B\u7A7A\u9608\u503C\u8868\u793A\u5C1A\u672A\u8BBE\u7F6E\uFF0C\u4E0D\u7B49\u4E8E\u65E0\u9650\u98CE\u9669\u6216\u5DF2\u901A\u8FC7\u68C0\u67E5\u3002`;
+export const createInvestmentPlanResponsePolicySnapshotStyleDefault = `long_term`;
+export const createInvestmentPlanResponsePolicySnapshotTaxNotesDefault = ``;
+export const createInvestmentPlanResponsePolicySnapshotTaxNotesMax = 4000;
+
+export const createInvestmentPlanResponseQualityDefault = ``;
+export const createInvestmentPlanResponseQualityMax = 4000;
+
+export const createInvestmentPlanResponseReviewNotesDefault = ``;
+export const createInvestmentPlanResponseReviewNotesMax = 4000;
+
+export const createInvestmentPlanResponseReviewOnOneRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const createInvestmentPlanResponseRiskInputsAvailableCashUsdOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsAvailableCashUsdOneMax = 1000000000000000;
+
+export const createInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMax = 1000000000000000;
+
+export const createInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMax = 100;
+
+export const createInvestmentPlanResponseRiskInputsCurrentPositionPctOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsCurrentPositionPctOneMax = 100;
+
+export const createInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMax = 100;
+
+export const createInvestmentPlanResponseRiskInputsEssentialCashUsdOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsEssentialCashUsdOneMax = 1000000000000000;
+
+export const createInvestmentPlanResponseRiskInputsTargetPositionPctOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsTargetPositionPctOneMax = 100;
+
+export const createInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMin = 0;
+export const createInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMax = 100;
+
+export const createInvestmentPlanResponseRiskInputsUnleveredLongOnlyDefault = true;
+export const createInvestmentPlanResponseScenariosBaseProbabilityPctOneMin = 0;
+export const createInvestmentPlanResponseScenariosBaseProbabilityPctOneMax = 100;
+
+export const createInvestmentPlanResponseScenariosBaseTargetPriceOneMin = 0;
+export const createInvestmentPlanResponseScenariosBaseTargetPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanResponseScenariosBaseThesisDefault = ``;
+export const createInvestmentPlanResponseScenariosBaseThesisMax = 2000;
+
+export const createInvestmentPlanResponseScenariosBearProbabilityPctOneMin = 0;
+export const createInvestmentPlanResponseScenariosBearProbabilityPctOneMax = 100;
+
+export const createInvestmentPlanResponseScenariosBearTargetPriceOneMin = 0;
+export const createInvestmentPlanResponseScenariosBearTargetPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanResponseScenariosBearThesisDefault = ``;
+export const createInvestmentPlanResponseScenariosBearThesisMax = 2000;
+
+export const createInvestmentPlanResponseScenariosBullProbabilityPctOneMin = 0;
+export const createInvestmentPlanResponseScenariosBullProbabilityPctOneMax = 100;
+
+export const createInvestmentPlanResponseScenariosBullTargetPriceOneMin = 0;
+export const createInvestmentPlanResponseScenariosBullTargetPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanResponseScenariosBullThesisDefault = ``;
+export const createInvestmentPlanResponseScenariosBullThesisMax = 2000;
+
+export const createInvestmentPlanResponseScopeNoticeDefault = `\u7528\u6237\u624B\u52A8\u7EF4\u62A4\u7684\u7814\u7A76\u4E0E\u51B3\u7B56\u8BB0\u5F55\uFF1Bholding\u4E3A\u672C\u4EBA\u6807\u7B7E\uFF0C\u4E0D\u4EE3\u8868\u5DF2\u8FDE\u63A5\u5238\u5546\u6216\u6838\u5B9E\u771F\u5B9E\u6301\u4ED3\u3002`;
+export const createInvestmentPlanResponseStatusDefault = `draft`;
+export const createInvestmentPlanResponseStopLossPriceOneMin = 0.000001;
+export const createInvestmentPlanResponseStopLossPriceOneMax = 1000000000000;
+
+export const createInvestmentPlanResponseThemeDefault = ``;
+export const createInvestmentPlanResponseThemeMax = 120;
+
+export const createInvestmentPlanResponseTickerMax = 32;
+
+export const createInvestmentPlanResponseTitleDefault = ``;
+export const createInvestmentPlanResponseTitleMax = 160;
+
+export const createInvestmentPlanResponseValuationDefault = ``;
+export const createInvestmentPlanResponseValuationMax = 4000;
+
+export const createInvestmentPlanResponseValuationCycleDefault = ``;
+export const createInvestmentPlanResponseValuationCycleMax = 4000;
+
+
+
+export const CreateInvestmentPlanResponse = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(createInvestmentPlanResponseActionRulesAddMax).default(createInvestmentPlanResponseActionRulesAddDefault),
+  "buy": zod.string().max(createInvestmentPlanResponseActionRulesBuyMax).default(createInvestmentPlanResponseActionRulesBuyDefault),
+  "exit": zod.string().max(createInvestmentPlanResponseActionRulesExitMax).default(createInvestmentPlanResponseActionRulesExitDefault),
+  "reduce": zod.string().max(createInvestmentPlanResponseActionRulesReduceMax).default(createInvestmentPlanResponseActionRulesReduceDefault),
+  "review": zod.string().max(createInvestmentPlanResponseActionRulesReviewMax).default(createInvestmentPlanResponseActionRulesReviewDefault)
+}).optional(),
+  "analysis_date": zod.string().regex(createInvestmentPlanResponseAnalysisDateRegExp),
+  "business": zod.string().max(createInvestmentPlanResponseBusinessMax).default(createInvestmentPlanResponseBusinessDefault),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "entry_price": zod.union([zod.number().min(createInvestmentPlanResponseEntryPriceOneMin).max(createInvestmentPlanResponseEntryPriceOneMax),zod.null()]).optional(),
+  "estimated_cost_pct": zod.union([zod.number().min(createInvestmentPlanResponseEstimatedCostPctOneMin).max(createInvestmentPlanResponseEstimatedCostPctOneMax),zod.null()]).optional(),
+  "evaluation": zod.object({
+  "bear_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "bull_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "checks": zod.array(zod.object({
+  "actual": zod.union([zod.number(),zod.null()]).optional(),
+  "key": zod.string(),
+  "label": zod.string(),
+  "limit": zod.union([zod.number(),zod.null()]).optional(),
+  "message": zod.string(),
+  "status": zod.enum(['within_limit', 'breach', 'unknown', 'not_applicable'])
+})),
+  "eligible_for_rating": zod.literal(false).default(createInvestmentPlanResponseEvaluationEligibleForRatingDefault).meta({ title: 'Eligible For Rating' }),
+  "gross_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "margin_of_safety_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "net_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "notices": zod.array(zod.string()),
+  "planned_cash_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "planned_cash_usd": zod.union([zod.number(),zod.null()]).optional(),
+  "questions": zod.array(zod.object({
+  "answer": zod.string(),
+  "key": zod.string(),
+  "question": zod.string(),
+  "status": zod.enum(['recorded', 'missing'])
+})),
+  "reward_risk_ratio": zod.union([zod.number(),zod.null()]).optional(),
+  "scenario_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "scope_notice": zod.string().default(createInvestmentPlanResponseEvaluationScopeNoticeDefault),
+  "status": zod.enum(['incomplete', 'breach', 'within_configured_limits']),
+  "stop_reference_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "zero_value_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional()
+}),
+  "evidence_notes": zod.string().max(createInvestmentPlanResponseEvidenceNotesMax).default(createInvestmentPlanResponseEvidenceNotesDefault),
+  "fair_value": zod.union([zod.number().min(createInvestmentPlanResponseFairValueOneMin).max(createInvestmentPlanResponseFairValueOneMax),zod.null()]).optional(),
+  "id": zod.string(),
+  "industry_cycle": zod.string().max(createInvestmentPlanResponseIndustryCycleMax).default(createInvestmentPlanResponseIndustryCycleDefault),
+  "invalidation": zod.string().max(createInvestmentPlanResponseInvalidationMax).default(createInvestmentPlanResponseInvalidationDefault),
+  "macro_cycle": zod.string().max(createInvestmentPlanResponseMacroCycleMax).default(createInvestmentPlanResponseMacroCycleDefault),
+  "moat": zod.string().max(createInvestmentPlanResponseMoatMax).default(createInvestmentPlanResponseMoatDefault),
+  "policy_snapshot": zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(createInvestmentPlanResponsePolicySnapshotActionRulesAddMax).default(createInvestmentPlanResponsePolicySnapshotActionRulesAddDefault),
+  "buy": zod.string().max(createInvestmentPlanResponsePolicySnapshotActionRulesBuyMax).default(createInvestmentPlanResponsePolicySnapshotActionRulesBuyDefault),
+  "exit": zod.string().max(createInvestmentPlanResponsePolicySnapshotActionRulesExitMax).default(createInvestmentPlanResponsePolicySnapshotActionRulesExitDefault),
+  "reduce": zod.string().max(createInvestmentPlanResponsePolicySnapshotActionRulesReduceMax).default(createInvestmentPlanResponsePolicySnapshotActionRulesReduceDefault),
+  "review": zod.string().max(createInvestmentPlanResponsePolicySnapshotActionRulesReviewMax).default(createInvestmentPlanResponsePolicySnapshotActionRulesReviewDefault)
+}).optional(),
+  "enabled": zod.boolean().default(createInvestmentPlanResponsePolicySnapshotEnabledDefault),
+  "life_notes": zod.string().max(createInvestmentPlanResponsePolicySnapshotLifeNotesMax).default(createInvestmentPlanResponsePolicySnapshotLifeNotesDefault),
+  "name": zod.string().min(1).max(createInvestmentPlanResponsePolicySnapshotNameMax).default(createInvestmentPlanResponsePolicySnapshotNameDefault),
+  "objective": zod.string().max(createInvestmentPlanResponsePolicySnapshotObjectiveMax).default(createInvestmentPlanResponsePolicySnapshotObjectiveDefault),
+  "principles": zod.object({
+  "cycles": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesCyclesMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesCyclesDefault),
+  "discipline": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineDefault),
+  "goal": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesGoalMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesGoalDefault),
+  "life": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesLifeMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesLifeDefault),
+  "probability": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityDefault),
+  "quality": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesQualityMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesQualityDefault),
+  "sizing": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesSizingMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesSizingDefault),
+  "valuation": zod.string().max(createInvestmentPlanResponsePolicySnapshotPrinciplesValuationMax).default(createInvestmentPlanResponsePolicySnapshotPrinciplesValuationDefault)
+}).optional(),
+  "review_interval_days": zod.union([zod.int().min(1).max(createInvestmentPlanResponsePolicySnapshotReviewIntervalDaysOneMax),zod.null()]).optional(),
+  "revision": zod.int(),
+  "risk_limits": zod.object({
+  "max_drawdown_pct": zod.union([zod.number().min(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMin).max(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMax),zod.null()]).optional(),
+  "max_loss_per_idea_pct": zod.union([zod.number().min(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin).max(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax),zod.null()]).optional(),
+  "max_single_position_pct": zod.union([zod.number().min(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMin).max(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMax),zod.null()]).optional(),
+  "max_theme_exposure_pct": zod.union([zod.number().min(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMin).max(createInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMax),zod.null()]).optional(),
+  "min_cash_pct": zod.union([zod.number().min(createInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMin).max(createInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMax),zod.null()]).optional(),
+  "min_reward_risk": zod.union([zod.number().gt(createInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin).max(createInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneMax),zod.null()]).optional(),
+  "minimum_margin_of_safety_pct": zod.union([zod.number().min(createInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin).max(createInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax),zod.null()]).optional()
+}).optional(),
+  "saved": zod.boolean(),
+  "scope_notice": zod.string().default(createInvestmentPlanResponsePolicySnapshotScopeNoticeDefault),
+  "style": zod.enum(['long_term', 'left_side', 'trend', 'swing']).default(createInvestmentPlanResponsePolicySnapshotStyleDefault),
+  "tax_notes": zod.string().max(createInvestmentPlanResponsePolicySnapshotTaxNotesMax).default(createInvestmentPlanResponsePolicySnapshotTaxNotesDefault),
+  "updated_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional()
+}),
+  "quality": zod.string().max(createInvestmentPlanResponseQualityMax).default(createInvestmentPlanResponseQualityDefault),
+  "review_due": zod.boolean(),
+  "review_notes": zod.string().max(createInvestmentPlanResponseReviewNotesMax).default(createInvestmentPlanResponseReviewNotesDefault),
+  "review_on": zod.union([zod.string().regex(createInvestmentPlanResponseReviewOnOneRegExp),zod.null()]).optional(),
+  "reviewed_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "revision": zod.int(),
+  "risk_inputs": zod.object({
+  "available_cash_usd": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsAvailableCashUsdOneMin).max(createInvestmentPlanResponseRiskInputsAvailableCashUsdOneMax),zod.null()]).optional(),
+  "capital_total_usd": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMin).max(createInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMax),zod.null()]).optional(),
+  "current_drawdown_pct": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMin).max(createInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMax),zod.null()]).optional(),
+  "current_position_pct": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsCurrentPositionPctOneMin).max(createInvestmentPlanResponseRiskInputsCurrentPositionPctOneMax),zod.null()]).optional(),
+  "current_theme_exposure_pct": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMin).max(createInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMax),zod.null()]).optional(),
+  "essential_cash_usd": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsEssentialCashUsdOneMin).max(createInvestmentPlanResponseRiskInputsEssentialCashUsdOneMax),zod.null()]).optional(),
+  "target_position_pct": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsTargetPositionPctOneMin).max(createInvestmentPlanResponseRiskInputsTargetPositionPctOneMax),zod.null()]).optional(),
+  "target_theme_exposure_pct": zod.union([zod.number().min(createInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMin).max(createInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMax),zod.null()]).optional(),
+  "unlevered_long_only": zod.boolean().default(createInvestmentPlanResponseRiskInputsUnleveredLongOnlyDefault)
+}).optional(),
+  "run_id": zod.union([zod.uuid(),zod.null()]).optional(),
+  "scenarios": zod.object({
+  "base": zod.object({
+  "probability_pct": zod.union([zod.number().min(createInvestmentPlanResponseScenariosBaseProbabilityPctOneMin).max(createInvestmentPlanResponseScenariosBaseProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(createInvestmentPlanResponseScenariosBaseTargetPriceOneMin).max(createInvestmentPlanResponseScenariosBaseTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(createInvestmentPlanResponseScenariosBaseThesisMax).default(createInvestmentPlanResponseScenariosBaseThesisDefault)
+}).optional(),
+  "bear": zod.object({
+  "probability_pct": zod.union([zod.number().min(createInvestmentPlanResponseScenariosBearProbabilityPctOneMin).max(createInvestmentPlanResponseScenariosBearProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(createInvestmentPlanResponseScenariosBearTargetPriceOneMin).max(createInvestmentPlanResponseScenariosBearTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(createInvestmentPlanResponseScenariosBearThesisMax).default(createInvestmentPlanResponseScenariosBearThesisDefault)
+}).optional(),
+  "bull": zod.object({
+  "probability_pct": zod.union([zod.number().min(createInvestmentPlanResponseScenariosBullProbabilityPctOneMin).max(createInvestmentPlanResponseScenariosBullProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(createInvestmentPlanResponseScenariosBullTargetPriceOneMin).max(createInvestmentPlanResponseScenariosBullTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(createInvestmentPlanResponseScenariosBullThesisMax).default(createInvestmentPlanResponseScenariosBullThesisDefault)
+}).optional()
+}).optional(),
+  "scope_notice": zod.string().default(createInvestmentPlanResponseScopeNoticeDefault),
+  "status": zod.enum(['draft', 'watching', 'holding', 'reviewed', 'archived']).default(createInvestmentPlanResponseStatusDefault),
+  "stop_loss_price": zod.union([zod.number().min(createInvestmentPlanResponseStopLossPriceOneMin).max(createInvestmentPlanResponseStopLossPriceOneMax),zod.null()]).optional(),
+  "theme": zod.string().max(createInvestmentPlanResponseThemeMax).default(createInvestmentPlanResponseThemeDefault),
+  "ticker": zod.string().min(1).max(createInvestmentPlanResponseTickerMax),
+  "title": zod.string().max(createInvestmentPlanResponseTitleMax).default(createInvestmentPlanResponseTitleDefault),
+  "updated_at": zod.iso.datetime({"offset":true}),
+  "valuation": zod.string().max(createInvestmentPlanResponseValuationMax).default(createInvestmentPlanResponseValuationDefault),
+  "valuation_cycle": zod.string().max(createInvestmentPlanResponseValuationCycleMax).default(createInvestmentPlanResponseValuationCycleDefault)
+})
+
+
+/**
+ * @summary Plan
+ */
+export const GetInvestmentPlanParams = zod.object({
+  "plan_id": zod.uuid()
+})
+
+export const getInvestmentPlanResponseActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const getInvestmentPlanResponseActionRulesAddMax = 4000;
+
+export const getInvestmentPlanResponseActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const getInvestmentPlanResponseActionRulesBuyMax = 4000;
+
+export const getInvestmentPlanResponseActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const getInvestmentPlanResponseActionRulesExitMax = 4000;
+
+export const getInvestmentPlanResponseActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const getInvestmentPlanResponseActionRulesReduceMax = 4000;
+
+export const getInvestmentPlanResponseActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const getInvestmentPlanResponseActionRulesReviewMax = 4000;
+
+export const getInvestmentPlanResponseAnalysisDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const getInvestmentPlanResponseBusinessDefault = ``;
+export const getInvestmentPlanResponseBusinessMax = 4000;
+
+export const getInvestmentPlanResponseEntryPriceOneMin = 0.000001;
+export const getInvestmentPlanResponseEntryPriceOneMax = 1000000000000;
+
+export const getInvestmentPlanResponseEstimatedCostPctOneMin = 0;
+export const getInvestmentPlanResponseEstimatedCostPctOneMax = 100;
+
+export const getInvestmentPlanResponseEvaluationEligibleForRatingDefault = false;
+export const getInvestmentPlanResponseEvaluationScopeNoticeDefault = `\u4EC5\u6309\u7528\u6237\u81EA\u586B\u5047\u8BBE\u8BA1\u7B97\u7EAA\u5F8B\u4E0E\u60C5\u666F\uFF1B\u4E0D\u9A8C\u8BC1\u516C\u5141\u4EF7\u503C\u3001\u6982\u7387\u6216\u76C8\u5229\u80FD\u529B\uFF0C\u4E0D\u6784\u6210\u4E70\u5356\u5224\u65AD\u6216\u6267\u884C\u4EA4\u6613\u3002`;
+export const getInvestmentPlanResponseEvidenceNotesDefault = ``;
+export const getInvestmentPlanResponseEvidenceNotesMax = 4000;
+
+export const getInvestmentPlanResponseFairValueOneMin = 0.000001;
+export const getInvestmentPlanResponseFairValueOneMax = 1000000000000;
+
+export const getInvestmentPlanResponseIndustryCycleDefault = ``;
+export const getInvestmentPlanResponseIndustryCycleMax = 4000;
+
+export const getInvestmentPlanResponseInvalidationDefault = ``;
+export const getInvestmentPlanResponseInvalidationMax = 4000;
+
+export const getInvestmentPlanResponseMacroCycleDefault = ``;
+export const getInvestmentPlanResponseMacroCycleMax = 4000;
+
+export const getInvestmentPlanResponseMoatDefault = ``;
+export const getInvestmentPlanResponseMoatMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotActionRulesAddMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotActionRulesBuyMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotActionRulesExitMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotActionRulesReduceMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotActionRulesReviewMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotEnabledDefault = true;
+export const getInvestmentPlanResponsePolicySnapshotLifeNotesDefault = ``;
+export const getInvestmentPlanResponsePolicySnapshotLifeNotesMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotNameDefault = `\u6211\u7684\u6295\u8D44\u4F53\u7CFB`;
+export const getInvestmentPlanResponsePolicySnapshotNameMax = 120;
+
+export const getInvestmentPlanResponsePolicySnapshotObjectiveDefault = `\u957F\u671F\u53EF\u6301\u7EED\u7684\u8D22\u5BCC\u589E\u957F`;
+export const getInvestmentPlanResponsePolicySnapshotObjectiveMax = 2000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesCyclesDefault = `\u5148\u7814\u7A76\u5B8F\u89C2\u3001\u884C\u4E1A\u4E0E\u4F30\u503C\u5468\u671F\uFF0C\u518D\u9009\u8D44\u4EA7\uFF1B\u8BB0\u5F55\u8BC1\u636E\u3001\u9636\u6BB5\u5224\u65AD\u548C\u76F8\u53CD\u4FE1\u53F7\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesCyclesMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineDefault = `\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u957F\u671F\u3001\u5DE6\u4FA7\u3001\u8D8B\u52BF\u6216\u6CE2\u6BB5\u65B9\u6CD5\uFF1B\u9075\u5B88\u4E70\u5165\u3001\u52A0\u4ED3\u3001\u51CF\u4ED3\u3001\u9000\u51FA\u4E0E\u590D\u76D8\u89C4\u5219\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesGoalDefault = `\u957F\u671F\u8D22\u5BCC\u589E\u957F\uFF1B\u5148\u6D3B\u4E0B\u6765\uFF0C\u518D\u8FFD\u6C42\u6536\u76CA\uFF0C\u8BA9\u672C\u91D1\u3001\u6536\u76CA\u4E0E\u65F6\u95F4\u5171\u540C\u79EF\u7D2F\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesGoalMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesLifeDefault = `\u6295\u8D44\u670D\u52A1\u4E8E\u751F\u6D3B\uFF1B\u786E\u5B9A\u652F\u51FA\u3001\u751F\u6D3B\u73B0\u91D1\u3001\u7A0E\u52A1\u3001\u6D41\u52A8\u6027\u4E0E\u8D44\u4EA7\u5206\u6563\u4F18\u5148\u4E8E\u9AD8\u6CE2\u52A8\u6295\u8D44\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesLifeMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityDefault = `\u7528\u6982\u7387\u548C\u60C5\u666F\u4EE3\u66FF\u786E\u5B9A\u9884\u6D4B\uFF1B\u5224\u65AD\u6B63\u786E\u65F6\u591A\u8D5A\uFF0C\u9519\u8BEF\u65F6\u5C11\u4E8F\uFF0C\u6301\u7EED\u68C0\u9A8C\u671F\u671B\u503C\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesQualityDefault = `\u597D\u8D5B\u9053\u4E0E\u597D\u516C\u53F8\uFF1A\u6838\u67E5\u6301\u7EED\u589E\u957F\u3001\u81EA\u7531\u73B0\u91D1\u6D41\u3001\u62A4\u57CE\u6CB3\u3001\u5B9A\u4EF7\u6743\u3001\u7BA1\u7406\u5C42\u53CA\u884C\u4E1A\u5730\u4F4D\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesQualityMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesSizingDefault = `\u5206\u6279\u5EFA\u4ED3\uFF0C\u63A7\u5236\u5355\u80A1\u548C\u4E3B\u9898\u96C6\u4E2D\u5EA6\uFF0C\u4FDD\u7559\u73B0\u91D1\uFF1B\u5148\u95EE\u5224\u65AD\u9519\u8BEF\u4F1A\u4E8F\u591A\u5C11\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesSizingMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesValuationDefault = `\u597D\u516C\u53F8\u4E5F\u8981\u597D\u4EF7\u683C\uFF1B\u5206\u522B\u5224\u65AD\u8D28\u91CF\u3001\u4F30\u503C\u4E0E\u5B89\u5168\u8FB9\u9645\uFF0C\u4E3A\u9519\u8BEF\u7559\u51FA\u7A7A\u95F4\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotPrinciplesValuationMax = 4000;
+
+export const getInvestmentPlanResponsePolicySnapshotReviewIntervalDaysOneMax = 3650;
+
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMin = 0;
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMax = 100;
+
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin = 0;
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax = 100;
+
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMin = 0;
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMax = 100;
+
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMin = 0;
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMax = 100;
+
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMin = 0;
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMax = 100;
+
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin = 0;
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneMax = 1000;
+
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin = 0;
+export const getInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax = 100;
+
+export const getInvestmentPlanResponsePolicySnapshotScopeNoticeDefault = `\u4E2A\u4EBA\u53EF\u7F16\u8F91\u7684\u6295\u8D44\u7EAA\u5F8B\uFF1B\u7A7A\u9608\u503C\u8868\u793A\u5C1A\u672A\u8BBE\u7F6E\uFF0C\u4E0D\u7B49\u4E8E\u65E0\u9650\u98CE\u9669\u6216\u5DF2\u901A\u8FC7\u68C0\u67E5\u3002`;
+export const getInvestmentPlanResponsePolicySnapshotStyleDefault = `long_term`;
+export const getInvestmentPlanResponsePolicySnapshotTaxNotesDefault = ``;
+export const getInvestmentPlanResponsePolicySnapshotTaxNotesMax = 4000;
+
+export const getInvestmentPlanResponseQualityDefault = ``;
+export const getInvestmentPlanResponseQualityMax = 4000;
+
+export const getInvestmentPlanResponseReviewNotesDefault = ``;
+export const getInvestmentPlanResponseReviewNotesMax = 4000;
+
+export const getInvestmentPlanResponseReviewOnOneRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const getInvestmentPlanResponseRiskInputsAvailableCashUsdOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsAvailableCashUsdOneMax = 1000000000000000;
+
+export const getInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMax = 1000000000000000;
+
+export const getInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMax = 100;
+
+export const getInvestmentPlanResponseRiskInputsCurrentPositionPctOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsCurrentPositionPctOneMax = 100;
+
+export const getInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMax = 100;
+
+export const getInvestmentPlanResponseRiskInputsEssentialCashUsdOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsEssentialCashUsdOneMax = 1000000000000000;
+
+export const getInvestmentPlanResponseRiskInputsTargetPositionPctOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsTargetPositionPctOneMax = 100;
+
+export const getInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMin = 0;
+export const getInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMax = 100;
+
+export const getInvestmentPlanResponseRiskInputsUnleveredLongOnlyDefault = true;
+export const getInvestmentPlanResponseScenariosBaseProbabilityPctOneMin = 0;
+export const getInvestmentPlanResponseScenariosBaseProbabilityPctOneMax = 100;
+
+export const getInvestmentPlanResponseScenariosBaseTargetPriceOneMin = 0;
+export const getInvestmentPlanResponseScenariosBaseTargetPriceOneMax = 1000000000000;
+
+export const getInvestmentPlanResponseScenariosBaseThesisDefault = ``;
+export const getInvestmentPlanResponseScenariosBaseThesisMax = 2000;
+
+export const getInvestmentPlanResponseScenariosBearProbabilityPctOneMin = 0;
+export const getInvestmentPlanResponseScenariosBearProbabilityPctOneMax = 100;
+
+export const getInvestmentPlanResponseScenariosBearTargetPriceOneMin = 0;
+export const getInvestmentPlanResponseScenariosBearTargetPriceOneMax = 1000000000000;
+
+export const getInvestmentPlanResponseScenariosBearThesisDefault = ``;
+export const getInvestmentPlanResponseScenariosBearThesisMax = 2000;
+
+export const getInvestmentPlanResponseScenariosBullProbabilityPctOneMin = 0;
+export const getInvestmentPlanResponseScenariosBullProbabilityPctOneMax = 100;
+
+export const getInvestmentPlanResponseScenariosBullTargetPriceOneMin = 0;
+export const getInvestmentPlanResponseScenariosBullTargetPriceOneMax = 1000000000000;
+
+export const getInvestmentPlanResponseScenariosBullThesisDefault = ``;
+export const getInvestmentPlanResponseScenariosBullThesisMax = 2000;
+
+export const getInvestmentPlanResponseScopeNoticeDefault = `\u7528\u6237\u624B\u52A8\u7EF4\u62A4\u7684\u7814\u7A76\u4E0E\u51B3\u7B56\u8BB0\u5F55\uFF1Bholding\u4E3A\u672C\u4EBA\u6807\u7B7E\uFF0C\u4E0D\u4EE3\u8868\u5DF2\u8FDE\u63A5\u5238\u5546\u6216\u6838\u5B9E\u771F\u5B9E\u6301\u4ED3\u3002`;
+export const getInvestmentPlanResponseStatusDefault = `draft`;
+export const getInvestmentPlanResponseStopLossPriceOneMin = 0.000001;
+export const getInvestmentPlanResponseStopLossPriceOneMax = 1000000000000;
+
+export const getInvestmentPlanResponseThemeDefault = ``;
+export const getInvestmentPlanResponseThemeMax = 120;
+
+export const getInvestmentPlanResponseTickerMax = 32;
+
+export const getInvestmentPlanResponseTitleDefault = ``;
+export const getInvestmentPlanResponseTitleMax = 160;
+
+export const getInvestmentPlanResponseValuationDefault = ``;
+export const getInvestmentPlanResponseValuationMax = 4000;
+
+export const getInvestmentPlanResponseValuationCycleDefault = ``;
+export const getInvestmentPlanResponseValuationCycleMax = 4000;
+
+
+
+export const GetInvestmentPlanResponse = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(getInvestmentPlanResponseActionRulesAddMax).default(getInvestmentPlanResponseActionRulesAddDefault),
+  "buy": zod.string().max(getInvestmentPlanResponseActionRulesBuyMax).default(getInvestmentPlanResponseActionRulesBuyDefault),
+  "exit": zod.string().max(getInvestmentPlanResponseActionRulesExitMax).default(getInvestmentPlanResponseActionRulesExitDefault),
+  "reduce": zod.string().max(getInvestmentPlanResponseActionRulesReduceMax).default(getInvestmentPlanResponseActionRulesReduceDefault),
+  "review": zod.string().max(getInvestmentPlanResponseActionRulesReviewMax).default(getInvestmentPlanResponseActionRulesReviewDefault)
+}).optional(),
+  "analysis_date": zod.string().regex(getInvestmentPlanResponseAnalysisDateRegExp),
+  "business": zod.string().max(getInvestmentPlanResponseBusinessMax).default(getInvestmentPlanResponseBusinessDefault),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "entry_price": zod.union([zod.number().min(getInvestmentPlanResponseEntryPriceOneMin).max(getInvestmentPlanResponseEntryPriceOneMax),zod.null()]).optional(),
+  "estimated_cost_pct": zod.union([zod.number().min(getInvestmentPlanResponseEstimatedCostPctOneMin).max(getInvestmentPlanResponseEstimatedCostPctOneMax),zod.null()]).optional(),
+  "evaluation": zod.object({
+  "bear_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "bull_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "checks": zod.array(zod.object({
+  "actual": zod.union([zod.number(),zod.null()]).optional(),
+  "key": zod.string(),
+  "label": zod.string(),
+  "limit": zod.union([zod.number(),zod.null()]).optional(),
+  "message": zod.string(),
+  "status": zod.enum(['within_limit', 'breach', 'unknown', 'not_applicable'])
+})),
+  "eligible_for_rating": zod.literal(false).default(getInvestmentPlanResponseEvaluationEligibleForRatingDefault).meta({ title: 'Eligible For Rating' }),
+  "gross_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "margin_of_safety_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "net_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "notices": zod.array(zod.string()),
+  "planned_cash_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "planned_cash_usd": zod.union([zod.number(),zod.null()]).optional(),
+  "questions": zod.array(zod.object({
+  "answer": zod.string(),
+  "key": zod.string(),
+  "question": zod.string(),
+  "status": zod.enum(['recorded', 'missing'])
+})),
+  "reward_risk_ratio": zod.union([zod.number(),zod.null()]).optional(),
+  "scenario_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "scope_notice": zod.string().default(getInvestmentPlanResponseEvaluationScopeNoticeDefault),
+  "status": zod.enum(['incomplete', 'breach', 'within_configured_limits']),
+  "stop_reference_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "zero_value_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional()
+}),
+  "evidence_notes": zod.string().max(getInvestmentPlanResponseEvidenceNotesMax).default(getInvestmentPlanResponseEvidenceNotesDefault),
+  "fair_value": zod.union([zod.number().min(getInvestmentPlanResponseFairValueOneMin).max(getInvestmentPlanResponseFairValueOneMax),zod.null()]).optional(),
+  "id": zod.string(),
+  "industry_cycle": zod.string().max(getInvestmentPlanResponseIndustryCycleMax).default(getInvestmentPlanResponseIndustryCycleDefault),
+  "invalidation": zod.string().max(getInvestmentPlanResponseInvalidationMax).default(getInvestmentPlanResponseInvalidationDefault),
+  "macro_cycle": zod.string().max(getInvestmentPlanResponseMacroCycleMax).default(getInvestmentPlanResponseMacroCycleDefault),
+  "moat": zod.string().max(getInvestmentPlanResponseMoatMax).default(getInvestmentPlanResponseMoatDefault),
+  "policy_snapshot": zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(getInvestmentPlanResponsePolicySnapshotActionRulesAddMax).default(getInvestmentPlanResponsePolicySnapshotActionRulesAddDefault),
+  "buy": zod.string().max(getInvestmentPlanResponsePolicySnapshotActionRulesBuyMax).default(getInvestmentPlanResponsePolicySnapshotActionRulesBuyDefault),
+  "exit": zod.string().max(getInvestmentPlanResponsePolicySnapshotActionRulesExitMax).default(getInvestmentPlanResponsePolicySnapshotActionRulesExitDefault),
+  "reduce": zod.string().max(getInvestmentPlanResponsePolicySnapshotActionRulesReduceMax).default(getInvestmentPlanResponsePolicySnapshotActionRulesReduceDefault),
+  "review": zod.string().max(getInvestmentPlanResponsePolicySnapshotActionRulesReviewMax).default(getInvestmentPlanResponsePolicySnapshotActionRulesReviewDefault)
+}).optional(),
+  "enabled": zod.boolean().default(getInvestmentPlanResponsePolicySnapshotEnabledDefault),
+  "life_notes": zod.string().max(getInvestmentPlanResponsePolicySnapshotLifeNotesMax).default(getInvestmentPlanResponsePolicySnapshotLifeNotesDefault),
+  "name": zod.string().min(1).max(getInvestmentPlanResponsePolicySnapshotNameMax).default(getInvestmentPlanResponsePolicySnapshotNameDefault),
+  "objective": zod.string().max(getInvestmentPlanResponsePolicySnapshotObjectiveMax).default(getInvestmentPlanResponsePolicySnapshotObjectiveDefault),
+  "principles": zod.object({
+  "cycles": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesCyclesMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesCyclesDefault),
+  "discipline": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineDefault),
+  "goal": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesGoalMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesGoalDefault),
+  "life": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesLifeMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesLifeDefault),
+  "probability": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityDefault),
+  "quality": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesQualityMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesQualityDefault),
+  "sizing": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesSizingMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesSizingDefault),
+  "valuation": zod.string().max(getInvestmentPlanResponsePolicySnapshotPrinciplesValuationMax).default(getInvestmentPlanResponsePolicySnapshotPrinciplesValuationDefault)
+}).optional(),
+  "review_interval_days": zod.union([zod.int().min(1).max(getInvestmentPlanResponsePolicySnapshotReviewIntervalDaysOneMax),zod.null()]).optional(),
+  "revision": zod.int(),
+  "risk_limits": zod.object({
+  "max_drawdown_pct": zod.union([zod.number().min(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMin).max(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMax),zod.null()]).optional(),
+  "max_loss_per_idea_pct": zod.union([zod.number().min(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin).max(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax),zod.null()]).optional(),
+  "max_single_position_pct": zod.union([zod.number().min(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMin).max(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMax),zod.null()]).optional(),
+  "max_theme_exposure_pct": zod.union([zod.number().min(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMin).max(getInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMax),zod.null()]).optional(),
+  "min_cash_pct": zod.union([zod.number().min(getInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMin).max(getInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMax),zod.null()]).optional(),
+  "min_reward_risk": zod.union([zod.number().gt(getInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin).max(getInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneMax),zod.null()]).optional(),
+  "minimum_margin_of_safety_pct": zod.union([zod.number().min(getInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin).max(getInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax),zod.null()]).optional()
+}).optional(),
+  "saved": zod.boolean(),
+  "scope_notice": zod.string().default(getInvestmentPlanResponsePolicySnapshotScopeNoticeDefault),
+  "style": zod.enum(['long_term', 'left_side', 'trend', 'swing']).default(getInvestmentPlanResponsePolicySnapshotStyleDefault),
+  "tax_notes": zod.string().max(getInvestmentPlanResponsePolicySnapshotTaxNotesMax).default(getInvestmentPlanResponsePolicySnapshotTaxNotesDefault),
+  "updated_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional()
+}),
+  "quality": zod.string().max(getInvestmentPlanResponseQualityMax).default(getInvestmentPlanResponseQualityDefault),
+  "review_due": zod.boolean(),
+  "review_notes": zod.string().max(getInvestmentPlanResponseReviewNotesMax).default(getInvestmentPlanResponseReviewNotesDefault),
+  "review_on": zod.union([zod.string().regex(getInvestmentPlanResponseReviewOnOneRegExp),zod.null()]).optional(),
+  "reviewed_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "revision": zod.int(),
+  "risk_inputs": zod.object({
+  "available_cash_usd": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsAvailableCashUsdOneMin).max(getInvestmentPlanResponseRiskInputsAvailableCashUsdOneMax),zod.null()]).optional(),
+  "capital_total_usd": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMin).max(getInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMax),zod.null()]).optional(),
+  "current_drawdown_pct": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMin).max(getInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMax),zod.null()]).optional(),
+  "current_position_pct": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsCurrentPositionPctOneMin).max(getInvestmentPlanResponseRiskInputsCurrentPositionPctOneMax),zod.null()]).optional(),
+  "current_theme_exposure_pct": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMin).max(getInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMax),zod.null()]).optional(),
+  "essential_cash_usd": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsEssentialCashUsdOneMin).max(getInvestmentPlanResponseRiskInputsEssentialCashUsdOneMax),zod.null()]).optional(),
+  "target_position_pct": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsTargetPositionPctOneMin).max(getInvestmentPlanResponseRiskInputsTargetPositionPctOneMax),zod.null()]).optional(),
+  "target_theme_exposure_pct": zod.union([zod.number().min(getInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMin).max(getInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMax),zod.null()]).optional(),
+  "unlevered_long_only": zod.boolean().default(getInvestmentPlanResponseRiskInputsUnleveredLongOnlyDefault)
+}).optional(),
+  "run_id": zod.union([zod.uuid(),zod.null()]).optional(),
+  "scenarios": zod.object({
+  "base": zod.object({
+  "probability_pct": zod.union([zod.number().min(getInvestmentPlanResponseScenariosBaseProbabilityPctOneMin).max(getInvestmentPlanResponseScenariosBaseProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(getInvestmentPlanResponseScenariosBaseTargetPriceOneMin).max(getInvestmentPlanResponseScenariosBaseTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(getInvestmentPlanResponseScenariosBaseThesisMax).default(getInvestmentPlanResponseScenariosBaseThesisDefault)
+}).optional(),
+  "bear": zod.object({
+  "probability_pct": zod.union([zod.number().min(getInvestmentPlanResponseScenariosBearProbabilityPctOneMin).max(getInvestmentPlanResponseScenariosBearProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(getInvestmentPlanResponseScenariosBearTargetPriceOneMin).max(getInvestmentPlanResponseScenariosBearTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(getInvestmentPlanResponseScenariosBearThesisMax).default(getInvestmentPlanResponseScenariosBearThesisDefault)
+}).optional(),
+  "bull": zod.object({
+  "probability_pct": zod.union([zod.number().min(getInvestmentPlanResponseScenariosBullProbabilityPctOneMin).max(getInvestmentPlanResponseScenariosBullProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(getInvestmentPlanResponseScenariosBullTargetPriceOneMin).max(getInvestmentPlanResponseScenariosBullTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(getInvestmentPlanResponseScenariosBullThesisMax).default(getInvestmentPlanResponseScenariosBullThesisDefault)
+}).optional()
+}).optional(),
+  "scope_notice": zod.string().default(getInvestmentPlanResponseScopeNoticeDefault),
+  "status": zod.enum(['draft', 'watching', 'holding', 'reviewed', 'archived']).default(getInvestmentPlanResponseStatusDefault),
+  "stop_loss_price": zod.union([zod.number().min(getInvestmentPlanResponseStopLossPriceOneMin).max(getInvestmentPlanResponseStopLossPriceOneMax),zod.null()]).optional(),
+  "theme": zod.string().max(getInvestmentPlanResponseThemeMax).default(getInvestmentPlanResponseThemeDefault),
+  "ticker": zod.string().min(1).max(getInvestmentPlanResponseTickerMax),
+  "title": zod.string().max(getInvestmentPlanResponseTitleMax).default(getInvestmentPlanResponseTitleDefault),
+  "updated_at": zod.iso.datetime({"offset":true}),
+  "valuation": zod.string().max(getInvestmentPlanResponseValuationMax).default(getInvestmentPlanResponseValuationDefault),
+  "valuation_cycle": zod.string().max(getInvestmentPlanResponseValuationCycleMax).default(getInvestmentPlanResponseValuationCycleDefault)
+})
+
+
+/**
+ * @summary Update Plan
+ */
+export const UpdateInvestmentPlanParams = zod.object({
+  "plan_id": zod.uuid()
+})
+
+export const updateInvestmentPlanBodyActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const updateInvestmentPlanBodyActionRulesAddMax = 4000;
+
+export const updateInvestmentPlanBodyActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const updateInvestmentPlanBodyActionRulesBuyMax = 4000;
+
+export const updateInvestmentPlanBodyActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const updateInvestmentPlanBodyActionRulesExitMax = 4000;
+
+export const updateInvestmentPlanBodyActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const updateInvestmentPlanBodyActionRulesReduceMax = 4000;
+
+export const updateInvestmentPlanBodyActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const updateInvestmentPlanBodyActionRulesReviewMax = 4000;
+
+export const updateInvestmentPlanBodyAnalysisDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const updateInvestmentPlanBodyBusinessDefault = ``;
+export const updateInvestmentPlanBodyBusinessMax = 4000;
+
+export const updateInvestmentPlanBodyEntryPriceOneMin = 0.000001;
+export const updateInvestmentPlanBodyEntryPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanBodyEstimatedCostPctOneMin = 0;
+export const updateInvestmentPlanBodyEstimatedCostPctOneMax = 100;
+
+export const updateInvestmentPlanBodyEvidenceNotesDefault = ``;
+export const updateInvestmentPlanBodyEvidenceNotesMax = 4000;
+
+export const updateInvestmentPlanBodyFairValueOneMin = 0.000001;
+export const updateInvestmentPlanBodyFairValueOneMax = 1000000000000;
+
+export const updateInvestmentPlanBodyIndustryCycleDefault = ``;
+export const updateInvestmentPlanBodyIndustryCycleMax = 4000;
+
+export const updateInvestmentPlanBodyInvalidationDefault = ``;
+export const updateInvestmentPlanBodyInvalidationMax = 4000;
+
+export const updateInvestmentPlanBodyMacroCycleDefault = ``;
+export const updateInvestmentPlanBodyMacroCycleMax = 4000;
+
+export const updateInvestmentPlanBodyMarkReviewedDefault = false;
+export const updateInvestmentPlanBodyMoatDefault = ``;
+export const updateInvestmentPlanBodyMoatMax = 4000;
+
+export const updateInvestmentPlanBodyQualityDefault = ``;
+export const updateInvestmentPlanBodyQualityMax = 4000;
+
+export const updateInvestmentPlanBodyRebasePolicyDefault = false;
+export const updateInvestmentPlanBodyReviewNotesDefault = ``;
+export const updateInvestmentPlanBodyReviewNotesMax = 4000;
+
+export const updateInvestmentPlanBodyReviewOnOneRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+
+export const updateInvestmentPlanBodyRiskInputsAvailableCashUsdOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsAvailableCashUsdOneMax = 1000000000000000;
+
+export const updateInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMax = 1000000000000000;
+
+export const updateInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMax = 100;
+
+export const updateInvestmentPlanBodyRiskInputsCurrentPositionPctOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsCurrentPositionPctOneMax = 100;
+
+export const updateInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMax = 100;
+
+export const updateInvestmentPlanBodyRiskInputsEssentialCashUsdOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsEssentialCashUsdOneMax = 1000000000000000;
+
+export const updateInvestmentPlanBodyRiskInputsTargetPositionPctOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsTargetPositionPctOneMax = 100;
+
+export const updateInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMin = 0;
+export const updateInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMax = 100;
+
+export const updateInvestmentPlanBodyRiskInputsUnleveredLongOnlyDefault = true;
+export const updateInvestmentPlanBodyScenariosBaseProbabilityPctOneMin = 0;
+export const updateInvestmentPlanBodyScenariosBaseProbabilityPctOneMax = 100;
+
+export const updateInvestmentPlanBodyScenariosBaseTargetPriceOneMin = 0;
+export const updateInvestmentPlanBodyScenariosBaseTargetPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanBodyScenariosBaseThesisDefault = ``;
+export const updateInvestmentPlanBodyScenariosBaseThesisMax = 2000;
+
+export const updateInvestmentPlanBodyScenariosBearProbabilityPctOneMin = 0;
+export const updateInvestmentPlanBodyScenariosBearProbabilityPctOneMax = 100;
+
+export const updateInvestmentPlanBodyScenariosBearTargetPriceOneMin = 0;
+export const updateInvestmentPlanBodyScenariosBearTargetPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanBodyScenariosBearThesisDefault = ``;
+export const updateInvestmentPlanBodyScenariosBearThesisMax = 2000;
+
+export const updateInvestmentPlanBodyScenariosBullProbabilityPctOneMin = 0;
+export const updateInvestmentPlanBodyScenariosBullProbabilityPctOneMax = 100;
+
+export const updateInvestmentPlanBodyScenariosBullTargetPriceOneMin = 0;
+export const updateInvestmentPlanBodyScenariosBullTargetPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanBodyScenariosBullThesisDefault = ``;
+export const updateInvestmentPlanBodyScenariosBullThesisMax = 2000;
+
+export const updateInvestmentPlanBodyStatusDefault = `draft`;
+export const updateInvestmentPlanBodyStopLossPriceOneMin = 0.000001;
+export const updateInvestmentPlanBodyStopLossPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanBodyThemeDefault = ``;
+export const updateInvestmentPlanBodyThemeMax = 120;
+
+export const updateInvestmentPlanBodyTickerMax = 32;
+
+export const updateInvestmentPlanBodyTitleDefault = ``;
+export const updateInvestmentPlanBodyTitleMax = 160;
+
+export const updateInvestmentPlanBodyValuationDefault = ``;
+export const updateInvestmentPlanBodyValuationMax = 4000;
+
+export const updateInvestmentPlanBodyValuationCycleDefault = ``;
+export const updateInvestmentPlanBodyValuationCycleMax = 4000;
+
+
+
+export const UpdateInvestmentPlanBody = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(updateInvestmentPlanBodyActionRulesAddMax).default(updateInvestmentPlanBodyActionRulesAddDefault),
+  "buy": zod.string().max(updateInvestmentPlanBodyActionRulesBuyMax).default(updateInvestmentPlanBodyActionRulesBuyDefault),
+  "exit": zod.string().max(updateInvestmentPlanBodyActionRulesExitMax).default(updateInvestmentPlanBodyActionRulesExitDefault),
+  "reduce": zod.string().max(updateInvestmentPlanBodyActionRulesReduceMax).default(updateInvestmentPlanBodyActionRulesReduceDefault),
+  "review": zod.string().max(updateInvestmentPlanBodyActionRulesReviewMax).default(updateInvestmentPlanBodyActionRulesReviewDefault)
+}).optional(),
+  "analysis_date": zod.string().regex(updateInvestmentPlanBodyAnalysisDateRegExp),
+  "business": zod.string().max(updateInvestmentPlanBodyBusinessMax).default(updateInvestmentPlanBodyBusinessDefault),
+  "entry_price": zod.union([zod.number().min(updateInvestmentPlanBodyEntryPriceOneMin).max(updateInvestmentPlanBodyEntryPriceOneMax),zod.null()]).optional(),
+  "estimated_cost_pct": zod.union([zod.number().min(updateInvestmentPlanBodyEstimatedCostPctOneMin).max(updateInvestmentPlanBodyEstimatedCostPctOneMax),zod.null()]).optional(),
+  "evidence_notes": zod.string().max(updateInvestmentPlanBodyEvidenceNotesMax).default(updateInvestmentPlanBodyEvidenceNotesDefault),
+  "fair_value": zod.union([zod.number().min(updateInvestmentPlanBodyFairValueOneMin).max(updateInvestmentPlanBodyFairValueOneMax),zod.null()]).optional(),
+  "industry_cycle": zod.string().max(updateInvestmentPlanBodyIndustryCycleMax).default(updateInvestmentPlanBodyIndustryCycleDefault),
+  "invalidation": zod.string().max(updateInvestmentPlanBodyInvalidationMax).default(updateInvestmentPlanBodyInvalidationDefault),
+  "macro_cycle": zod.string().max(updateInvestmentPlanBodyMacroCycleMax).default(updateInvestmentPlanBodyMacroCycleDefault),
+  "mark_reviewed": zod.boolean().default(updateInvestmentPlanBodyMarkReviewedDefault),
+  "moat": zod.string().max(updateInvestmentPlanBodyMoatMax).default(updateInvestmentPlanBodyMoatDefault),
+  "quality": zod.string().max(updateInvestmentPlanBodyQualityMax).default(updateInvestmentPlanBodyQualityDefault),
+  "rebase_policy": zod.boolean().default(updateInvestmentPlanBodyRebasePolicyDefault),
+  "review_notes": zod.string().max(updateInvestmentPlanBodyReviewNotesMax).default(updateInvestmentPlanBodyReviewNotesDefault),
+  "review_on": zod.union([zod.string().regex(updateInvestmentPlanBodyReviewOnOneRegExp),zod.null()]).optional(),
+  "revision": zod.int().min(1),
+  "risk_inputs": zod.object({
+  "available_cash_usd": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsAvailableCashUsdOneMin).max(updateInvestmentPlanBodyRiskInputsAvailableCashUsdOneMax),zod.null()]).optional(),
+  "capital_total_usd": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMin).max(updateInvestmentPlanBodyRiskInputsCapitalTotalUsdOneMax),zod.null()]).optional(),
+  "current_drawdown_pct": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMin).max(updateInvestmentPlanBodyRiskInputsCurrentDrawdownPctOneMax),zod.null()]).optional(),
+  "current_position_pct": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsCurrentPositionPctOneMin).max(updateInvestmentPlanBodyRiskInputsCurrentPositionPctOneMax),zod.null()]).optional(),
+  "current_theme_exposure_pct": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMin).max(updateInvestmentPlanBodyRiskInputsCurrentThemeExposurePctOneMax),zod.null()]).optional(),
+  "essential_cash_usd": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsEssentialCashUsdOneMin).max(updateInvestmentPlanBodyRiskInputsEssentialCashUsdOneMax),zod.null()]).optional(),
+  "target_position_pct": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsTargetPositionPctOneMin).max(updateInvestmentPlanBodyRiskInputsTargetPositionPctOneMax),zod.null()]).optional(),
+  "target_theme_exposure_pct": zod.union([zod.number().min(updateInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMin).max(updateInvestmentPlanBodyRiskInputsTargetThemeExposurePctOneMax),zod.null()]).optional(),
+  "unlevered_long_only": zod.boolean().default(updateInvestmentPlanBodyRiskInputsUnleveredLongOnlyDefault)
+}).optional(),
+  "run_id": zod.union([zod.uuid(),zod.null()]).optional(),
+  "scenarios": zod.object({
+  "base": zod.object({
+  "probability_pct": zod.union([zod.number().min(updateInvestmentPlanBodyScenariosBaseProbabilityPctOneMin).max(updateInvestmentPlanBodyScenariosBaseProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(updateInvestmentPlanBodyScenariosBaseTargetPriceOneMin).max(updateInvestmentPlanBodyScenariosBaseTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(updateInvestmentPlanBodyScenariosBaseThesisMax).default(updateInvestmentPlanBodyScenariosBaseThesisDefault)
+}).optional(),
+  "bear": zod.object({
+  "probability_pct": zod.union([zod.number().min(updateInvestmentPlanBodyScenariosBearProbabilityPctOneMin).max(updateInvestmentPlanBodyScenariosBearProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(updateInvestmentPlanBodyScenariosBearTargetPriceOneMin).max(updateInvestmentPlanBodyScenariosBearTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(updateInvestmentPlanBodyScenariosBearThesisMax).default(updateInvestmentPlanBodyScenariosBearThesisDefault)
+}).optional(),
+  "bull": zod.object({
+  "probability_pct": zod.union([zod.number().min(updateInvestmentPlanBodyScenariosBullProbabilityPctOneMin).max(updateInvestmentPlanBodyScenariosBullProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(updateInvestmentPlanBodyScenariosBullTargetPriceOneMin).max(updateInvestmentPlanBodyScenariosBullTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(updateInvestmentPlanBodyScenariosBullThesisMax).default(updateInvestmentPlanBodyScenariosBullThesisDefault)
+}).optional()
+}).optional(),
+  "status": zod.enum(['draft', 'watching', 'holding', 'reviewed', 'archived']).default(updateInvestmentPlanBodyStatusDefault),
+  "stop_loss_price": zod.union([zod.number().min(updateInvestmentPlanBodyStopLossPriceOneMin).max(updateInvestmentPlanBodyStopLossPriceOneMax),zod.null()]).optional(),
+  "theme": zod.string().max(updateInvestmentPlanBodyThemeMax).default(updateInvestmentPlanBodyThemeDefault),
+  "ticker": zod.string().min(1).max(updateInvestmentPlanBodyTickerMax),
+  "title": zod.string().max(updateInvestmentPlanBodyTitleMax).default(updateInvestmentPlanBodyTitleDefault),
+  "valuation": zod.string().max(updateInvestmentPlanBodyValuationMax).default(updateInvestmentPlanBodyValuationDefault),
+  "valuation_cycle": zod.string().max(updateInvestmentPlanBodyValuationCycleMax).default(updateInvestmentPlanBodyValuationCycleDefault)
+})
+
+export const updateInvestmentPlanResponseActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const updateInvestmentPlanResponseActionRulesAddMax = 4000;
+
+export const updateInvestmentPlanResponseActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const updateInvestmentPlanResponseActionRulesBuyMax = 4000;
+
+export const updateInvestmentPlanResponseActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const updateInvestmentPlanResponseActionRulesExitMax = 4000;
+
+export const updateInvestmentPlanResponseActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const updateInvestmentPlanResponseActionRulesReduceMax = 4000;
+
+export const updateInvestmentPlanResponseActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const updateInvestmentPlanResponseActionRulesReviewMax = 4000;
+
+export const updateInvestmentPlanResponseAnalysisDateRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const updateInvestmentPlanResponseBusinessDefault = ``;
+export const updateInvestmentPlanResponseBusinessMax = 4000;
+
+export const updateInvestmentPlanResponseEntryPriceOneMin = 0.000001;
+export const updateInvestmentPlanResponseEntryPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanResponseEstimatedCostPctOneMin = 0;
+export const updateInvestmentPlanResponseEstimatedCostPctOneMax = 100;
+
+export const updateInvestmentPlanResponseEvaluationEligibleForRatingDefault = false;
+export const updateInvestmentPlanResponseEvaluationScopeNoticeDefault = `\u4EC5\u6309\u7528\u6237\u81EA\u586B\u5047\u8BBE\u8BA1\u7B97\u7EAA\u5F8B\u4E0E\u60C5\u666F\uFF1B\u4E0D\u9A8C\u8BC1\u516C\u5141\u4EF7\u503C\u3001\u6982\u7387\u6216\u76C8\u5229\u80FD\u529B\uFF0C\u4E0D\u6784\u6210\u4E70\u5356\u5224\u65AD\u6216\u6267\u884C\u4EA4\u6613\u3002`;
+export const updateInvestmentPlanResponseEvidenceNotesDefault = ``;
+export const updateInvestmentPlanResponseEvidenceNotesMax = 4000;
+
+export const updateInvestmentPlanResponseFairValueOneMin = 0.000001;
+export const updateInvestmentPlanResponseFairValueOneMax = 1000000000000;
+
+export const updateInvestmentPlanResponseIndustryCycleDefault = ``;
+export const updateInvestmentPlanResponseIndustryCycleMax = 4000;
+
+export const updateInvestmentPlanResponseInvalidationDefault = ``;
+export const updateInvestmentPlanResponseInvalidationMax = 4000;
+
+export const updateInvestmentPlanResponseMacroCycleDefault = ``;
+export const updateInvestmentPlanResponseMacroCycleMax = 4000;
+
+export const updateInvestmentPlanResponseMoatDefault = ``;
+export const updateInvestmentPlanResponseMoatMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesAddMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesBuyMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesExitMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesReduceMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotActionRulesReviewMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotEnabledDefault = true;
+export const updateInvestmentPlanResponsePolicySnapshotLifeNotesDefault = ``;
+export const updateInvestmentPlanResponsePolicySnapshotLifeNotesMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotNameDefault = `\u6211\u7684\u6295\u8D44\u4F53\u7CFB`;
+export const updateInvestmentPlanResponsePolicySnapshotNameMax = 120;
+
+export const updateInvestmentPlanResponsePolicySnapshotObjectiveDefault = `\u957F\u671F\u53EF\u6301\u7EED\u7684\u8D22\u5BCC\u589E\u957F`;
+export const updateInvestmentPlanResponsePolicySnapshotObjectiveMax = 2000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesCyclesDefault = `\u5148\u7814\u7A76\u5B8F\u89C2\u3001\u884C\u4E1A\u4E0E\u4F30\u503C\u5468\u671F\uFF0C\u518D\u9009\u8D44\u4EA7\uFF1B\u8BB0\u5F55\u8BC1\u636E\u3001\u9636\u6BB5\u5224\u65AD\u548C\u76F8\u53CD\u4FE1\u53F7\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesCyclesMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineDefault = `\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u957F\u671F\u3001\u5DE6\u4FA7\u3001\u8D8B\u52BF\u6216\u6CE2\u6BB5\u65B9\u6CD5\uFF1B\u9075\u5B88\u4E70\u5165\u3001\u52A0\u4ED3\u3001\u51CF\u4ED3\u3001\u9000\u51FA\u4E0E\u590D\u76D8\u89C4\u5219\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesGoalDefault = `\u957F\u671F\u8D22\u5BCC\u589E\u957F\uFF1B\u5148\u6D3B\u4E0B\u6765\uFF0C\u518D\u8FFD\u6C42\u6536\u76CA\uFF0C\u8BA9\u672C\u91D1\u3001\u6536\u76CA\u4E0E\u65F6\u95F4\u5171\u540C\u79EF\u7D2F\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesGoalMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesLifeDefault = `\u6295\u8D44\u670D\u52A1\u4E8E\u751F\u6D3B\uFF1B\u786E\u5B9A\u652F\u51FA\u3001\u751F\u6D3B\u73B0\u91D1\u3001\u7A0E\u52A1\u3001\u6D41\u52A8\u6027\u4E0E\u8D44\u4EA7\u5206\u6563\u4F18\u5148\u4E8E\u9AD8\u6CE2\u52A8\u6295\u8D44\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesLifeMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityDefault = `\u7528\u6982\u7387\u548C\u60C5\u666F\u4EE3\u66FF\u786E\u5B9A\u9884\u6D4B\uFF1B\u5224\u65AD\u6B63\u786E\u65F6\u591A\u8D5A\uFF0C\u9519\u8BEF\u65F6\u5C11\u4E8F\uFF0C\u6301\u7EED\u68C0\u9A8C\u671F\u671B\u503C\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesQualityDefault = `\u597D\u8D5B\u9053\u4E0E\u597D\u516C\u53F8\uFF1A\u6838\u67E5\u6301\u7EED\u589E\u957F\u3001\u81EA\u7531\u73B0\u91D1\u6D41\u3001\u62A4\u57CE\u6CB3\u3001\u5B9A\u4EF7\u6743\u3001\u7BA1\u7406\u5C42\u53CA\u884C\u4E1A\u5730\u4F4D\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesQualityMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesSizingDefault = `\u5206\u6279\u5EFA\u4ED3\uFF0C\u63A7\u5236\u5355\u80A1\u548C\u4E3B\u9898\u96C6\u4E2D\u5EA6\uFF0C\u4FDD\u7559\u73B0\u91D1\uFF1B\u5148\u95EE\u5224\u65AD\u9519\u8BEF\u4F1A\u4E8F\u591A\u5C11\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesSizingMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesValuationDefault = `\u597D\u516C\u53F8\u4E5F\u8981\u597D\u4EF7\u683C\uFF1B\u5206\u522B\u5224\u65AD\u8D28\u91CF\u3001\u4F30\u503C\u4E0E\u5B89\u5168\u8FB9\u9645\uFF0C\u4E3A\u9519\u8BEF\u7559\u51FA\u7A7A\u95F4\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotPrinciplesValuationMax = 4000;
+
+export const updateInvestmentPlanResponsePolicySnapshotReviewIntervalDaysOneMax = 3650;
+
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMin = 0;
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMax = 100;
+
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin = 0;
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax = 100;
+
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMin = 0;
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMax = 100;
+
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMin = 0;
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMax = 100;
+
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMin = 0;
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMax = 100;
+
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin = 0;
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneMax = 1000;
+
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin = 0;
+export const updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax = 100;
+
+export const updateInvestmentPlanResponsePolicySnapshotScopeNoticeDefault = `\u4E2A\u4EBA\u53EF\u7F16\u8F91\u7684\u6295\u8D44\u7EAA\u5F8B\uFF1B\u7A7A\u9608\u503C\u8868\u793A\u5C1A\u672A\u8BBE\u7F6E\uFF0C\u4E0D\u7B49\u4E8E\u65E0\u9650\u98CE\u9669\u6216\u5DF2\u901A\u8FC7\u68C0\u67E5\u3002`;
+export const updateInvestmentPlanResponsePolicySnapshotStyleDefault = `long_term`;
+export const updateInvestmentPlanResponsePolicySnapshotTaxNotesDefault = ``;
+export const updateInvestmentPlanResponsePolicySnapshotTaxNotesMax = 4000;
+
+export const updateInvestmentPlanResponseQualityDefault = ``;
+export const updateInvestmentPlanResponseQualityMax = 4000;
+
+export const updateInvestmentPlanResponseReviewNotesDefault = ``;
+export const updateInvestmentPlanResponseReviewNotesMax = 4000;
+
+export const updateInvestmentPlanResponseReviewOnOneRegExp = new RegExp('^\\d{4}-\\d{2}-\\d{2}$');
+export const updateInvestmentPlanResponseRiskInputsAvailableCashUsdOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsAvailableCashUsdOneMax = 1000000000000000;
+
+export const updateInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMax = 1000000000000000;
+
+export const updateInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMax = 100;
+
+export const updateInvestmentPlanResponseRiskInputsCurrentPositionPctOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsCurrentPositionPctOneMax = 100;
+
+export const updateInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMax = 100;
+
+export const updateInvestmentPlanResponseRiskInputsEssentialCashUsdOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsEssentialCashUsdOneMax = 1000000000000000;
+
+export const updateInvestmentPlanResponseRiskInputsTargetPositionPctOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsTargetPositionPctOneMax = 100;
+
+export const updateInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMin = 0;
+export const updateInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMax = 100;
+
+export const updateInvestmentPlanResponseRiskInputsUnleveredLongOnlyDefault = true;
+export const updateInvestmentPlanResponseScenariosBaseProbabilityPctOneMin = 0;
+export const updateInvestmentPlanResponseScenariosBaseProbabilityPctOneMax = 100;
+
+export const updateInvestmentPlanResponseScenariosBaseTargetPriceOneMin = 0;
+export const updateInvestmentPlanResponseScenariosBaseTargetPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanResponseScenariosBaseThesisDefault = ``;
+export const updateInvestmentPlanResponseScenariosBaseThesisMax = 2000;
+
+export const updateInvestmentPlanResponseScenariosBearProbabilityPctOneMin = 0;
+export const updateInvestmentPlanResponseScenariosBearProbabilityPctOneMax = 100;
+
+export const updateInvestmentPlanResponseScenariosBearTargetPriceOneMin = 0;
+export const updateInvestmentPlanResponseScenariosBearTargetPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanResponseScenariosBearThesisDefault = ``;
+export const updateInvestmentPlanResponseScenariosBearThesisMax = 2000;
+
+export const updateInvestmentPlanResponseScenariosBullProbabilityPctOneMin = 0;
+export const updateInvestmentPlanResponseScenariosBullProbabilityPctOneMax = 100;
+
+export const updateInvestmentPlanResponseScenariosBullTargetPriceOneMin = 0;
+export const updateInvestmentPlanResponseScenariosBullTargetPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanResponseScenariosBullThesisDefault = ``;
+export const updateInvestmentPlanResponseScenariosBullThesisMax = 2000;
+
+export const updateInvestmentPlanResponseScopeNoticeDefault = `\u7528\u6237\u624B\u52A8\u7EF4\u62A4\u7684\u7814\u7A76\u4E0E\u51B3\u7B56\u8BB0\u5F55\uFF1Bholding\u4E3A\u672C\u4EBA\u6807\u7B7E\uFF0C\u4E0D\u4EE3\u8868\u5DF2\u8FDE\u63A5\u5238\u5546\u6216\u6838\u5B9E\u771F\u5B9E\u6301\u4ED3\u3002`;
+export const updateInvestmentPlanResponseStatusDefault = `draft`;
+export const updateInvestmentPlanResponseStopLossPriceOneMin = 0.000001;
+export const updateInvestmentPlanResponseStopLossPriceOneMax = 1000000000000;
+
+export const updateInvestmentPlanResponseThemeDefault = ``;
+export const updateInvestmentPlanResponseThemeMax = 120;
+
+export const updateInvestmentPlanResponseTickerMax = 32;
+
+export const updateInvestmentPlanResponseTitleDefault = ``;
+export const updateInvestmentPlanResponseTitleMax = 160;
+
+export const updateInvestmentPlanResponseValuationDefault = ``;
+export const updateInvestmentPlanResponseValuationMax = 4000;
+
+export const updateInvestmentPlanResponseValuationCycleDefault = ``;
+export const updateInvestmentPlanResponseValuationCycleMax = 4000;
+
+
+
+export const UpdateInvestmentPlanResponse = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(updateInvestmentPlanResponseActionRulesAddMax).default(updateInvestmentPlanResponseActionRulesAddDefault),
+  "buy": zod.string().max(updateInvestmentPlanResponseActionRulesBuyMax).default(updateInvestmentPlanResponseActionRulesBuyDefault),
+  "exit": zod.string().max(updateInvestmentPlanResponseActionRulesExitMax).default(updateInvestmentPlanResponseActionRulesExitDefault),
+  "reduce": zod.string().max(updateInvestmentPlanResponseActionRulesReduceMax).default(updateInvestmentPlanResponseActionRulesReduceDefault),
+  "review": zod.string().max(updateInvestmentPlanResponseActionRulesReviewMax).default(updateInvestmentPlanResponseActionRulesReviewDefault)
+}).optional(),
+  "analysis_date": zod.string().regex(updateInvestmentPlanResponseAnalysisDateRegExp),
+  "business": zod.string().max(updateInvestmentPlanResponseBusinessMax).default(updateInvestmentPlanResponseBusinessDefault),
+  "created_at": zod.iso.datetime({"offset":true}),
+  "entry_price": zod.union([zod.number().min(updateInvestmentPlanResponseEntryPriceOneMin).max(updateInvestmentPlanResponseEntryPriceOneMax),zod.null()]).optional(),
+  "estimated_cost_pct": zod.union([zod.number().min(updateInvestmentPlanResponseEstimatedCostPctOneMin).max(updateInvestmentPlanResponseEstimatedCostPctOneMax),zod.null()]).optional(),
+  "evaluation": zod.object({
+  "bear_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "bull_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "checks": zod.array(zod.object({
+  "actual": zod.union([zod.number(),zod.null()]).optional(),
+  "key": zod.string(),
+  "label": zod.string(),
+  "limit": zod.union([zod.number(),zod.null()]).optional(),
+  "message": zod.string(),
+  "status": zod.enum(['within_limit', 'breach', 'unknown', 'not_applicable'])
+})),
+  "eligible_for_rating": zod.literal(false).default(updateInvestmentPlanResponseEvaluationEligibleForRatingDefault).meta({ title: 'Eligible For Rating' }),
+  "gross_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "margin_of_safety_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "net_expected_return_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "notices": zod.array(zod.string()),
+  "planned_cash_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "planned_cash_usd": zod.union([zod.number(),zod.null()]).optional(),
+  "questions": zod.array(zod.object({
+  "answer": zod.string(),
+  "key": zod.string(),
+  "question": zod.string(),
+  "status": zod.enum(['recorded', 'missing'])
+})),
+  "reward_risk_ratio": zod.union([zod.number(),zod.null()]).optional(),
+  "scenario_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "scope_notice": zod.string().default(updateInvestmentPlanResponseEvaluationScopeNoticeDefault),
+  "status": zod.enum(['incomplete', 'breach', 'within_configured_limits']),
+  "stop_reference_loss_pct": zod.union([zod.number(),zod.null()]).optional(),
+  "zero_value_portfolio_loss_pct": zod.union([zod.number(),zod.null()]).optional()
+}),
+  "evidence_notes": zod.string().max(updateInvestmentPlanResponseEvidenceNotesMax).default(updateInvestmentPlanResponseEvidenceNotesDefault),
+  "fair_value": zod.union([zod.number().min(updateInvestmentPlanResponseFairValueOneMin).max(updateInvestmentPlanResponseFairValueOneMax),zod.null()]).optional(),
+  "id": zod.string(),
+  "industry_cycle": zod.string().max(updateInvestmentPlanResponseIndustryCycleMax).default(updateInvestmentPlanResponseIndustryCycleDefault),
+  "invalidation": zod.string().max(updateInvestmentPlanResponseInvalidationMax).default(updateInvestmentPlanResponseInvalidationDefault),
+  "macro_cycle": zod.string().max(updateInvestmentPlanResponseMacroCycleMax).default(updateInvestmentPlanResponseMacroCycleDefault),
+  "moat": zod.string().max(updateInvestmentPlanResponseMoatMax).default(updateInvestmentPlanResponseMoatDefault),
+  "policy_snapshot": zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(updateInvestmentPlanResponsePolicySnapshotActionRulesAddMax).default(updateInvestmentPlanResponsePolicySnapshotActionRulesAddDefault),
+  "buy": zod.string().max(updateInvestmentPlanResponsePolicySnapshotActionRulesBuyMax).default(updateInvestmentPlanResponsePolicySnapshotActionRulesBuyDefault),
+  "exit": zod.string().max(updateInvestmentPlanResponsePolicySnapshotActionRulesExitMax).default(updateInvestmentPlanResponsePolicySnapshotActionRulesExitDefault),
+  "reduce": zod.string().max(updateInvestmentPlanResponsePolicySnapshotActionRulesReduceMax).default(updateInvestmentPlanResponsePolicySnapshotActionRulesReduceDefault),
+  "review": zod.string().max(updateInvestmentPlanResponsePolicySnapshotActionRulesReviewMax).default(updateInvestmentPlanResponsePolicySnapshotActionRulesReviewDefault)
+}).optional(),
+  "enabled": zod.boolean().default(updateInvestmentPlanResponsePolicySnapshotEnabledDefault),
+  "life_notes": zod.string().max(updateInvestmentPlanResponsePolicySnapshotLifeNotesMax).default(updateInvestmentPlanResponsePolicySnapshotLifeNotesDefault),
+  "name": zod.string().min(1).max(updateInvestmentPlanResponsePolicySnapshotNameMax).default(updateInvestmentPlanResponsePolicySnapshotNameDefault),
+  "objective": zod.string().max(updateInvestmentPlanResponsePolicySnapshotObjectiveMax).default(updateInvestmentPlanResponsePolicySnapshotObjectiveDefault),
+  "principles": zod.object({
+  "cycles": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesCyclesMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesCyclesDefault),
+  "discipline": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesDisciplineDefault),
+  "goal": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesGoalMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesGoalDefault),
+  "life": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesLifeMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesLifeDefault),
+  "probability": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesProbabilityDefault),
+  "quality": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesQualityMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesQualityDefault),
+  "sizing": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesSizingMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesSizingDefault),
+  "valuation": zod.string().max(updateInvestmentPlanResponsePolicySnapshotPrinciplesValuationMax).default(updateInvestmentPlanResponsePolicySnapshotPrinciplesValuationDefault)
+}).optional(),
+  "review_interval_days": zod.union([zod.int().min(1).max(updateInvestmentPlanResponsePolicySnapshotReviewIntervalDaysOneMax),zod.null()]).optional(),
+  "revision": zod.int(),
+  "risk_limits": zod.object({
+  "max_drawdown_pct": zod.union([zod.number().min(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMin).max(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxDrawdownPctOneMax),zod.null()]).optional(),
+  "max_loss_per_idea_pct": zod.union([zod.number().min(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMin).max(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxLossPerIdeaPctOneMax),zod.null()]).optional(),
+  "max_single_position_pct": zod.union([zod.number().min(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMin).max(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxSinglePositionPctOneMax),zod.null()]).optional(),
+  "max_theme_exposure_pct": zod.union([zod.number().min(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMin).max(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMaxThemeExposurePctOneMax),zod.null()]).optional(),
+  "min_cash_pct": zod.union([zod.number().min(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMin).max(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinCashPctOneMax),zod.null()]).optional(),
+  "min_reward_risk": zod.union([zod.number().gt(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneExclusiveMin).max(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinRewardRiskOneMax),zod.null()]).optional(),
+  "minimum_margin_of_safety_pct": zod.union([zod.number().min(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMin).max(updateInvestmentPlanResponsePolicySnapshotRiskLimitsMinimumMarginOfSafetyPctOneMax),zod.null()]).optional()
+}).optional(),
+  "saved": zod.boolean(),
+  "scope_notice": zod.string().default(updateInvestmentPlanResponsePolicySnapshotScopeNoticeDefault),
+  "style": zod.enum(['long_term', 'left_side', 'trend', 'swing']).default(updateInvestmentPlanResponsePolicySnapshotStyleDefault),
+  "tax_notes": zod.string().max(updateInvestmentPlanResponsePolicySnapshotTaxNotesMax).default(updateInvestmentPlanResponsePolicySnapshotTaxNotesDefault),
+  "updated_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional()
+}),
+  "quality": zod.string().max(updateInvestmentPlanResponseQualityMax).default(updateInvestmentPlanResponseQualityDefault),
+  "review_due": zod.boolean(),
+  "review_notes": zod.string().max(updateInvestmentPlanResponseReviewNotesMax).default(updateInvestmentPlanResponseReviewNotesDefault),
+  "review_on": zod.union([zod.string().regex(updateInvestmentPlanResponseReviewOnOneRegExp),zod.null()]).optional(),
+  "reviewed_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]),
+  "revision": zod.int(),
+  "risk_inputs": zod.object({
+  "available_cash_usd": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsAvailableCashUsdOneMin).max(updateInvestmentPlanResponseRiskInputsAvailableCashUsdOneMax),zod.null()]).optional(),
+  "capital_total_usd": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMin).max(updateInvestmentPlanResponseRiskInputsCapitalTotalUsdOneMax),zod.null()]).optional(),
+  "current_drawdown_pct": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMin).max(updateInvestmentPlanResponseRiskInputsCurrentDrawdownPctOneMax),zod.null()]).optional(),
+  "current_position_pct": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsCurrentPositionPctOneMin).max(updateInvestmentPlanResponseRiskInputsCurrentPositionPctOneMax),zod.null()]).optional(),
+  "current_theme_exposure_pct": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMin).max(updateInvestmentPlanResponseRiskInputsCurrentThemeExposurePctOneMax),zod.null()]).optional(),
+  "essential_cash_usd": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsEssentialCashUsdOneMin).max(updateInvestmentPlanResponseRiskInputsEssentialCashUsdOneMax),zod.null()]).optional(),
+  "target_position_pct": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsTargetPositionPctOneMin).max(updateInvestmentPlanResponseRiskInputsTargetPositionPctOneMax),zod.null()]).optional(),
+  "target_theme_exposure_pct": zod.union([zod.number().min(updateInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMin).max(updateInvestmentPlanResponseRiskInputsTargetThemeExposurePctOneMax),zod.null()]).optional(),
+  "unlevered_long_only": zod.boolean().default(updateInvestmentPlanResponseRiskInputsUnleveredLongOnlyDefault)
+}).optional(),
+  "run_id": zod.union([zod.uuid(),zod.null()]).optional(),
+  "scenarios": zod.object({
+  "base": zod.object({
+  "probability_pct": zod.union([zod.number().min(updateInvestmentPlanResponseScenariosBaseProbabilityPctOneMin).max(updateInvestmentPlanResponseScenariosBaseProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(updateInvestmentPlanResponseScenariosBaseTargetPriceOneMin).max(updateInvestmentPlanResponseScenariosBaseTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(updateInvestmentPlanResponseScenariosBaseThesisMax).default(updateInvestmentPlanResponseScenariosBaseThesisDefault)
+}).optional(),
+  "bear": zod.object({
+  "probability_pct": zod.union([zod.number().min(updateInvestmentPlanResponseScenariosBearProbabilityPctOneMin).max(updateInvestmentPlanResponseScenariosBearProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(updateInvestmentPlanResponseScenariosBearTargetPriceOneMin).max(updateInvestmentPlanResponseScenariosBearTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(updateInvestmentPlanResponseScenariosBearThesisMax).default(updateInvestmentPlanResponseScenariosBearThesisDefault)
+}).optional(),
+  "bull": zod.object({
+  "probability_pct": zod.union([zod.number().min(updateInvestmentPlanResponseScenariosBullProbabilityPctOneMin).max(updateInvestmentPlanResponseScenariosBullProbabilityPctOneMax),zod.null()]).optional(),
+  "target_price": zod.union([zod.number().min(updateInvestmentPlanResponseScenariosBullTargetPriceOneMin).max(updateInvestmentPlanResponseScenariosBullTargetPriceOneMax),zod.null()]).optional(),
+  "thesis": zod.string().max(updateInvestmentPlanResponseScenariosBullThesisMax).default(updateInvestmentPlanResponseScenariosBullThesisDefault)
+}).optional()
+}).optional(),
+  "scope_notice": zod.string().default(updateInvestmentPlanResponseScopeNoticeDefault),
+  "status": zod.enum(['draft', 'watching', 'holding', 'reviewed', 'archived']).default(updateInvestmentPlanResponseStatusDefault),
+  "stop_loss_price": zod.union([zod.number().min(updateInvestmentPlanResponseStopLossPriceOneMin).max(updateInvestmentPlanResponseStopLossPriceOneMax),zod.null()]).optional(),
+  "theme": zod.string().max(updateInvestmentPlanResponseThemeMax).default(updateInvestmentPlanResponseThemeDefault),
+  "ticker": zod.string().min(1).max(updateInvestmentPlanResponseTickerMax),
+  "title": zod.string().max(updateInvestmentPlanResponseTitleMax).default(updateInvestmentPlanResponseTitleDefault),
+  "updated_at": zod.iso.datetime({"offset":true}),
+  "valuation": zod.string().max(updateInvestmentPlanResponseValuationMax).default(updateInvestmentPlanResponseValuationDefault),
+  "valuation_cycle": zod.string().max(updateInvestmentPlanResponseValuationCycleMax).default(updateInvestmentPlanResponseValuationCycleDefault)
+})
+
+
+/**
+ * @summary Policy
+ */
+export const getInvestmentPolicyResponseActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const getInvestmentPolicyResponseActionRulesAddMax = 4000;
+
+export const getInvestmentPolicyResponseActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const getInvestmentPolicyResponseActionRulesBuyMax = 4000;
+
+export const getInvestmentPolicyResponseActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const getInvestmentPolicyResponseActionRulesExitMax = 4000;
+
+export const getInvestmentPolicyResponseActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const getInvestmentPolicyResponseActionRulesReduceMax = 4000;
+
+export const getInvestmentPolicyResponseActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const getInvestmentPolicyResponseActionRulesReviewMax = 4000;
+
+export const getInvestmentPolicyResponseEnabledDefault = true;
+export const getInvestmentPolicyResponseLifeNotesDefault = ``;
+export const getInvestmentPolicyResponseLifeNotesMax = 4000;
+
+export const getInvestmentPolicyResponseNameDefault = `\u6211\u7684\u6295\u8D44\u4F53\u7CFB`;
+export const getInvestmentPolicyResponseNameMax = 120;
+
+export const getInvestmentPolicyResponseObjectiveDefault = `\u957F\u671F\u53EF\u6301\u7EED\u7684\u8D22\u5BCC\u589E\u957F`;
+export const getInvestmentPolicyResponseObjectiveMax = 2000;
+
+export const getInvestmentPolicyResponsePrinciplesCyclesDefault = `\u5148\u7814\u7A76\u5B8F\u89C2\u3001\u884C\u4E1A\u4E0E\u4F30\u503C\u5468\u671F\uFF0C\u518D\u9009\u8D44\u4EA7\uFF1B\u8BB0\u5F55\u8BC1\u636E\u3001\u9636\u6BB5\u5224\u65AD\u548C\u76F8\u53CD\u4FE1\u53F7\u3002`;
+export const getInvestmentPolicyResponsePrinciplesCyclesMax = 4000;
+
+export const getInvestmentPolicyResponsePrinciplesDisciplineDefault = `\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u957F\u671F\u3001\u5DE6\u4FA7\u3001\u8D8B\u52BF\u6216\u6CE2\u6BB5\u65B9\u6CD5\uFF1B\u9075\u5B88\u4E70\u5165\u3001\u52A0\u4ED3\u3001\u51CF\u4ED3\u3001\u9000\u51FA\u4E0E\u590D\u76D8\u89C4\u5219\u3002`;
+export const getInvestmentPolicyResponsePrinciplesDisciplineMax = 4000;
+
+export const getInvestmentPolicyResponsePrinciplesGoalDefault = `\u957F\u671F\u8D22\u5BCC\u589E\u957F\uFF1B\u5148\u6D3B\u4E0B\u6765\uFF0C\u518D\u8FFD\u6C42\u6536\u76CA\uFF0C\u8BA9\u672C\u91D1\u3001\u6536\u76CA\u4E0E\u65F6\u95F4\u5171\u540C\u79EF\u7D2F\u3002`;
+export const getInvestmentPolicyResponsePrinciplesGoalMax = 4000;
+
+export const getInvestmentPolicyResponsePrinciplesLifeDefault = `\u6295\u8D44\u670D\u52A1\u4E8E\u751F\u6D3B\uFF1B\u786E\u5B9A\u652F\u51FA\u3001\u751F\u6D3B\u73B0\u91D1\u3001\u7A0E\u52A1\u3001\u6D41\u52A8\u6027\u4E0E\u8D44\u4EA7\u5206\u6563\u4F18\u5148\u4E8E\u9AD8\u6CE2\u52A8\u6295\u8D44\u3002`;
+export const getInvestmentPolicyResponsePrinciplesLifeMax = 4000;
+
+export const getInvestmentPolicyResponsePrinciplesProbabilityDefault = `\u7528\u6982\u7387\u548C\u60C5\u666F\u4EE3\u66FF\u786E\u5B9A\u9884\u6D4B\uFF1B\u5224\u65AD\u6B63\u786E\u65F6\u591A\u8D5A\uFF0C\u9519\u8BEF\u65F6\u5C11\u4E8F\uFF0C\u6301\u7EED\u68C0\u9A8C\u671F\u671B\u503C\u3002`;
+export const getInvestmentPolicyResponsePrinciplesProbabilityMax = 4000;
+
+export const getInvestmentPolicyResponsePrinciplesQualityDefault = `\u597D\u8D5B\u9053\u4E0E\u597D\u516C\u53F8\uFF1A\u6838\u67E5\u6301\u7EED\u589E\u957F\u3001\u81EA\u7531\u73B0\u91D1\u6D41\u3001\u62A4\u57CE\u6CB3\u3001\u5B9A\u4EF7\u6743\u3001\u7BA1\u7406\u5C42\u53CA\u884C\u4E1A\u5730\u4F4D\u3002`;
+export const getInvestmentPolicyResponsePrinciplesQualityMax = 4000;
+
+export const getInvestmentPolicyResponsePrinciplesSizingDefault = `\u5206\u6279\u5EFA\u4ED3\uFF0C\u63A7\u5236\u5355\u80A1\u548C\u4E3B\u9898\u96C6\u4E2D\u5EA6\uFF0C\u4FDD\u7559\u73B0\u91D1\uFF1B\u5148\u95EE\u5224\u65AD\u9519\u8BEF\u4F1A\u4E8F\u591A\u5C11\u3002`;
+export const getInvestmentPolicyResponsePrinciplesSizingMax = 4000;
+
+export const getInvestmentPolicyResponsePrinciplesValuationDefault = `\u597D\u516C\u53F8\u4E5F\u8981\u597D\u4EF7\u683C\uFF1B\u5206\u522B\u5224\u65AD\u8D28\u91CF\u3001\u4F30\u503C\u4E0E\u5B89\u5168\u8FB9\u9645\uFF0C\u4E3A\u9519\u8BEF\u7559\u51FA\u7A7A\u95F4\u3002`;
+export const getInvestmentPolicyResponsePrinciplesValuationMax = 4000;
+
+export const getInvestmentPolicyResponseReviewIntervalDaysOneMax = 3650;
+
+export const getInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMin = 0;
+export const getInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMax = 100;
+
+export const getInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMin = 0;
+export const getInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMax = 100;
+
+export const getInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMin = 0;
+export const getInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMax = 100;
+
+export const getInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMin = 0;
+export const getInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMax = 100;
+
+export const getInvestmentPolicyResponseRiskLimitsMinCashPctOneMin = 0;
+export const getInvestmentPolicyResponseRiskLimitsMinCashPctOneMax = 100;
+
+export const getInvestmentPolicyResponseRiskLimitsMinRewardRiskOneExclusiveMin = 0;
+export const getInvestmentPolicyResponseRiskLimitsMinRewardRiskOneMax = 1000;
+
+export const getInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMin = 0;
+export const getInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMax = 100;
+
+export const getInvestmentPolicyResponseScopeNoticeDefault = `\u4E2A\u4EBA\u53EF\u7F16\u8F91\u7684\u6295\u8D44\u7EAA\u5F8B\uFF1B\u7A7A\u9608\u503C\u8868\u793A\u5C1A\u672A\u8BBE\u7F6E\uFF0C\u4E0D\u7B49\u4E8E\u65E0\u9650\u98CE\u9669\u6216\u5DF2\u901A\u8FC7\u68C0\u67E5\u3002`;
+export const getInvestmentPolicyResponseStyleDefault = `long_term`;
+export const getInvestmentPolicyResponseTaxNotesDefault = ``;
+export const getInvestmentPolicyResponseTaxNotesMax = 4000;
+
+
+
+export const GetInvestmentPolicyResponse = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(getInvestmentPolicyResponseActionRulesAddMax).default(getInvestmentPolicyResponseActionRulesAddDefault),
+  "buy": zod.string().max(getInvestmentPolicyResponseActionRulesBuyMax).default(getInvestmentPolicyResponseActionRulesBuyDefault),
+  "exit": zod.string().max(getInvestmentPolicyResponseActionRulesExitMax).default(getInvestmentPolicyResponseActionRulesExitDefault),
+  "reduce": zod.string().max(getInvestmentPolicyResponseActionRulesReduceMax).default(getInvestmentPolicyResponseActionRulesReduceDefault),
+  "review": zod.string().max(getInvestmentPolicyResponseActionRulesReviewMax).default(getInvestmentPolicyResponseActionRulesReviewDefault)
+}).optional(),
+  "enabled": zod.boolean().default(getInvestmentPolicyResponseEnabledDefault),
+  "life_notes": zod.string().max(getInvestmentPolicyResponseLifeNotesMax).default(getInvestmentPolicyResponseLifeNotesDefault),
+  "name": zod.string().min(1).max(getInvestmentPolicyResponseNameMax).default(getInvestmentPolicyResponseNameDefault),
+  "objective": zod.string().max(getInvestmentPolicyResponseObjectiveMax).default(getInvestmentPolicyResponseObjectiveDefault),
+  "principles": zod.object({
+  "cycles": zod.string().max(getInvestmentPolicyResponsePrinciplesCyclesMax).default(getInvestmentPolicyResponsePrinciplesCyclesDefault),
+  "discipline": zod.string().max(getInvestmentPolicyResponsePrinciplesDisciplineMax).default(getInvestmentPolicyResponsePrinciplesDisciplineDefault),
+  "goal": zod.string().max(getInvestmentPolicyResponsePrinciplesGoalMax).default(getInvestmentPolicyResponsePrinciplesGoalDefault),
+  "life": zod.string().max(getInvestmentPolicyResponsePrinciplesLifeMax).default(getInvestmentPolicyResponsePrinciplesLifeDefault),
+  "probability": zod.string().max(getInvestmentPolicyResponsePrinciplesProbabilityMax).default(getInvestmentPolicyResponsePrinciplesProbabilityDefault),
+  "quality": zod.string().max(getInvestmentPolicyResponsePrinciplesQualityMax).default(getInvestmentPolicyResponsePrinciplesQualityDefault),
+  "sizing": zod.string().max(getInvestmentPolicyResponsePrinciplesSizingMax).default(getInvestmentPolicyResponsePrinciplesSizingDefault),
+  "valuation": zod.string().max(getInvestmentPolicyResponsePrinciplesValuationMax).default(getInvestmentPolicyResponsePrinciplesValuationDefault)
+}).optional(),
+  "review_interval_days": zod.union([zod.int().min(1).max(getInvestmentPolicyResponseReviewIntervalDaysOneMax),zod.null()]).optional(),
+  "revision": zod.int(),
+  "risk_limits": zod.object({
+  "max_drawdown_pct": zod.union([zod.number().min(getInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMin).max(getInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMax),zod.null()]).optional(),
+  "max_loss_per_idea_pct": zod.union([zod.number().min(getInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMin).max(getInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMax),zod.null()]).optional(),
+  "max_single_position_pct": zod.union([zod.number().min(getInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMin).max(getInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMax),zod.null()]).optional(),
+  "max_theme_exposure_pct": zod.union([zod.number().min(getInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMin).max(getInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMax),zod.null()]).optional(),
+  "min_cash_pct": zod.union([zod.number().min(getInvestmentPolicyResponseRiskLimitsMinCashPctOneMin).max(getInvestmentPolicyResponseRiskLimitsMinCashPctOneMax),zod.null()]).optional(),
+  "min_reward_risk": zod.union([zod.number().gt(getInvestmentPolicyResponseRiskLimitsMinRewardRiskOneExclusiveMin).max(getInvestmentPolicyResponseRiskLimitsMinRewardRiskOneMax),zod.null()]).optional(),
+  "minimum_margin_of_safety_pct": zod.union([zod.number().min(getInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMin).max(getInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMax),zod.null()]).optional()
+}).optional(),
+  "saved": zod.boolean(),
+  "scope_notice": zod.string().default(getInvestmentPolicyResponseScopeNoticeDefault),
+  "style": zod.enum(['long_term', 'left_side', 'trend', 'swing']).default(getInvestmentPolicyResponseStyleDefault),
+  "tax_notes": zod.string().max(getInvestmentPolicyResponseTaxNotesMax).default(getInvestmentPolicyResponseTaxNotesDefault),
+  "updated_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional()
+})
+
+
+/**
+ * @summary Update Policy
+ */
+export const updateInvestmentPolicyBodyActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const updateInvestmentPolicyBodyActionRulesAddMax = 4000;
+
+export const updateInvestmentPolicyBodyActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const updateInvestmentPolicyBodyActionRulesBuyMax = 4000;
+
+export const updateInvestmentPolicyBodyActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const updateInvestmentPolicyBodyActionRulesExitMax = 4000;
+
+export const updateInvestmentPolicyBodyActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const updateInvestmentPolicyBodyActionRulesReduceMax = 4000;
+
+export const updateInvestmentPolicyBodyActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const updateInvestmentPolicyBodyActionRulesReviewMax = 4000;
+
+export const updateInvestmentPolicyBodyEnabledDefault = true;
+export const updateInvestmentPolicyBodyLifeNotesDefault = ``;
+export const updateInvestmentPolicyBodyLifeNotesMax = 4000;
+
+export const updateInvestmentPolicyBodyNameDefault = `\u6211\u7684\u6295\u8D44\u4F53\u7CFB`;
+export const updateInvestmentPolicyBodyNameMax = 120;
+
+export const updateInvestmentPolicyBodyObjectiveDefault = `\u957F\u671F\u53EF\u6301\u7EED\u7684\u8D22\u5BCC\u589E\u957F`;
+export const updateInvestmentPolicyBodyObjectiveMax = 2000;
+
+export const updateInvestmentPolicyBodyPrinciplesCyclesDefault = `\u5148\u7814\u7A76\u5B8F\u89C2\u3001\u884C\u4E1A\u4E0E\u4F30\u503C\u5468\u671F\uFF0C\u518D\u9009\u8D44\u4EA7\uFF1B\u8BB0\u5F55\u8BC1\u636E\u3001\u9636\u6BB5\u5224\u65AD\u548C\u76F8\u53CD\u4FE1\u53F7\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesCyclesMax = 4000;
+
+export const updateInvestmentPolicyBodyPrinciplesDisciplineDefault = `\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u957F\u671F\u3001\u5DE6\u4FA7\u3001\u8D8B\u52BF\u6216\u6CE2\u6BB5\u65B9\u6CD5\uFF1B\u9075\u5B88\u4E70\u5165\u3001\u52A0\u4ED3\u3001\u51CF\u4ED3\u3001\u9000\u51FA\u4E0E\u590D\u76D8\u89C4\u5219\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesDisciplineMax = 4000;
+
+export const updateInvestmentPolicyBodyPrinciplesGoalDefault = `\u957F\u671F\u8D22\u5BCC\u589E\u957F\uFF1B\u5148\u6D3B\u4E0B\u6765\uFF0C\u518D\u8FFD\u6C42\u6536\u76CA\uFF0C\u8BA9\u672C\u91D1\u3001\u6536\u76CA\u4E0E\u65F6\u95F4\u5171\u540C\u79EF\u7D2F\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesGoalMax = 4000;
+
+export const updateInvestmentPolicyBodyPrinciplesLifeDefault = `\u6295\u8D44\u670D\u52A1\u4E8E\u751F\u6D3B\uFF1B\u786E\u5B9A\u652F\u51FA\u3001\u751F\u6D3B\u73B0\u91D1\u3001\u7A0E\u52A1\u3001\u6D41\u52A8\u6027\u4E0E\u8D44\u4EA7\u5206\u6563\u4F18\u5148\u4E8E\u9AD8\u6CE2\u52A8\u6295\u8D44\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesLifeMax = 4000;
+
+export const updateInvestmentPolicyBodyPrinciplesProbabilityDefault = `\u7528\u6982\u7387\u548C\u60C5\u666F\u4EE3\u66FF\u786E\u5B9A\u9884\u6D4B\uFF1B\u5224\u65AD\u6B63\u786E\u65F6\u591A\u8D5A\uFF0C\u9519\u8BEF\u65F6\u5C11\u4E8F\uFF0C\u6301\u7EED\u68C0\u9A8C\u671F\u671B\u503C\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesProbabilityMax = 4000;
+
+export const updateInvestmentPolicyBodyPrinciplesQualityDefault = `\u597D\u8D5B\u9053\u4E0E\u597D\u516C\u53F8\uFF1A\u6838\u67E5\u6301\u7EED\u589E\u957F\u3001\u81EA\u7531\u73B0\u91D1\u6D41\u3001\u62A4\u57CE\u6CB3\u3001\u5B9A\u4EF7\u6743\u3001\u7BA1\u7406\u5C42\u53CA\u884C\u4E1A\u5730\u4F4D\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesQualityMax = 4000;
+
+export const updateInvestmentPolicyBodyPrinciplesSizingDefault = `\u5206\u6279\u5EFA\u4ED3\uFF0C\u63A7\u5236\u5355\u80A1\u548C\u4E3B\u9898\u96C6\u4E2D\u5EA6\uFF0C\u4FDD\u7559\u73B0\u91D1\uFF1B\u5148\u95EE\u5224\u65AD\u9519\u8BEF\u4F1A\u4E8F\u591A\u5C11\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesSizingMax = 4000;
+
+export const updateInvestmentPolicyBodyPrinciplesValuationDefault = `\u597D\u516C\u53F8\u4E5F\u8981\u597D\u4EF7\u683C\uFF1B\u5206\u522B\u5224\u65AD\u8D28\u91CF\u3001\u4F30\u503C\u4E0E\u5B89\u5168\u8FB9\u9645\uFF0C\u4E3A\u9519\u8BEF\u7559\u51FA\u7A7A\u95F4\u3002`;
+export const updateInvestmentPolicyBodyPrinciplesValuationMax = 4000;
+
+export const updateInvestmentPolicyBodyReviewIntervalDaysOneMax = 3650;
+
+export const updateInvestmentPolicyBodyRevisionMin = 0;
+
+export const updateInvestmentPolicyBodyRiskLimitsMaxDrawdownPctOneMin = 0;
+export const updateInvestmentPolicyBodyRiskLimitsMaxDrawdownPctOneMax = 100;
+
+export const updateInvestmentPolicyBodyRiskLimitsMaxLossPerIdeaPctOneMin = 0;
+export const updateInvestmentPolicyBodyRiskLimitsMaxLossPerIdeaPctOneMax = 100;
+
+export const updateInvestmentPolicyBodyRiskLimitsMaxSinglePositionPctOneMin = 0;
+export const updateInvestmentPolicyBodyRiskLimitsMaxSinglePositionPctOneMax = 100;
+
+export const updateInvestmentPolicyBodyRiskLimitsMaxThemeExposurePctOneMin = 0;
+export const updateInvestmentPolicyBodyRiskLimitsMaxThemeExposurePctOneMax = 100;
+
+export const updateInvestmentPolicyBodyRiskLimitsMinCashPctOneMin = 0;
+export const updateInvestmentPolicyBodyRiskLimitsMinCashPctOneMax = 100;
+
+export const updateInvestmentPolicyBodyRiskLimitsMinRewardRiskOneExclusiveMin = 0;
+export const updateInvestmentPolicyBodyRiskLimitsMinRewardRiskOneMax = 1000;
+
+export const updateInvestmentPolicyBodyRiskLimitsMinimumMarginOfSafetyPctOneMin = 0;
+export const updateInvestmentPolicyBodyRiskLimitsMinimumMarginOfSafetyPctOneMax = 100;
+
+export const updateInvestmentPolicyBodyStyleDefault = `long_term`;
+export const updateInvestmentPolicyBodyTaxNotesDefault = ``;
+export const updateInvestmentPolicyBodyTaxNotesMax = 4000;
+
+
+
+export const UpdateInvestmentPolicyBody = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(updateInvestmentPolicyBodyActionRulesAddMax).default(updateInvestmentPolicyBodyActionRulesAddDefault),
+  "buy": zod.string().max(updateInvestmentPolicyBodyActionRulesBuyMax).default(updateInvestmentPolicyBodyActionRulesBuyDefault),
+  "exit": zod.string().max(updateInvestmentPolicyBodyActionRulesExitMax).default(updateInvestmentPolicyBodyActionRulesExitDefault),
+  "reduce": zod.string().max(updateInvestmentPolicyBodyActionRulesReduceMax).default(updateInvestmentPolicyBodyActionRulesReduceDefault),
+  "review": zod.string().max(updateInvestmentPolicyBodyActionRulesReviewMax).default(updateInvestmentPolicyBodyActionRulesReviewDefault)
+}).optional(),
+  "enabled": zod.boolean().default(updateInvestmentPolicyBodyEnabledDefault),
+  "life_notes": zod.string().max(updateInvestmentPolicyBodyLifeNotesMax).default(updateInvestmentPolicyBodyLifeNotesDefault),
+  "name": zod.string().min(1).max(updateInvestmentPolicyBodyNameMax).default(updateInvestmentPolicyBodyNameDefault),
+  "objective": zod.string().max(updateInvestmentPolicyBodyObjectiveMax).default(updateInvestmentPolicyBodyObjectiveDefault),
+  "principles": zod.object({
+  "cycles": zod.string().max(updateInvestmentPolicyBodyPrinciplesCyclesMax).default(updateInvestmentPolicyBodyPrinciplesCyclesDefault),
+  "discipline": zod.string().max(updateInvestmentPolicyBodyPrinciplesDisciplineMax).default(updateInvestmentPolicyBodyPrinciplesDisciplineDefault),
+  "goal": zod.string().max(updateInvestmentPolicyBodyPrinciplesGoalMax).default(updateInvestmentPolicyBodyPrinciplesGoalDefault),
+  "life": zod.string().max(updateInvestmentPolicyBodyPrinciplesLifeMax).default(updateInvestmentPolicyBodyPrinciplesLifeDefault),
+  "probability": zod.string().max(updateInvestmentPolicyBodyPrinciplesProbabilityMax).default(updateInvestmentPolicyBodyPrinciplesProbabilityDefault),
+  "quality": zod.string().max(updateInvestmentPolicyBodyPrinciplesQualityMax).default(updateInvestmentPolicyBodyPrinciplesQualityDefault),
+  "sizing": zod.string().max(updateInvestmentPolicyBodyPrinciplesSizingMax).default(updateInvestmentPolicyBodyPrinciplesSizingDefault),
+  "valuation": zod.string().max(updateInvestmentPolicyBodyPrinciplesValuationMax).default(updateInvestmentPolicyBodyPrinciplesValuationDefault)
+}).optional(),
+  "review_interval_days": zod.union([zod.int().min(1).max(updateInvestmentPolicyBodyReviewIntervalDaysOneMax),zod.null()]).optional(),
+  "revision": zod.int().min(updateInvestmentPolicyBodyRevisionMin),
+  "risk_limits": zod.object({
+  "max_drawdown_pct": zod.union([zod.number().min(updateInvestmentPolicyBodyRiskLimitsMaxDrawdownPctOneMin).max(updateInvestmentPolicyBodyRiskLimitsMaxDrawdownPctOneMax),zod.null()]).optional(),
+  "max_loss_per_idea_pct": zod.union([zod.number().min(updateInvestmentPolicyBodyRiskLimitsMaxLossPerIdeaPctOneMin).max(updateInvestmentPolicyBodyRiskLimitsMaxLossPerIdeaPctOneMax),zod.null()]).optional(),
+  "max_single_position_pct": zod.union([zod.number().min(updateInvestmentPolicyBodyRiskLimitsMaxSinglePositionPctOneMin).max(updateInvestmentPolicyBodyRiskLimitsMaxSinglePositionPctOneMax),zod.null()]).optional(),
+  "max_theme_exposure_pct": zod.union([zod.number().min(updateInvestmentPolicyBodyRiskLimitsMaxThemeExposurePctOneMin).max(updateInvestmentPolicyBodyRiskLimitsMaxThemeExposurePctOneMax),zod.null()]).optional(),
+  "min_cash_pct": zod.union([zod.number().min(updateInvestmentPolicyBodyRiskLimitsMinCashPctOneMin).max(updateInvestmentPolicyBodyRiskLimitsMinCashPctOneMax),zod.null()]).optional(),
+  "min_reward_risk": zod.union([zod.number().gt(updateInvestmentPolicyBodyRiskLimitsMinRewardRiskOneExclusiveMin).max(updateInvestmentPolicyBodyRiskLimitsMinRewardRiskOneMax),zod.null()]).optional(),
+  "minimum_margin_of_safety_pct": zod.union([zod.number().min(updateInvestmentPolicyBodyRiskLimitsMinimumMarginOfSafetyPctOneMin).max(updateInvestmentPolicyBodyRiskLimitsMinimumMarginOfSafetyPctOneMax),zod.null()]).optional()
+}).optional(),
+  "style": zod.enum(['long_term', 'left_side', 'trend', 'swing']).default(updateInvestmentPolicyBodyStyleDefault),
+  "tax_notes": zod.string().max(updateInvestmentPolicyBodyTaxNotesMax).default(updateInvestmentPolicyBodyTaxNotesDefault)
+})
+
+export const updateInvestmentPolicyResponseActionRulesAddDefault = `\u65B0\u8BC1\u636E\u652F\u6301\u539F\u5047\u8BBE\u4E14\u4EF7\u683C\u4E0E\u7EC4\u5408\u98CE\u9669\u4ECD\u7B26\u5408\u89C4\u5219\u65F6\uFF0C\u624D\u8003\u8651\u5206\u6279\u52A0\u4ED3\u3002`;
+export const updateInvestmentPolicyResponseActionRulesAddMax = 4000;
+
+export const updateInvestmentPolicyResponseActionRulesBuyDefault = `\u5148\u5B8C\u6210\u5468\u671F\u3001\u516C\u53F8\u8D28\u91CF\u3001\u4F30\u503C\u548C\u98CE\u9669\u68C0\u67E5\uFF1B\u6EE1\u8DB3\u81EA\u5DF1\u7684\u6761\u4EF6\u540E\u5206\u6279\u5EFA\u4ED3\u3002`;
+export const updateInvestmentPolicyResponseActionRulesBuyMax = 4000;
+
+export const updateInvestmentPolicyResponseActionRulesExitDefault = `\u6838\u5FC3\u5047\u8BBE\u5931\u6548\u3001\u98CE\u9669\u8D8A\u8FC7\u672C\u4EBA\u8FB9\u754C\u6216\u673A\u4F1A\u6210\u672C\u53D8\u5316\u65F6\uFF0C\u6309\u9884\u5148\u8BB0\u5F55\u7684\u6761\u4EF6\u9000\u51FA\u3002`;
+export const updateInvestmentPolicyResponseActionRulesExitMax = 4000;
+
+export const updateInvestmentPolicyResponseActionRulesReduceDefault = `\u4F30\u503C\u8FC7\u9AD8\u3001\u96C6\u4E2D\u5EA6\u8D85\u9650\u3001\u73B0\u91D1\u9700\u6C42\u53D8\u5316\u6216\u8BC1\u636E\u51CF\u5F31\u65F6\uFF0C\u590D\u6838\u5E76\u8003\u8651\u51CF\u4ED3\u3002`;
+export const updateInvestmentPolicyResponseActionRulesReduceMax = 4000;
+
+export const updateInvestmentPolicyResponseActionRulesReviewDefault = `\u5B9A\u671F\u6838\u5BF9\u8BC1\u636E\u3001\u4F30\u503C\u3001\u4ED3\u4F4D\u4E0E\u9519\u8BEF\uFF1B\u5206\u522B\u8BB0\u5F55\u5224\u65AD\u8D28\u91CF\u3001\u6267\u884C\u7EAA\u5F8B\u4E0E\u7ED3\u679C\u3002`;
+export const updateInvestmentPolicyResponseActionRulesReviewMax = 4000;
+
+export const updateInvestmentPolicyResponseEnabledDefault = true;
+export const updateInvestmentPolicyResponseLifeNotesDefault = ``;
+export const updateInvestmentPolicyResponseLifeNotesMax = 4000;
+
+export const updateInvestmentPolicyResponseNameDefault = `\u6211\u7684\u6295\u8D44\u4F53\u7CFB`;
+export const updateInvestmentPolicyResponseNameMax = 120;
+
+export const updateInvestmentPolicyResponseObjectiveDefault = `\u957F\u671F\u53EF\u6301\u7EED\u7684\u8D22\u5BCC\u589E\u957F`;
+export const updateInvestmentPolicyResponseObjectiveMax = 2000;
+
+export const updateInvestmentPolicyResponsePrinciplesCyclesDefault = `\u5148\u7814\u7A76\u5B8F\u89C2\u3001\u884C\u4E1A\u4E0E\u4F30\u503C\u5468\u671F\uFF0C\u518D\u9009\u8D44\u4EA7\uFF1B\u8BB0\u5F55\u8BC1\u636E\u3001\u9636\u6BB5\u5224\u65AD\u548C\u76F8\u53CD\u4FE1\u53F7\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesCyclesMax = 4000;
+
+export const updateInvestmentPolicyResponsePrinciplesDisciplineDefault = `\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u957F\u671F\u3001\u5DE6\u4FA7\u3001\u8D8B\u52BF\u6216\u6CE2\u6BB5\u65B9\u6CD5\uFF1B\u9075\u5B88\u4E70\u5165\u3001\u52A0\u4ED3\u3001\u51CF\u4ED3\u3001\u9000\u51FA\u4E0E\u590D\u76D8\u89C4\u5219\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesDisciplineMax = 4000;
+
+export const updateInvestmentPolicyResponsePrinciplesGoalDefault = `\u957F\u671F\u8D22\u5BCC\u589E\u957F\uFF1B\u5148\u6D3B\u4E0B\u6765\uFF0C\u518D\u8FFD\u6C42\u6536\u76CA\uFF0C\u8BA9\u672C\u91D1\u3001\u6536\u76CA\u4E0E\u65F6\u95F4\u5171\u540C\u79EF\u7D2F\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesGoalMax = 4000;
+
+export const updateInvestmentPolicyResponsePrinciplesLifeDefault = `\u6295\u8D44\u670D\u52A1\u4E8E\u751F\u6D3B\uFF1B\u786E\u5B9A\u652F\u51FA\u3001\u751F\u6D3B\u73B0\u91D1\u3001\u7A0E\u52A1\u3001\u6D41\u52A8\u6027\u4E0E\u8D44\u4EA7\u5206\u6563\u4F18\u5148\u4E8E\u9AD8\u6CE2\u52A8\u6295\u8D44\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesLifeMax = 4000;
+
+export const updateInvestmentPolicyResponsePrinciplesProbabilityDefault = `\u7528\u6982\u7387\u548C\u60C5\u666F\u4EE3\u66FF\u786E\u5B9A\u9884\u6D4B\uFF1B\u5224\u65AD\u6B63\u786E\u65F6\u591A\u8D5A\uFF0C\u9519\u8BEF\u65F6\u5C11\u4E8F\uFF0C\u6301\u7EED\u68C0\u9A8C\u671F\u671B\u503C\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesProbabilityMax = 4000;
+
+export const updateInvestmentPolicyResponsePrinciplesQualityDefault = `\u597D\u8D5B\u9053\u4E0E\u597D\u516C\u53F8\uFF1A\u6838\u67E5\u6301\u7EED\u589E\u957F\u3001\u81EA\u7531\u73B0\u91D1\u6D41\u3001\u62A4\u57CE\u6CB3\u3001\u5B9A\u4EF7\u6743\u3001\u7BA1\u7406\u5C42\u53CA\u884C\u4E1A\u5730\u4F4D\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesQualityMax = 4000;
+
+export const updateInvestmentPolicyResponsePrinciplesSizingDefault = `\u5206\u6279\u5EFA\u4ED3\uFF0C\u63A7\u5236\u5355\u80A1\u548C\u4E3B\u9898\u96C6\u4E2D\u5EA6\uFF0C\u4FDD\u7559\u73B0\u91D1\uFF1B\u5148\u95EE\u5224\u65AD\u9519\u8BEF\u4F1A\u4E8F\u591A\u5C11\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesSizingMax = 4000;
+
+export const updateInvestmentPolicyResponsePrinciplesValuationDefault = `\u597D\u516C\u53F8\u4E5F\u8981\u597D\u4EF7\u683C\uFF1B\u5206\u522B\u5224\u65AD\u8D28\u91CF\u3001\u4F30\u503C\u4E0E\u5B89\u5168\u8FB9\u9645\uFF0C\u4E3A\u9519\u8BEF\u7559\u51FA\u7A7A\u95F4\u3002`;
+export const updateInvestmentPolicyResponsePrinciplesValuationMax = 4000;
+
+export const updateInvestmentPolicyResponseReviewIntervalDaysOneMax = 3650;
+
+export const updateInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMin = 0;
+export const updateInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMax = 100;
+
+export const updateInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMin = 0;
+export const updateInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMax = 100;
+
+export const updateInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMin = 0;
+export const updateInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMax = 100;
+
+export const updateInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMin = 0;
+export const updateInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMax = 100;
+
+export const updateInvestmentPolicyResponseRiskLimitsMinCashPctOneMin = 0;
+export const updateInvestmentPolicyResponseRiskLimitsMinCashPctOneMax = 100;
+
+export const updateInvestmentPolicyResponseRiskLimitsMinRewardRiskOneExclusiveMin = 0;
+export const updateInvestmentPolicyResponseRiskLimitsMinRewardRiskOneMax = 1000;
+
+export const updateInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMin = 0;
+export const updateInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMax = 100;
+
+export const updateInvestmentPolicyResponseScopeNoticeDefault = `\u4E2A\u4EBA\u53EF\u7F16\u8F91\u7684\u6295\u8D44\u7EAA\u5F8B\uFF1B\u7A7A\u9608\u503C\u8868\u793A\u5C1A\u672A\u8BBE\u7F6E\uFF0C\u4E0D\u7B49\u4E8E\u65E0\u9650\u98CE\u9669\u6216\u5DF2\u901A\u8FC7\u68C0\u67E5\u3002`;
+export const updateInvestmentPolicyResponseStyleDefault = `long_term`;
+export const updateInvestmentPolicyResponseTaxNotesDefault = ``;
+export const updateInvestmentPolicyResponseTaxNotesMax = 4000;
+
+
+
+export const UpdateInvestmentPolicyResponse = zod.object({
+  "action_rules": zod.object({
+  "add": zod.string().max(updateInvestmentPolicyResponseActionRulesAddMax).default(updateInvestmentPolicyResponseActionRulesAddDefault),
+  "buy": zod.string().max(updateInvestmentPolicyResponseActionRulesBuyMax).default(updateInvestmentPolicyResponseActionRulesBuyDefault),
+  "exit": zod.string().max(updateInvestmentPolicyResponseActionRulesExitMax).default(updateInvestmentPolicyResponseActionRulesExitDefault),
+  "reduce": zod.string().max(updateInvestmentPolicyResponseActionRulesReduceMax).default(updateInvestmentPolicyResponseActionRulesReduceDefault),
+  "review": zod.string().max(updateInvestmentPolicyResponseActionRulesReviewMax).default(updateInvestmentPolicyResponseActionRulesReviewDefault)
+}).optional(),
+  "enabled": zod.boolean().default(updateInvestmentPolicyResponseEnabledDefault),
+  "life_notes": zod.string().max(updateInvestmentPolicyResponseLifeNotesMax).default(updateInvestmentPolicyResponseLifeNotesDefault),
+  "name": zod.string().min(1).max(updateInvestmentPolicyResponseNameMax).default(updateInvestmentPolicyResponseNameDefault),
+  "objective": zod.string().max(updateInvestmentPolicyResponseObjectiveMax).default(updateInvestmentPolicyResponseObjectiveDefault),
+  "principles": zod.object({
+  "cycles": zod.string().max(updateInvestmentPolicyResponsePrinciplesCyclesMax).default(updateInvestmentPolicyResponsePrinciplesCyclesDefault),
+  "discipline": zod.string().max(updateInvestmentPolicyResponsePrinciplesDisciplineMax).default(updateInvestmentPolicyResponsePrinciplesDisciplineDefault),
+  "goal": zod.string().max(updateInvestmentPolicyResponsePrinciplesGoalMax).default(updateInvestmentPolicyResponsePrinciplesGoalDefault),
+  "life": zod.string().max(updateInvestmentPolicyResponsePrinciplesLifeMax).default(updateInvestmentPolicyResponsePrinciplesLifeDefault),
+  "probability": zod.string().max(updateInvestmentPolicyResponsePrinciplesProbabilityMax).default(updateInvestmentPolicyResponsePrinciplesProbabilityDefault),
+  "quality": zod.string().max(updateInvestmentPolicyResponsePrinciplesQualityMax).default(updateInvestmentPolicyResponsePrinciplesQualityDefault),
+  "sizing": zod.string().max(updateInvestmentPolicyResponsePrinciplesSizingMax).default(updateInvestmentPolicyResponsePrinciplesSizingDefault),
+  "valuation": zod.string().max(updateInvestmentPolicyResponsePrinciplesValuationMax).default(updateInvestmentPolicyResponsePrinciplesValuationDefault)
+}).optional(),
+  "review_interval_days": zod.union([zod.int().min(1).max(updateInvestmentPolicyResponseReviewIntervalDaysOneMax),zod.null()]).optional(),
+  "revision": zod.int(),
+  "risk_limits": zod.object({
+  "max_drawdown_pct": zod.union([zod.number().min(updateInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMin).max(updateInvestmentPolicyResponseRiskLimitsMaxDrawdownPctOneMax),zod.null()]).optional(),
+  "max_loss_per_idea_pct": zod.union([zod.number().min(updateInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMin).max(updateInvestmentPolicyResponseRiskLimitsMaxLossPerIdeaPctOneMax),zod.null()]).optional(),
+  "max_single_position_pct": zod.union([zod.number().min(updateInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMin).max(updateInvestmentPolicyResponseRiskLimitsMaxSinglePositionPctOneMax),zod.null()]).optional(),
+  "max_theme_exposure_pct": zod.union([zod.number().min(updateInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMin).max(updateInvestmentPolicyResponseRiskLimitsMaxThemeExposurePctOneMax),zod.null()]).optional(),
+  "min_cash_pct": zod.union([zod.number().min(updateInvestmentPolicyResponseRiskLimitsMinCashPctOneMin).max(updateInvestmentPolicyResponseRiskLimitsMinCashPctOneMax),zod.null()]).optional(),
+  "min_reward_risk": zod.union([zod.number().gt(updateInvestmentPolicyResponseRiskLimitsMinRewardRiskOneExclusiveMin).max(updateInvestmentPolicyResponseRiskLimitsMinRewardRiskOneMax),zod.null()]).optional(),
+  "minimum_margin_of_safety_pct": zod.union([zod.number().min(updateInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMin).max(updateInvestmentPolicyResponseRiskLimitsMinimumMarginOfSafetyPctOneMax),zod.null()]).optional()
+}).optional(),
+  "saved": zod.boolean(),
+  "scope_notice": zod.string().default(updateInvestmentPolicyResponseScopeNoticeDefault),
+  "style": zod.enum(['long_term', 'left_side', 'trend', 'swing']).default(updateInvestmentPolicyResponseStyleDefault),
+  "tax_notes": zod.string().max(updateInvestmentPolicyResponseTaxNotesMax).default(updateInvestmentPolicyResponseTaxNotesDefault),
+  "updated_at": zod.union([zod.iso.datetime({"offset":true}),zod.null()]).optional()
+})
+
+
+/**
  * @summary Capabilities
  */
 export const getAlternativeCapabilitiesResponseTradingEnabledDefault = false;
@@ -2494,6 +4612,7 @@ export const CreateResearchRunHeader = zod.object({
 
 export const createResearchRunBodyAnalystsMax = 4;
 
+export const createResearchRunBodyApplyInvestmentSystemDefault = false;
 export const createResearchRunBodyCheckpointDefault = null;
 export const createResearchRunBodyContextIdsMax = 5;
 
@@ -2506,6 +4625,9 @@ export const createResearchRunBodyDepthDefault = 1;
 export const createResearchRunBodyExecutionModeDefault = `builtin_workflow`;
 export const createResearchRunBodyHoldingStateDefault = `unknown`;
 export const createResearchRunBodyHorizonDefault = `medium`;
+export const createResearchRunBodyInvestmentPlanIdOneMax = 36;
+
+export const createResearchRunBodyInvestmentPlanIdDefault = null;
 export const createResearchRunBodyLanguageDefault = `Chinese`;
 export const createResearchRunBodyMaxLlmCallsDefault = 80;
 export const createResearchRunBodyMaxLlmCallsMax = 500;
@@ -2536,6 +4658,7 @@ export const createResearchRunBodyTickerMax = 32;
 
 export const CreateResearchRunBody = zod.object({
   "analysts": zod.array(zod.enum(['market', 'social', 'news', 'fundamentals'])).min(1).max(createResearchRunBodyAnalystsMax).optional(),
+  "apply_investment_system": zod.boolean().default(createResearchRunBodyApplyInvestmentSystemDefault),
   "checkpoint": zod.union([zod.boolean(),zod.null()]).default(createResearchRunBodyCheckpointDefault),
   "context_ids": zod.array(zod.string()).max(createResearchRunBodyContextIdsMax).optional(),
   "date": zod.string().min(createResearchRunBodyDateMin).max(createResearchRunBodyDateMax).regex(createResearchRunBodyDateRegExp),
@@ -2543,6 +4666,7 @@ export const CreateResearchRunBody = zod.object({
   "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(createResearchRunBodyExecutionModeDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(createResearchRunBodyHoldingStateDefault),
   "horizon": zod.enum(['short', 'medium', 'long']).default(createResearchRunBodyHorizonDefault),
+  "investment_plan_id": zod.union([zod.string().max(createResearchRunBodyInvestmentPlanIdOneMax),zod.null()]).default(createResearchRunBodyInvestmentPlanIdDefault),
   "language": zod.enum(['Chinese', 'English']).default(createResearchRunBodyLanguageDefault),
   "max_llm_calls": zod.int().min(1).max(createResearchRunBodyMaxLlmCallsMax).default(createResearchRunBodyMaxLlmCallsDefault),
   "max_runtime_seconds": zod.int().min(createResearchRunBodyMaxRuntimeSecondsMin).max(createResearchRunBodyMaxRuntimeSecondsMax).default(createResearchRunBodyMaxRuntimeSecondsDefault),
@@ -3093,6 +5217,7 @@ export const CloneResearchRunHeader = zod.object({
 
 export const cloneResearchRunBodyOneAnalystsMax = 4;
 
+export const cloneResearchRunBodyOneApplyInvestmentSystemDefault = false;
 export const cloneResearchRunBodyOneCheckpointDefault = null;
 export const cloneResearchRunBodyOneContextIdsMax = 5;
 
@@ -3105,6 +5230,9 @@ export const cloneResearchRunBodyOneDepthDefault = 1;
 export const cloneResearchRunBodyOneExecutionModeDefault = `builtin_workflow`;
 export const cloneResearchRunBodyOneHoldingStateDefault = `unknown`;
 export const cloneResearchRunBodyOneHorizonDefault = `medium`;
+export const cloneResearchRunBodyOneInvestmentPlanIdOneMax = 36;
+
+export const cloneResearchRunBodyOneInvestmentPlanIdDefault = null;
 export const cloneResearchRunBodyOneLanguageDefault = `Chinese`;
 export const cloneResearchRunBodyOneMaxLlmCallsDefault = 80;
 export const cloneResearchRunBodyOneMaxLlmCallsMax = 500;
@@ -3135,6 +5263,7 @@ export const cloneResearchRunBodyOneTickerMax = 32;
 
 export const CloneResearchRunBody = zod.union([zod.object({
   "analysts": zod.array(zod.enum(['market', 'social', 'news', 'fundamentals'])).min(1).max(cloneResearchRunBodyOneAnalystsMax).optional(),
+  "apply_investment_system": zod.boolean().default(cloneResearchRunBodyOneApplyInvestmentSystemDefault),
   "checkpoint": zod.union([zod.boolean(),zod.null()]).default(cloneResearchRunBodyOneCheckpointDefault),
   "context_ids": zod.array(zod.string()).max(cloneResearchRunBodyOneContextIdsMax).optional(),
   "date": zod.string().min(cloneResearchRunBodyOneDateMin).max(cloneResearchRunBodyOneDateMax).regex(cloneResearchRunBodyOneDateRegExp),
@@ -3142,6 +5271,7 @@ export const CloneResearchRunBody = zod.union([zod.object({
   "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(cloneResearchRunBodyOneExecutionModeDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(cloneResearchRunBodyOneHoldingStateDefault),
   "horizon": zod.enum(['short', 'medium', 'long']).default(cloneResearchRunBodyOneHorizonDefault),
+  "investment_plan_id": zod.union([zod.string().max(cloneResearchRunBodyOneInvestmentPlanIdOneMax),zod.null()]).default(cloneResearchRunBodyOneInvestmentPlanIdDefault),
   "language": zod.enum(['Chinese', 'English']).default(cloneResearchRunBodyOneLanguageDefault),
   "max_llm_calls": zod.int().min(1).max(cloneResearchRunBodyOneMaxLlmCallsMax).default(cloneResearchRunBodyOneMaxLlmCallsDefault),
   "max_runtime_seconds": zod.int().min(cloneResearchRunBodyOneMaxRuntimeSecondsMin).max(cloneResearchRunBodyOneMaxRuntimeSecondsMax).default(cloneResearchRunBodyOneMaxRuntimeSecondsDefault),
@@ -3661,6 +5791,7 @@ export const GetResearchManifestParams = zod.object({
 
 export const getResearchManifestResponseRequestAnalystsMax = 4;
 
+export const getResearchManifestResponseRequestApplyInvestmentSystemDefault = false;
 export const getResearchManifestResponseRequestCheckpointDefault = null;
 export const getResearchManifestResponseRequestContextIdsMax = 5;
 
@@ -3673,6 +5804,9 @@ export const getResearchManifestResponseRequestDepthDefault = 1;
 export const getResearchManifestResponseRequestExecutionModeDefault = `builtin_workflow`;
 export const getResearchManifestResponseRequestHoldingStateDefault = `unknown`;
 export const getResearchManifestResponseRequestHorizonDefault = `medium`;
+export const getResearchManifestResponseRequestInvestmentPlanIdOneMax = 36;
+
+export const getResearchManifestResponseRequestInvestmentPlanIdDefault = null;
 export const getResearchManifestResponseRequestLanguageDefault = `Chinese`;
 export const getResearchManifestResponseRequestMaxLlmCallsDefault = 80;
 export const getResearchManifestResponseRequestMaxLlmCallsMax = 500;
@@ -3709,6 +5843,7 @@ export const GetResearchManifestResponse = zod.object({
   "owner_id": zod.string(),
   "request": zod.object({
   "analysts": zod.array(zod.enum(['market', 'social', 'news', 'fundamentals'])).min(1).max(getResearchManifestResponseRequestAnalystsMax).optional(),
+  "apply_investment_system": zod.boolean().default(getResearchManifestResponseRequestApplyInvestmentSystemDefault),
   "checkpoint": zod.union([zod.boolean(),zod.null()]).default(getResearchManifestResponseRequestCheckpointDefault),
   "context_ids": zod.array(zod.string()).max(getResearchManifestResponseRequestContextIdsMax).optional(),
   "date": zod.string().min(getResearchManifestResponseRequestDateMin).max(getResearchManifestResponseRequestDateMax).regex(getResearchManifestResponseRequestDateRegExp),
@@ -3716,6 +5851,7 @@ export const GetResearchManifestResponse = zod.object({
   "execution_mode": zod.enum(['builtin_workflow', 'local_agent']).default(getResearchManifestResponseRequestExecutionModeDefault),
   "holding_state": zod.enum(['unknown', 'not_held', 'held']).default(getResearchManifestResponseRequestHoldingStateDefault),
   "horizon": zod.enum(['short', 'medium', 'long']).default(getResearchManifestResponseRequestHorizonDefault),
+  "investment_plan_id": zod.union([zod.string().max(getResearchManifestResponseRequestInvestmentPlanIdOneMax),zod.null()]).default(getResearchManifestResponseRequestInvestmentPlanIdDefault),
   "language": zod.enum(['Chinese', 'English']).default(getResearchManifestResponseRequestLanguageDefault),
   "max_llm_calls": zod.int().min(1).max(getResearchManifestResponseRequestMaxLlmCallsMax).default(getResearchManifestResponseRequestMaxLlmCallsDefault),
   "max_runtime_seconds": zod.int().min(getResearchManifestResponseRequestMaxRuntimeSecondsMin).max(getResearchManifestResponseRequestMaxRuntimeSecondsMax).default(getResearchManifestResponseRequestMaxRuntimeSecondsDefault),

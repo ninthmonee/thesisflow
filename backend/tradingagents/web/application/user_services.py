@@ -90,6 +90,7 @@ def _build_user_services(database, workspace, root, base_config, *, resources, s
     alternative_providers=None, research_data_tester=None, runtime_probe=None):
     """No shared credentials, mutable market settings, or cached research views."""
     from tradingagents.web.application.data_settings import DataSettingsService
+    from tradingagents.web.application.investment_system import InvestmentSystemService
     from tradingagents.web.application.market_alternatives import AlternativeMarketService
     from tradingagents.web.application.market_briefs import MarketBriefGenerator
     from tradingagents.web.application.market_data import MarketDataService
@@ -156,6 +157,7 @@ def _build_user_services(database, workspace, root, base_config, *, resources, s
         professional_pulse_service=pulse, research_context_service=context, data_service=data,
         readiness_service=RuntimeReadinessService(database, workspace, clock=market_clock),
         viewpoint_service=ViewpointService(database, workspace, research, clock=market_clock),
+        investment_service=InvestmentSystemService(database, workspace, research=research, clock=market_clock),
         resolve_models=create_selection_resolver(models),
         market_brief_generator=MarketBriefGenerator(models, base_config=config))
 

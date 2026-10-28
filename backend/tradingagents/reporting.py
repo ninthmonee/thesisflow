@@ -70,6 +70,9 @@ _SECTIONS = (
     ("V. Portfolio Manager Decision", "5_portfolio", (
         ("Portfolio Manager", "decision.md", ("final_trade_decision",)),
     )),
+    ("VI. Investment Discipline Review", "6_investment_system", (
+        ("投资体系与决策核对", "checklist.md", ("investment_system_checklist",)),
+    )),
 )
 
 

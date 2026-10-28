@@ -38,7 +38,8 @@ def _quiet(connection):
 
 def _inventory(connection):
     return {table: connection.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]
-            for table in ("runs", "reports", "data_snapshots", "watchlists", "research_viewpoints")
+            for table in ("runs", "reports", "data_snapshots", "watchlists", "research_viewpoints",
+                "investment_policies", "investment_policy_versions", "investment_plans")
             if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone()}
 
 

@@ -227,6 +227,14 @@ class ResearchService:
         ):
             raise ResearchError("invalid_idempotency_key", "幂等键长度须为 1 至 160", 422)
         selected = deepcopy(dict(manifest or {}))
+        system = selected.get("investment_system")
+        if body["apply_investment_system"]:
+            if (not isinstance(system, dict) or not isinstance(system.get("snapshot"), dict)
+                or not isinstance(system.get("prompt"), str) or not system["prompt"].strip()
+                or len(system["prompt"].encode()) > 64000):
+                raise ResearchError("investment_system_unresolved", "投资体系尚未冻结，请重新选择体系或决策计划", 422)
+        elif system is not None:
+            raise ResearchError("investment_system_conflict", "研究请求与投资体系配置不一致", 422)
         if body["execution_mode"] == "local_agent":
             from tradingagents.web.domain.agent_research import EXECUTOR_VERSION, evidence_policy
 
@@ -296,6 +304,10 @@ class ResearchService:
             "data_connections": data_connections,
             "memory_scope": "run",
         }
+        if body["apply_investment_system"]:
+            from tradingagents.web.executors.investment import investment_prompt
+
+            investment_prompt(document)
         model_snapshot = selected.get("model_snapshot")
         if isinstance(model_snapshot, Mapping):
             roles = model_snapshot.get("roles", {})
@@ -430,6 +442,8 @@ class ResearchService:
                             "runtime_risks": "Agent风险与失效条件", "runtime_evidence": "Agent证据引用",
                             "final_trade_decision": "Agent原始结论",
                         }.get(section, "Agent研究报告")
+                    if section == "investment_system_checklist":
+                        label = "投资体系与六问核对"
                     message = label + "已更新"
                 if event.event_type == "state":
                     message = {

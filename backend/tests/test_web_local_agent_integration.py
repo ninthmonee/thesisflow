@@ -70,7 +70,7 @@ def site(tmp_path, monkeypatch):
     executable.chmod(0o700)
     token = app.state.authentication_service.ensure_setup_token().read_text().strip()
     control = SimpleNamespace(behavior="normal", started=0, invocations=[], references=[],
-        tool_errors=[], run_id=None, adapter_options=[])
+        tool_errors=[], run_id=None, adapter_options=[], model_prompts=[])
 
     with TestClient(app, base_url=BASE) as owner_client:
         owner = actor(owner_client, checked(owner_client.post("/api/v1/auth/setup", json={
@@ -99,6 +99,7 @@ def site(tmp_path, monkeypatch):
 
                 def run(self, **options):
                     control.started += 1
+                    control.model_prompts.append(options["prompt"])
                     options["active"]()
                     options["emit"]("runtime_session", {"raw_log": PRIVATE_LOG})
                     definitions = {item["name"]: item for item in options["tools"]}
@@ -200,6 +201,41 @@ def test_cookie_runtime_worker_tools_evidence_and_safe_exports(site):
     public = json.dumps([result, page, events, manifest]) + html.text + markdown.text
     assert PRIVATE_LOG not in public and "a" * 64 not in public
     assert str(site.executable) not in json.dumps(manifest)
+
+
+def test_cookie_runtime_uses_frozen_investment_discipline_and_excludes_private_money(site):
+    policy = checked(request(site.owner, "PUT", "/api/v1/investment-policy", json={
+        "revision": 0, "name": "冻结的原投资体系", "life_notes": "PRIVATE_LIFE_PLAN",
+        "tax_notes": "PRIVATE_TAX_PLAN"}))
+    plan = checked(request(site.owner, "POST", "/api/v1/investment-plans", json={
+        "ticker": "NVDA", "analysis_date": DAY, "business": "SYNTHETIC_BUSINESS_ASSUMPTION",
+        "entry_price": 100.0, "fair_value": 120.0, "review_notes": "PRIVATE_REVIEW_NOTES",
+        "risk_inputs": {"capital_total_usd": 999123.0, "available_cash_usd": 444567.0,
+            "essential_cash_usd": 111234.0, "current_position_pct": 0.0, "target_position_pct": 8.0}}), 201)
+    queued = enqueue(site, apply_investment_system=True, investment_plan_id=plan["id"])
+    frozen = checked(request(site.owner, "GET", f"/api/v1/runs/{queued['id']}/manifest"))
+    # Changing today's policy after enqueue must not alter a research run's already frozen input.
+    checked(request(site.owner, "PUT", "/api/v1/investment-policy", json={
+        "revision": policy["revision"], "name": "后续修改不进入旧任务"}))
+    assert site.worker.run_once()
+    result = snapshot(site, queued["id"])
+    assert result["status"] == "completed", result
+    actual_prompt = site.control.model_prompts[-1]
+    assert "冻结的原投资体系" in actual_prompt and "SYNTHETIC_BUSINESS_ASSUMPTION" in actual_prompt
+    assert "后续修改不进入旧任务" not in actual_prompt
+    assert "user plan statements as hypotheses" in actual_prompt
+    assert "投资体系与决策核对" in result["reports"]["investment_system_checklist"]
+    assert result["reports"]["investment_system_checklist"].count("待人工核对：") == 6
+    frozen_prompt = frozen["selection"]["investment_system"]["prompt"]
+    assert frozen_prompt in actual_prompt
+    frozen_snapshot = frozen["selection"]["investment_system"]["snapshot"]
+    assert frozen_snapshot["plan"]["risk_percentages"]["target_position_pct"] == 8
+    safe = json.dumps([frozen_snapshot, frozen_prompt, actual_prompt], ensure_ascii=False)
+    for private in ("999123", "444567", "111234", "PRIVATE_LIFE_PLAN", "PRIVATE_TAX_PLAN", "PRIVATE_REVIEW_NOTES"):
+        assert private not in safe
+    for suffix in ("report", "report.md"):
+        export = request(site.owner, "GET", f"/api/v1/runs/{queued['id']}/{suffix}")
+        assert export.status_code == 200 and "投资体系与决策核对" in export.text
 
 
 def test_runtime_disabled_after_enqueue_never_starts_adapter(site):

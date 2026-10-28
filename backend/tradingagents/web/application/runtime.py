@@ -84,6 +84,12 @@ def create_runtime_resolver(
             {key: deepcopy(value) for key, value in frozen.items() if key in SAFE_RUNTIME_KEYS}
         )
         request = manifest.get("request", {})
+        from tradingagents.web.executors.investment import investment_prompt
+
+        config.pop("investment_system_prompt", None)
+        frozen_discipline = investment_prompt(manifest)
+        if frozen_discipline:
+            config["investment_system_prompt"] = frozen_discipline
         config.update(
             output_language=request.get("language", "Chinese"),
             max_debate_rounds=request.get("depth", 1),

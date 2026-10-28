@@ -12,6 +12,7 @@ from .alternative_router import create_alternative_router
 from .auth_router import create_auth_router
 from .data_router import create_data_router
 from .intelligence_router import create_intelligence_router
+from .investment_router import create_investment_router
 from .market_router import create_market_router
 from .model_router import create_model_router
 from .model_schemas import ModelServiceProtocol
@@ -168,11 +169,13 @@ def create_api_router(
     professional_pulse_service_reader: Callable | None = None,
     authentication_service_reader: Callable | None = None,
     runtime_service_reader: Callable | None = None,
+    investment_service_reader: Callable | None = None,
 ) -> APIRouter:
     """Readers are injected at runtime; schema export supplies none and performs no IO."""
     router = APIRouter(prefix="/api/v1", tags=["system"])
     router.include_router(create_auth_router(authentication_service_reader, prefix=""))
     router.include_router(create_runtime_router(runtime_service_reader, prefix=""))
+    router.include_router(create_investment_router(investment_service_reader, prefix=""))
 
     @router.get("/health", response_model=HealthResponse, operation_id="getHealth")
     def health() -> HealthResponse:

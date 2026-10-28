@@ -32,7 +32,11 @@ export function researchPrefill(
   templates: readonly TemplateView[],
   currentTemplate?: TemplateView | null,
 ): Partial<RuntimeResearchRequest> {
-  const original = manifest.request as RuntimeResearchRequest;
+  const original: RuntimeResearchRequest = {
+    ...manifest.request,
+    apply_investment_system: manifest.request.apply_investment_system ?? false,
+    investment_plan_id: manifest.request.investment_plan_id ?? null,
+  };
   if (isRuntimeResearch(manifest)) {
     return {
       ...original,
@@ -80,9 +84,13 @@ export function modelBindingSummary(models: WorkflowModelBindings) {
 }
 
 export function researchRequest(values: RuntimeResearchRequest): RuntimeResearchRequest {
+  const prepared = {
+    ...values,
+    investment_plan_id: values.apply_investment_system ? (values.investment_plan_id ?? null) : null,
+  };
   if (values.execution_mode === "local_agent") {
     return {
-      ...values,
+      ...prepared,
       ticker: values.ticker.trim().toUpperCase(),
       template_version_id: null,
       checkpoint: false,
@@ -90,7 +98,7 @@ export function researchRequest(values: RuntimeResearchRequest): RuntimeResearch
     };
   }
   return {
-    ...values,
+    ...prepared,
     ticker: values.ticker.trim().toUpperCase(),
     runtime_connection_id: null,
     template_version_id:

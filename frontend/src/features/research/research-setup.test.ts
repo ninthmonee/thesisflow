@@ -240,4 +240,35 @@ describe("reviewable research setup", () => {
       template_version_id: template.id,
     });
   });
+  it("preserves an explicitly applied investment plan on rerun without adding the system to old research", () => {
+    const source = manifest({
+      request: {
+        ticker: "NVDA",
+        date: "2026-10-01",
+        apply_investment_system: true,
+        investment_plan_id: "owned-plan",
+      },
+    });
+    expect(researchPrefill(source, "current", "2026-10-29", [])).toMatchObject({
+      apply_investment_system: true,
+      investment_plan_id: "owned-plan",
+      date: "2026-10-29",
+    });
+    expect(researchPrefill(manifest(), "original", "2026-10-29", []).apply_investment_system).toBe(
+      false,
+    );
+  });
+  it("drops an attached plan when the user disables investment rules in either execution mode", () => {
+    for (const execution_mode of ["builtin_workflow", "local_agent"] as const) {
+      expect(
+        researchRequest({
+          ticker: "NVDA",
+          date: "2026-10-29",
+          execution_mode,
+          apply_investment_system: false,
+          investment_plan_id: "stale-plan",
+        }).investment_plan_id,
+      ).toBeNull();
+    }
+  });
 });

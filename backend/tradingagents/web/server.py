@@ -615,6 +615,7 @@ def create_app(
 
     from tradingagents.web.api import create_api_router
     from tradingagents.web.application.data_settings import DataSettingsService
+    from tradingagents.web.application.investment_system import InvestmentSystemService
     from tradingagents.web.application.market_alternatives import AlternativeMarketService
     from tradingagents.web.application.market_briefs import MarketBriefGenerator
     from tradingagents.web.application.market_data import MarketDataService
@@ -732,6 +733,10 @@ def create_app(
         chosen["context_inputs"] = bundle.research_context_service.freeze(
             request.context_ids, ticker=request.ticker, analysis_date=request.date
         )
+        if request.apply_investment_system:
+            chosen["investment_system"] = bundle.investment_service.freeze_for_research(
+                request.ticker, request.date, plan_id=request.investment_plan_id
+            )
         return chosen
     market_brief_generator = MarketBriefGenerator(
         model_service,
@@ -765,6 +770,7 @@ def create_app(
     data_service.apply_saved_settings()
 
     local_services = SimpleNamespace(
+        investment_service=InvestmentSystemService(database, workspace, research=research_service, clock=market_clock),
         runtime_service=RuntimeConnectionService(database, workspace, secret_store=secret_store, probe=runtime_probe),
         model_service=model_service, watchlist_service=watchlist_service,
         research_service=research_service, research_data_service=research_data_service,
@@ -888,6 +894,7 @@ def create_app(
     app.state.database = database
     app.state.model_service = model_service
     app.state.runtime_service = local_services.runtime_service
+    app.state.investment_service = local_services.investment_service
     app.state.watchlist_service = watchlist_service
     app.state.research_service = research_service
     app.state.research_evidence_service = research_evidence_service
@@ -942,6 +949,7 @@ def create_app(
             professional_pulse_service_reader=lambda: scoped_services().professional_pulse_service,
             authentication_service_reader=(lambda: authentication) if authentication_required else None,
             runtime_service_reader=lambda: scoped_services().runtime_service,
+            investment_service_reader=lambda: scoped_services().investment_service,
         )
     )
     if authentication_required:

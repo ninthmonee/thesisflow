@@ -6,6 +6,7 @@ from copy import deepcopy
 
 from tradingagents.agents.rating import RATING_REVIEW, run_rating
 from tradingagents.web.domain.tasks import ResearchError
+from tradingagents.web.executors.investment import investment_checklist, investment_prompt
 from tradingagents.web.workers.checkpoints import file_hash
 
 
@@ -18,6 +19,11 @@ class BuiltinWorkflowExecutor:
         worker, claim, manifest = self.worker, context.claim, context.manifest
         self.claim = claim
         manifest_hash, config, options = context.manifest_hash, context.config, context.options
+        config = dict(config)
+        config.pop("investment_system_prompt", None)
+        frozen_discipline = investment_prompt(manifest)
+        if frozen_discipline:
+            config["investment_system_prompt"] = frozen_discipline
         request, callback, active = manifest["request"], context.callback, context.active
         factory = worker.graph_factory
         if factory is None:
@@ -76,6 +82,10 @@ class BuiltinWorkflowExecutor:
         if not final_state.get("final_trade_decision"):
             raise ResearchError("decision_missing", "执行图结束时缺少最终决策，研究未完成")
         callback.publish_reports(final_state)
+        checklist = investment_checklist(manifest)
+        if checklist:
+            final_state["investment_system_checklist"] = checklist
+            worker.service.tasks.publish(claim, reports={"investment_system_checklist": checklist}, stats=callback.stats())
         quality = worker.evidence.finalize(claim)
         export_state = deepcopy(final_state)
         if not quality.eligible_for_rating:

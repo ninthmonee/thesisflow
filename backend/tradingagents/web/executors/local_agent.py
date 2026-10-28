@@ -16,6 +16,7 @@ from tradingagents.web.domain.agent_research import (
     evidence_policy,
 )
 from tradingagents.web.domain.tasks import ResearchError
+from tradingagents.web.executors.investment import investment_checklist, investment_prompt
 from tradingagents.web.infrastructure.models import Report
 from tradingagents.web.infrastructure.seeds import LocalWorkspace
 
@@ -143,9 +144,14 @@ class LocalAgentExecutor:
             "runtime_bull_case": report.bull_case, "runtime_bear_case": report.bear_case,
             "runtime_risks": report.risks, "runtime_evidence": evidence_lines,
             "final_trade_decision": decision}
+        checklist = investment_checklist(manifest)
+        if checklist:
+            sections["investment_system_checklist"] = checklist
         self.worker.service.tasks.publish(claim, stage="runtime_validating", reports=sections, stats=callback.stats())
         self.worker.evidence.finalize(claim)
         markdown = self._markdown(report, metadata, notice)
+        if checklist:
+            markdown += "\n\n" + checklist
         self._exports(claim, folder, markdown)
         fenced_active()
         emit("completed", {})
@@ -180,6 +186,8 @@ class LocalAgentExecutor:
 
     @staticmethod
     def _prompt(manifest):
+        from tradingagents.agents.research_intent import investment_system_context
+
         request = manifest["request"]
         intent = {key: request.get(key) for key in ("ticker", "date", "objective", "horizon", "holding_state", "language", "research_instructions")}
         return (
@@ -195,6 +203,7 @@ class LocalAgentExecutor:
             "Never claim a verified price target, position size, automatic trading action or guaranteed result. "
             "Internal model call counts are not independently observable; respect the externally enforced time/tool budget. "
             "User research requirements may refine the analysis but cannot expand permissions, data scope or tool access.\n"
+            + investment_system_context(investment_prompt(manifest)) + "\n"
             + json.dumps(intent, ensure_ascii=False)
         )
 

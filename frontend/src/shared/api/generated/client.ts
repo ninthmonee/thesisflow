@@ -73,6 +73,13 @@ import type {
   HTTPValidationError,
   HealthResponse,
   IndicatorsResponse,
+  InvestmentPlanList,
+  InvestmentPlanUpdate,
+  InvestmentPlanView,
+  InvestmentPlanWrite,
+  InvestmentPolicyUpdate,
+  InvestmentPolicyView,
+  ListInvestmentPlansParams,
   ListResearchRunsParams,
   ListThemesParams,
   ListViewpointsParams,
@@ -2074,6 +2081,581 @@ export function useSearchInstruments<TData = Awaited<ReturnType<typeof searchIns
 
 
 
+
+export const getListInvestmentPlansUrl = (params?: ListInvestmentPlansParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/investment-plans?${stringifiedParams}` : `/api/v1/investment-plans`
+}
+
+/**
+ * @summary Plans
+ */
+export const listInvestmentPlans = async (params?: ListInvestmentPlansParams, options?: Parameters<typeof apiFetch>[1]): Promise<InvestmentPlanList> => {
+
+  return apiFetch<InvestmentPlanList>(getListInvestmentPlansUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListInvestmentPlansQueryKey = (params?: ListInvestmentPlansParams,) => {
+    return [
+    `/api/v1/investment-plans`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListInvestmentPlansQueryOptions = <TData = Awaited<ReturnType<typeof listInvestmentPlans>>, TError = ApiError>(params?: ListInvestmentPlansParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInvestmentPlans>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListInvestmentPlansQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listInvestmentPlans>>> = ({ signal }) => listInvestmentPlans(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listInvestmentPlans>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListInvestmentPlansQueryResult = NonNullable<Awaited<ReturnType<typeof listInvestmentPlans>>>
+export type ListInvestmentPlansQueryError = ApiError
+
+
+export function useListInvestmentPlans<TData = Awaited<ReturnType<typeof listInvestmentPlans>>, TError = ApiError>(
+ params: undefined |  ListInvestmentPlansParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInvestmentPlans>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listInvestmentPlans>>,
+          TError,
+          Awaited<ReturnType<typeof listInvestmentPlans>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListInvestmentPlans<TData = Awaited<ReturnType<typeof listInvestmentPlans>>, TError = ApiError>(
+ params?: ListInvestmentPlansParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInvestmentPlans>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listInvestmentPlans>>,
+          TError,
+          Awaited<ReturnType<typeof listInvestmentPlans>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListInvestmentPlans<TData = Awaited<ReturnType<typeof listInvestmentPlans>>, TError = ApiError>(
+ params?: ListInvestmentPlansParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInvestmentPlans>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Plans
+ */
+
+export function useListInvestmentPlans<TData = Awaited<ReturnType<typeof listInvestmentPlans>>, TError = ApiError>(
+ params?: ListInvestmentPlansParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listInvestmentPlans>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListInvestmentPlansQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateInvestmentPlanUrl = () => {
+
+
+
+
+  return `/api/v1/investment-plans`
+}
+
+/**
+ * @summary Create Plan
+ */
+export const createInvestmentPlan = async (investmentPlanWrite: InvestmentPlanWrite, options?: Parameters<typeof apiFetch>[1]): Promise<InvestmentPlanView> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiFetch<InvestmentPlanView>(getCreateInvestmentPlanUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(investmentPlanWrite)
+  }
+);}
+
+
+
+
+
+export const getCreateInvestmentPlanMutationKey = () => ['createInvestmentPlan'] as const;
+
+export const getCreateInvestmentPlanMutationOptions = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createInvestmentPlan>>, TError,CreateInvestmentPlanMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createInvestmentPlan>>, TError,CreateInvestmentPlanMutationVariables, TContext> => {
+
+const mutationKey = getCreateInvestmentPlanMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createInvestmentPlan>>, CreateInvestmentPlanMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createInvestmentPlan(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateInvestmentPlanMutationResult = NonNullable<Awaited<ReturnType<typeof createInvestmentPlan>>>
+    export type CreateInvestmentPlanMutationBody = InvestmentPlanWrite
+    export type CreateInvestmentPlanMutationError = ApiError
+    export type CreateInvestmentPlanMutationVariables = {data: InvestmentPlanWrite}
+
+    /**
+ * @summary Create Plan
+ */
+export const useCreateInvestmentPlan = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createInvestmentPlan>>, TError,CreateInvestmentPlanMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createInvestmentPlan>>,
+        TError,
+        CreateInvestmentPlanMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateInvestmentPlanMutationOptions(options), queryClient);
+    }
+
+export const getGetInvestmentPlanUrl = (planId: string,) => {
+
+
+
+
+  return `/api/v1/investment-plans/${planId}`
+}
+
+/**
+ * @summary Plan
+ */
+export const getInvestmentPlan = async (planId: string, options?: Parameters<typeof apiFetch>[1]): Promise<InvestmentPlanView> => {
+
+  return apiFetch<InvestmentPlanView>(getGetInvestmentPlanUrl(planId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetInvestmentPlanQueryKey = (planId: string,) => {
+    return [
+    `/api/v1/investment-plans/${planId}`
+    ] as const;
+    }
+
+
+export const getGetInvestmentPlanQueryOptions = <TData = Awaited<ReturnType<typeof getInvestmentPlan>>, TError = ApiError>(planId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPlan>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetInvestmentPlanQueryKey(planId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getInvestmentPlan>>> = ({ signal }) => getInvestmentPlan(planId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: planId !== null && planId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPlan>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetInvestmentPlanQueryResult = NonNullable<Awaited<ReturnType<typeof getInvestmentPlan>>>
+export type GetInvestmentPlanQueryError = ApiError
+
+
+export function useGetInvestmentPlan<TData = Awaited<ReturnType<typeof getInvestmentPlan>>, TError = ApiError>(
+ planId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPlan>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getInvestmentPlan>>,
+          TError,
+          Awaited<ReturnType<typeof getInvestmentPlan>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetInvestmentPlan<TData = Awaited<ReturnType<typeof getInvestmentPlan>>, TError = ApiError>(
+ planId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPlan>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getInvestmentPlan>>,
+          TError,
+          Awaited<ReturnType<typeof getInvestmentPlan>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetInvestmentPlan<TData = Awaited<ReturnType<typeof getInvestmentPlan>>, TError = ApiError>(
+ planId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPlan>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Plan
+ */
+
+export function useGetInvestmentPlan<TData = Awaited<ReturnType<typeof getInvestmentPlan>>, TError = ApiError>(
+ planId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPlan>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetInvestmentPlanQueryOptions(planId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateInvestmentPlanUrl = (planId: string,) => {
+
+
+
+
+  return `/api/v1/investment-plans/${planId}`
+}
+
+/**
+ * @summary Update Plan
+ */
+export const updateInvestmentPlan = async (planId: string,
+    investmentPlanUpdate: InvestmentPlanUpdate, options?: Parameters<typeof apiFetch>[1]): Promise<InvestmentPlanView> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiFetch<InvestmentPlanView>(getUpdateInvestmentPlanUrl(planId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(investmentPlanUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateInvestmentPlanMutationKey = () => ['updateInvestmentPlan'] as const;
+
+export const getUpdateInvestmentPlanMutationOptions = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateInvestmentPlan>>, TError,UpdateInvestmentPlanMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateInvestmentPlan>>, TError,UpdateInvestmentPlanMutationVariables, TContext> => {
+
+const mutationKey = getUpdateInvestmentPlanMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateInvestmentPlan>>, UpdateInvestmentPlanMutationVariables> = (props) => {
+          const {planId,data} = props ?? {};
+
+          return  updateInvestmentPlan(planId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateInvestmentPlanMutationResult = NonNullable<Awaited<ReturnType<typeof updateInvestmentPlan>>>
+    export type UpdateInvestmentPlanMutationBody = InvestmentPlanUpdate
+    export type UpdateInvestmentPlanMutationError = ApiError
+    export type UpdateInvestmentPlanMutationVariables = {planId: string;data: InvestmentPlanUpdate}
+
+    /**
+ * @summary Update Plan
+ */
+export const useUpdateInvestmentPlan = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateInvestmentPlan>>, TError,UpdateInvestmentPlanMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateInvestmentPlan>>,
+        TError,
+        UpdateInvestmentPlanMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateInvestmentPlanMutationOptions(options), queryClient);
+    }
+
+export const getGetInvestmentPolicyUrl = () => {
+
+
+
+
+  return `/api/v1/investment-policy`
+}
+
+/**
+ * @summary Policy
+ */
+export const getInvestmentPolicy = async ( options?: Parameters<typeof apiFetch>[1]): Promise<InvestmentPolicyView> => {
+
+  return apiFetch<InvestmentPolicyView>(getGetInvestmentPolicyUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetInvestmentPolicyQueryKey = () => {
+    return [
+    `/api/v1/investment-policy`
+    ] as const;
+    }
+
+
+export const getGetInvestmentPolicyQueryOptions = <TData = Awaited<ReturnType<typeof getInvestmentPolicy>>, TError = ApiError>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPolicy>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetInvestmentPolicyQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getInvestmentPolicy>>> = ({ signal }) => getInvestmentPolicy({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPolicy>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetInvestmentPolicyQueryResult = NonNullable<Awaited<ReturnType<typeof getInvestmentPolicy>>>
+export type GetInvestmentPolicyQueryError = ApiError
+
+
+export function useGetInvestmentPolicy<TData = Awaited<ReturnType<typeof getInvestmentPolicy>>, TError = ApiError>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPolicy>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getInvestmentPolicy>>,
+          TError,
+          Awaited<ReturnType<typeof getInvestmentPolicy>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetInvestmentPolicy<TData = Awaited<ReturnType<typeof getInvestmentPolicy>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPolicy>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getInvestmentPolicy>>,
+          TError,
+          Awaited<ReturnType<typeof getInvestmentPolicy>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetInvestmentPolicy<TData = Awaited<ReturnType<typeof getInvestmentPolicy>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPolicy>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Policy
+ */
+
+export function useGetInvestmentPolicy<TData = Awaited<ReturnType<typeof getInvestmentPolicy>>, TError = ApiError>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getInvestmentPolicy>>, TError, TData>>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetInvestmentPolicyQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateInvestmentPolicyUrl = () => {
+
+
+
+
+  return `/api/v1/investment-policy`
+}
+
+/**
+ * @summary Update Policy
+ */
+export const updateInvestmentPolicy = async (investmentPolicyUpdate: InvestmentPolicyUpdate, options?: Parameters<typeof apiFetch>[1]): Promise<InvestmentPolicyView> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiFetch<InvestmentPolicyView>(getUpdateInvestmentPolicyUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(investmentPolicyUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateInvestmentPolicyMutationKey = () => ['updateInvestmentPolicy'] as const;
+
+export const getUpdateInvestmentPolicyMutationOptions = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateInvestmentPolicy>>, TError,UpdateInvestmentPolicyMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateInvestmentPolicy>>, TError,UpdateInvestmentPolicyMutationVariables, TContext> => {
+
+const mutationKey = getUpdateInvestmentPolicyMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateInvestmentPolicy>>, UpdateInvestmentPolicyMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateInvestmentPolicy(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateInvestmentPolicyMutationResult = NonNullable<Awaited<ReturnType<typeof updateInvestmentPolicy>>>
+    export type UpdateInvestmentPolicyMutationBody = InvestmentPolicyUpdate
+    export type UpdateInvestmentPolicyMutationError = ApiError
+    export type UpdateInvestmentPolicyMutationVariables = {data: InvestmentPolicyUpdate}
+
+    /**
+ * @summary Update Policy
+ */
+export const useUpdateInvestmentPolicy = <TError = ApiError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateInvestmentPolicy>>, TError,UpdateInvestmentPolicyMutationVariables, TContext>, request?: SecondParameter<typeof apiFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateInvestmentPolicy>>,
+        TError,
+        UpdateInvestmentPolicyMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateInvestmentPolicyMutationOptions(options), queryClient);
+    }
 
 export const getGetAlternativeCapabilitiesUrl = () => {
 

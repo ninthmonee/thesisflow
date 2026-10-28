@@ -118,9 +118,15 @@ class CreateResearchRequest(ContractModel):
     runtime_connection_id: str | None = Field(default=None, max_length=36)
     research_instructions: str = Field(default="", max_length=4000)
     max_tool_calls: int = Field(default=40, ge=1, le=100, strict=True)
+    apply_investment_system: bool = False
+    investment_plan_id: str | None = Field(default=None, max_length=36)
 
     @model_validator(mode="after")
     def execution_selection(self):
+        if self.investment_plan_id:
+            self.investment_plan_id = str(UUID(self.investment_plan_id))
+            if not self.apply_investment_system:
+                raise ValueError("附加决策计划时须应用投资体系")
         if self.execution_mode == "local_agent":
             if not self.runtime_connection_id or self.template_version_id:
                 raise ValueError("本地Agent研究需要选择Runtime，且不能同时指定内置模型模板")

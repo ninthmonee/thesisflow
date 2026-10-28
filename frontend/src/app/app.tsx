@@ -25,6 +25,7 @@ import {
   SwapOutlined,
   LogoutOutlined,
   UserOutlined,
+  CompassOutlined,
 } from "@ant-design/icons";
 import { useBootstrap } from "../shared/api/bootstrap";
 import type { BootstrapResponse } from "../shared/api/generated/models";
@@ -84,8 +85,19 @@ const DataSettingsPage = lazy(() =>
     default: module.DataSettingsPage,
   })),
 );
+const InvestmentPage = lazy(() =>
+  import("../features/investment/investment-page").then((module) => ({
+    default: module.InvestmentPage,
+  })),
+);
 
 const navigation = [
+  {
+    path: "/investment",
+    label: "投资体系",
+    subtitle: "TRADING DISCIPLINE",
+    icon: <CompassOutlined />,
+  },
   { path: "/research/new", label: "个股研究", subtitle: "RESEARCH", icon: <FileSearchOutlined /> },
   { path: "/stocks", label: "行情工作台", subtitle: "MARKET VIEW", icon: <LineChartOutlined /> },
   {
@@ -178,6 +190,7 @@ function ConnectedPages({ data }: { data: BootstrapResponse }) {
         <Route path="/" element={<Navigate to="/research/new" replace />} />
         <Route path="/research/new" element={<NewResearchPage bootstrap={data} />} />
         <Route path="/runs/:runId" element={<RunDetailPage bootstrap={data} />} />
+        <Route path="/investment" element={<InvestmentPage bootstrap={data} />} />
         <Route path="/stocks" element={<WatchlistsPage bootstrap={data} />} />
         <Route path="/stocks/:instrumentId" element={<WatchlistsPage bootstrap={data} />} />
         <Route path="/reports" element={<ResearchHistoryPage bootstrap={data} />} />

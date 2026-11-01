@@ -406,7 +406,7 @@ export function EquityPanel({
             </Button>
             {companyStock && (
               <Link to={`/research/new?ticker=${encodeURIComponent(symbol)}`}>
-                <Button type="primary">TradingAgents 个股研究</Button>
+                <Button type="primary">ThesisFlow 个股研究</Button>
               </Link>
             )}
           </div>

@@ -42,7 +42,16 @@ _ANALYSTS = ("market", "social", "news", "fundamentals")
 _TERMINAL = {"completed", "failed", "interrupted"}
 _HOSTS = {"localhost", "127.0.0.1"}
 _MAX_BODY = 8192
+_MAX_RESEARCH_BODY = 32 * 1024
 _CRYPTO_SUFFIXES = ("-USD", "-USDT", "-USDC", "-BTC", "-ETH")
+_EMBEDDED_WORKBENCH = re.compile(
+    r"/workbench/advanced/(?:"
+    r"settings(?:/(?:models|runtimes|data|sources))?|account|"
+    r"stocks(?:/[A-Za-z0-9][A-Za-z0-9._:^=\-]{0,79})?|"
+    r"market|sectors|themes|insights/(?:flows|options|news)|research/new|"
+    r"runs/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|"
+    r"reports|investment)"
+)
 _REPORT_LABELS = {
     "market_report": "技术分析报告",
     "sentiment_report": "社交情绪报告",
@@ -80,6 +89,21 @@ _STAGE_LABELS = {
 
 def _now() -> str:
     return datetime.now(UTC).isoformat()
+
+
+def _frameable_workbench_document(request: Request) -> bool:
+    """Only the two intentional, same-origin application documents may be framed."""
+    path = request.url.path
+    # Reject encoded aliases and separators rather than broadening the route whitelist
+    # through URL decoding. Neither allowed document family has non-ASCII paths.
+    if request.method not in {"GET", "HEAD"} or request.scope.get("raw_path") != path.encode():
+        return False
+    if path == "/workbench/design/index.html":
+        return True
+    return (
+        request.query_params.getlist("embedded") == ["1"]
+        and _EMBEDDED_WORKBENCH.fullmatch(path) is not None
+    )
 
 
 def _valid_id(value: str) -> str:
@@ -884,7 +908,7 @@ def create_app(
             database.dispose()
 
     app = FastAPI(
-        title="TradingAgents Local",
+        title="ThesisFlow Local",
         docs_url=None,
         redoc_url=None,
         openapi_url=None,
@@ -996,6 +1020,8 @@ def create_app(
             if request.url.path.startswith("/api/v1/themes")
             else 64 * 1024
             if request.url.path.startswith(("/api/v1/model-connections", "/api/v1/model-profiles"))
+            else _MAX_RESEARCH_BODY
+            if request.method == "POST" and request.url.path == "/api/v1/runs"
             else _MAX_BODY
         )
         if length > body_limit:
@@ -1009,12 +1035,18 @@ def create_app(
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "same-origin"
         is_report = bool(re.fullmatch(r"/api/(?:v1/)?runs/[0-9a-f-]{36}/report", request.url.path))
-        response.headers["X-Frame-Options"] = "SAMEORIGIN" if is_report else "DENY"
+        is_workbench_frame = (
+            response.status_code == 200
+            and response.headers.get("content-type", "").split(";", 1)[0] == "text/html"
+            and _frameable_workbench_document(request)
+        )
+        frameable = is_report or is_workbench_frame
+        response.headers["X-Frame-Options"] = "SAMEORIGIN" if frameable else "DENY"
         response.headers["Cache-Control"] = "no-store"
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
             "img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; "
-            + ("frame-ancestors 'self'" if is_report else "frame-ancestors 'none'")
+            + ("frame-ancestors 'self'" if frameable else "frame-ancestors 'none'")
         )
         return response
 
@@ -1192,7 +1224,7 @@ def create_app(
 def main() -> None:
     import uvicorn
 
-    parser = argparse.ArgumentParser(description="TradingAgents local web interface")
+    parser = argparse.ArgumentParser(description="研衡 · ThesisFlow 个人投研工作台")
     parser.add_argument(
         "--port", type=int, default=int(os.getenv("TRADINGAGENTS_WEB_PORT", "8000"))
     )

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="研衡 · ThesisFlow，个人智能投研与决策工作台：行情、研究、决策与复盘。"
+    />
+    <title>研衡 · ThesisFlow</title>
+    <style>
+      /* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio, geometry.
+       Put this @layer first; product CSS outside the layer wins ordinary layout rules.
+       Native hidden and closed-dialog states take precedence over component display rules. */
+      @layer od-layout {
+        [hidden]:not([hidden="until-found" i]) {
+          display: none !important;
+        }
+        dialog:not([open]) {
+          display: none !important;
+        }
+        :where(
+            .od-stack,
+            .od-row,
+            .od-row-top,
+            .od-cluster,
+            .od-grid,
+            .od-field,
+            .od-stat,
+            .od-cell,
+            .od-tile
+          )
+          > :where(*) {
+          min-width: 0;
+        }
+        .od-stack {
+          display: flex;
+          flex-direction: column;
+          gap: var(--od-gap, 8px);
+        }
+        .od-row {
+          display: flex;
+          align-items: center;
+          gap: var(--od-gap, 8px);
+        }
+        .od-row-top {
+          display: flex;
+          align-items: flex-start;
+          gap: var(--od-gap, 8px);
+        }
+        .od-cluster {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: var(--od-gap, 8px);
+        }
+        .od-fill {
+          flex: 1 1 0;
+          min-width: 0;
+        }
+        .od-fixed {
+          flex: none;
+        }
+        .od-grid {
+          display: grid;
+          gap: var(--od-gap, 12px);
+          grid-template-columns: repeat(var(--od-cols, 3), minmax(0, 1fr));
+        }
+        .od-stat,
+        .od-field,
+        .od-cell {
+          display: grid;
+          gap: var(--od-gap, 2px);
+        }
+        :where(.od-stat, .od-field, .od-cell) > :where(*) {
+          display: block;
+        }
+        .od-tile {
+          display: grid;
+          grid-template-rows: auto 1fr;
+        }
+        :where(.od-tile) > :where(*) {
+          display: block;
+        }
+        .od-media {
+          display: block;
+          width: 100%;
+          height: auto;
+          aspect-ratio: var(--od-ratio, auto);
+        }
+        .od-media-cover {
+          object-fit: cover;
+        }
+        .od-icon {
+          display: inline-block;
+          inline-size: var(--od-icon-size, 1em);
+          block-size: var(--od-icon-size, 1em);
+          flex: none;
+        }
+        .od-truncate {
+          display: block;
+          max-width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        .od-clamp-2,
+        .od-clamp-3 {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          overflow-wrap: anywhere;
+        }
+        .od-clamp-2 {
+          -webkit-line-clamp: 2;
+        }
+        .od-clamp-3 {
+          -webkit-line-clamp: 3;
+        }
+        .od-lines-2 {
+          min-height: calc(2 * 1.4em);
+        }
+        .od-nowrap {
+          white-space: nowrap;
+        }
+        .od-keep {
+          word-break: keep-all;
+          overflow-wrap: anywhere;
+        }
+        .od-screen {
+          display: grid;
+          grid-template-rows: auto minmax(0, 1fr) auto;
+          height: 100%;
+        }
+        .od-scroll {
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          min-height: 0;
+        }
+        .od-rail {
+          display: flex;
+          gap: var(--od-gap, 8px);
+          overflow-x: auto;
+          scroll-snap-type: x proximity;
+          scrollbar-width: none;
+          padding-inline: var(--od-rail-pad, 16px);
+          scroll-padding-inline: var(--od-rail-pad, 16px);
+        }
+        .od-rail::-webkit-scrollbar {
+          display: none;
+        }
+        :where(.od-rail) > :where(*) {
+          flex: none;
+          scroll-snap-align: start;
+        }
+        :where(.od-rail) > :where(:last-child) {
+          margin-inline-end: var(--od-rail-pad, 16px);
+        }
+        .od-spacer {
+          flex: none;
+          visibility: hidden;
+          pointer-events: none;
+        }
+        .od-touch {
+          min-width: 44px;
+          min-height: 44px;
+        }
+      }
+      :root [hidden]:where(:not([hidden="until-found" i])) {
+        display: none;
+      }
+      /* /OD-LAYOUT-PRIMITIVES v1 */
+    </style>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="live.css" />
+    <script src="runtime.js" type="module"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳转到主要内容</a>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="工作区导航">
+        <button
+          class="brand"
+          type="button"
+          data-action="navigate"
+          data-page="dashboard"
+          aria-label="研衡 · ThesisFlow 研究工作台"
+        >
+          <span class="brand-monogram">TF<span class="brand-point"></span></span>
+          <span class="od-field brand-name"
+            ><strong>研衡 · ThesisFlow</strong><small>个人智能投研与决策工作台</small></span
+          >
+        </button>
+        <button class="workspace-switch od-row" type="button" data-action="account">
+          <span class="workspace-avatar">个</span>
+          <span class="od-field od-fill"
+            ><strong>个人工作区</strong><small>研究 · 决策 · 复盘</small></span
+          >
+          <span data-icon="chevrons" class="muted"></span>
+        </button>
+        <p class="nav-caption">投研空间</p>
+        <nav id="main-nav" class="main-nav" aria-label="主导航"></nav>
+        <div class="sidebar-bottom">
+          <button type="button" class="nav-link" data-action="navigate" data-page="settings">
+            <span data-icon="settings"></span><span>设置中心</span>
+          </button>
+          <button type="button" class="nav-link" data-action="guide">
+            <span data-icon="help"></span><span>使用指引</span>
+          </button>
+          <div class="preview-note od-row">
+            <span class="status-dot"></span>
+            <div class="od-field">
+              <strong>个人研究工作区</strong><small>账号数据 · 独立保存</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div class="main-column">
+        <header class="topbar">
+          <div class="breadcrumb">
+            <span class="muted">工作区</span><span class="breadcrumb-slash">/</span
+            ><strong id="breadcrumb-current">研究工作台</strong>
+          </div>
+          <button type="button" class="global-search" data-action="search">
+            <span data-icon="search"></span><span>搜索证券、研究与计划</span><kbd>⌘ K</kbd>
+          </button>
+          <div class="topbar-actions od-row">
+            <span class="demo-badge">当前账号</span>
+            <button
+              type="button"
+              class="icon-button task-trigger"
+              data-action="tasks"
+              aria-label="打开任务中心"
+            >
+              <span data-icon="activity"></span><span id="task-dot" class="task-dot"></span>
+            </button>
+            <button
+              type="button"
+              class="account-trigger"
+              data-action="account"
+              aria-label="个人账号与设置"
+            >
+              <span id="account-avatar">我</span>
+            </button>
+          </div>
+        </header>
+        <main id="main" class="main-content" tabindex="-1">
+          <div class="page">
+            <div class="panel panel-body">
+              <h2>正在读取你的工作区…</h2>
+              <p class="muted">加载研究、自选与投资计划。</p>
+            </div>
+          </div>
+        </main>
+        <footer class="app-footer">
+          <span>THESISFLOW <span class="footer-separator">/</span> RESEARCH WITH DISCIPLINE</span
+          ><span>研究与个人判断分别保存</span>
+        </footer>
+      </div>
+    </div>
+    <dialog id="app-dialog" class="app-dialog" aria-labelledby="dialog-title">
+      <header class="dialog-header od-row">
+        <h2 id="dialog-title" class="od-fill"></h2>
+        <button class="icon-button" type="button" data-action="close-dialog" aria-label="关闭窗口">
+          <span data-icon="close"></span>
+        </button>
+      </header>
+      <div id="dialog-body" class="dialog-body"></div>
+      <div id="dialog-footer" class="dialog-footer" hidden></div>
+    </dialog>
+    <div id="toast" class="toast od-row" role="status" aria-live="polite" hidden></div>
+    <noscript
+      ><div class="noscript-message">
+        请使用开启 JavaScript 的浏览器打开此文件，以切换页面并体验交互。
+      </div></noscript
+    >
+  </body>
+</html>

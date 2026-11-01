@@ -125,7 +125,7 @@ class ResearchWorker:
             memory_log_path=str(folder / "memory" / "trading_memory.md"),
             research_request={
                 key: request[key]
-                for key in ("objective", "horizon", "holding_state")
+                for key in ("objective", "horizon", "holding_state", "research_instructions")
                 if key in request
             },
         )

@@ -348,7 +348,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
   return (
     <div className={styles.stack}>
       <div className={styles.heading}>
-        <small>TRADINGAGENTS EQUITY RESEARCH</small>
+        <small>THESISFLOW EQUITY RESEARCH</small>
         <h1>启动个股研究</h1>
         <p>选择内置多角色流程或已连接的本地 Agent 执行个股研究，过程与报告保存到同一研究记录。</p>
       </div>
@@ -449,7 +449,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
               <Form.Item label="执行方式" name="execution_mode" rules={[{ required: true }]}>
                 <Select
                   options={[
-                    { value: "builtin_workflow", label: "TradingAgents · 内置 12 角色研究" },
+                    { value: "builtin_workflow", label: "内置 12 角色研究（TradingAgents 引擎）" },
                     {
                       value: "local_agent",
                       label: "本地 Agent · 独立研究",
@@ -742,7 +742,7 @@ function ResearchCreateForm({ bootstrap }: { bootstrap: BootstrapResponse }) {
                   !investmentReady
                 }
               >
-                {localAgent ? "启动本地 Agent 研究" : "启动 TradingAgents 分析"}
+                {localAgent ? "启动本地 Agent 研究" : "启动内置分析（TradingAgents 引擎）"}
               </Button>
             </Form>
           </div>

@@ -273,7 +273,7 @@ export function ResearchWorkflow({
   }
 
   return (
-    <section className={styles.workflow} aria-label="TradingAgents研究决策路径">
+    <section className={styles.workflow} aria-label="ThesisFlow 研究决策路径">
       <header className={styles.header}>
         <div>
           <small>RESEARCH DECISION FLOW</small>

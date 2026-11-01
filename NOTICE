@@ -1,0 +1,17 @@
+研衡 · ThesisFlow
+https://github.com/ninthmonee/thesisflow
+
+This project is based on TradingAgents, the multi-agent LLM financial research
+framework developed by Tauric Research and its contributors.
+
+Upstream source: https://github.com/TauricResearch/TradingAgents
+Upstream paper: https://arxiv.org/abs/2412.20138
+
+ThesisFlow adds a personal research workbench, account and connection management,
+market and thematic observations, research evidence, investment plans, and manual
+review workflows. The TradingAgents engine package and compatible commands retain
+their original technical names.
+
+The upstream attribution and Apache License 2.0 text are retained in this
+repository. See LICENSE and backend/LICENSE for the license text and README.md
+for the project and upstream documentation.

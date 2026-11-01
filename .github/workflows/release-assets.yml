@@ -2,7 +2,7 @@ name: Release assets
 
 # Builds the source archive and wheel from the release tag and attaches them to
 # the GitHub release, so a version can be installed without cloning:
-#   pip install https://github.com/TauricResearch/TradingAgents/releases/download/<tag>/<wheel>
+#   pip install https://github.com/ninthmonee/thesisflow/releases/download/<tag>/<wheel>
 # Run it by hand with a tag to attach builds to an earlier release.
 
 on:
@@ -71,6 +71,6 @@ jobs:
           /tmp/smoke/bin/pip install backend/dist/*.whl
           # From another directory, so the imports come from the wheel, not the checkout.
           cd /tmp
-          /tmp/smoke/bin/python -c "import importlib.resources as r, tradingagents, cli.main; assert (r.files('cli') / 'static' / 'welcome.txt').is_file(); assert (r.files('tradingagents') / 'web' / 'ui' / 'index.html').is_file(); assert (r.files('tradingagents') / 'web' / 'static' / 'index.html').is_file(); print('wheel install OK', tradingagents.__version__)"
+          /tmp/smoke/bin/python -c "import importlib.resources as r, tradingagents, cli.main; assert (r.files('cli') / 'static' / 'welcome.txt').is_file(); assert (r.files('tradingagents') / 'web' / 'ui' / 'index.html').is_file(); assert (r.files('tradingagents') / 'web' / 'ui' / 'design' / 'runtime.js').is_file(); assert (r.files('tradingagents') / 'web' / 'static' / 'index.html').is_file(); print('ThesisFlow wheel install OK', tradingagents.__version__)"
       - name: Attach them to the release
         run: gh release upload "$TAG" backend/dist/* --clobber --repo "$GITHUB_REPOSITORY"

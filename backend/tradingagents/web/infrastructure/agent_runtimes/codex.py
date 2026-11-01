@@ -29,7 +29,7 @@ MAX_TOTAL_BYTES = 16_777_216
 MAX_REPORT_BYTES = 1_048_576
 MAX_TOOL_BYTES = 524_288
 PROTOCOL_VERSION = "codex-stdio-research-v1"
-CLIENT = {"name": "tradingagents_research", "title": "TradingAgents Research", "version": "1.0.0"}
+CLIENT = {"name": "tradingagents_research", "title": "ThesisFlow Research", "version": "1.0.0"}
 _ENV_KEYS = (
     "PATH",
     "HOME",

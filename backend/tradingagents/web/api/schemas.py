@@ -22,7 +22,7 @@ RunStatus = Literal[
 
 
 class ApplicationInfo(ContractModel):
-    name: Literal["TradingAgents"] = "TradingAgents"
+    name: Literal["ThesisFlow"] = "ThesisFlow"
     version: str
     mode: Literal["local"] = "local"
 

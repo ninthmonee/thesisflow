@@ -257,8 +257,8 @@
             "type": "string"
           },
           "name": {
-            "const": "TradingAgents",
-            "default": "TradingAgents",
+            "const": "ThesisFlow",
+            "default": "ThesisFlow",
             "title": "Name",
             "type": "string"
           },
@@ -12480,7 +12480,7 @@
     }
   },
   "info": {
-    "title": "TradingAgents Web API",
+    "title": "ThesisFlow Web API",
     "version": "1.0.0"
   },
   "openapi": "3.1.0",

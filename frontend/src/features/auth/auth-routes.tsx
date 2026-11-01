@@ -27,9 +27,9 @@ function AuthFrame({ children }: { children: ReactNode }) {
     <main className={styles.screen}>
       <section className={styles.introduction}>
         <div className={styles.brand}>
-          <span>TA</span>
+          <span>TF</span>
           <div>
-            TradingAgents<small>RESEARCH TERMINAL</small>
+            研衡 · ThesisFlow<small>个人智能投研与决策工作台</small>
           </div>
         </div>
         <p className={styles.kicker}>YOUR RESEARCH · YOUR WORKSPACE</p>
@@ -45,7 +45,7 @@ function AuthFrame({ children }: { children: ReactNode }) {
         </div>
       </section>
       <section className={styles.card}>{children}</section>
-      <footer className={styles.footer}>TradingAgents · 美股研究工作台</footer>
+      <footer className={styles.footer}>研衡 · ThesisFlow · 个人智能投研与决策工作台</footer>
     </main>
   );
 }

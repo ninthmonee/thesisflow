@@ -1,4 +1,4 @@
-/* TradingAgents local workspace. No external scripts and no model calls on load. */
+/* ThesisFlow workspace, powered by the TradingAgents research engine. No external scripts and no model calls on load. */
 "use strict";
 
 (() => {
@@ -136,7 +136,7 @@
     });
     const names = { workspace: "研究工作台", history: "历史报告", settings: "运行设置" };
     $("breadcrumb-current").textContent = names[state.page];
-    document.title = `${names[state.page]} · TradingAgents`;
+    document.title = `${names[state.page]} · 研衡 · ThesisFlow`;
     closeSidebar();
     if (state.page === "history") { renderHistory(); refreshHistory(false); }
     if (state.page === "settings") renderSettings();
@@ -628,7 +628,7 @@
     model.append(el("p", "settings-description", "快速模型负责分析与辩论，深度模型负责研究和组合经理的最终权衡。"));
     const workspace = el("section", "card settings-card");
     const workspaceTitle = el("h2"); workspaceTitle.append(icon("sliders"), document.createTextNode("工作空间")); workspace.append(workspaceTitle);
-    workspace.append(settingRow("应用版本", `TradingAgents ${safeText(config.version)}`, true), settingRow("运行方式", "本地 Web 工作台"), settingRow("默认报告语言", config.output_language === "English" ? "English" : "简体中文"), settingRow("当前服务日期", config.today, true), settingRow("模型凭据", config.model_ready ? "已配置" : "尚未配置"));
+    workspace.append(settingRow("应用版本", `ThesisFlow ${safeText(config.version)}`, true), settingRow("运行方式", "本地 Web 工作台"), settingRow("默认报告语言", config.output_language === "English" ? "English" : "简体中文"), settingRow("当前服务日期", config.today, true), settingRow("模型凭据", config.model_ready ? "已配置" : "尚未配置"));
     workspace.append(el("p", "settings-description", "模型与数据配置来自本机环境。研究参数可在每次启动分析前单独选择。"));
     const sources = el("section", "card settings-card wide");
     const sourceTitle = el("h2"); sourceTitle.append(icon("layers"), document.createTextNode("数据来源与服务")); sources.append(sourceTitle);

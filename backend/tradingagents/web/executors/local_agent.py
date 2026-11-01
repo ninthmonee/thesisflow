@@ -168,7 +168,7 @@ class LocalAgentExecutor:
 
     def _exports(self, claim, folder, markdown):
         rendered = MarkdownIt("commonmark", {"html": False}).render(markdown)
-        document = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>TradingAgents 本地Agent研究</title><body><main>' + rendered + '</main></body></html>'
+        document = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>研衡 · ThesisFlow 本地 Agent 研究</title><body><main>' + rendered + '</main></body></html>'
         for kind, name, text in (("markdown", "report.md", markdown), ("html", "report.html", document)):
             path = folder / name
             temporary = path.with_suffix(path.suffix + ".tmp")

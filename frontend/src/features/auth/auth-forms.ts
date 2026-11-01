@@ -14,7 +14,7 @@ export function validNewPassword(value: string) {
 
 /** Only workbench-relative destinations can survive an authentication redirect. */
 export function safeReturnPath(value: string | null | undefined): string {
-  const fallback = "/research/new";
+  const fallback = "/";
   if (
     !value?.startsWith("/") ||
     value.startsWith("//") ||
@@ -28,7 +28,7 @@ export function safeReturnPath(value: string | null | undefined): string {
     const parsed = new URL(value, "https://workbench.invalid");
     if (
       parsed.origin !== "https://workbench.invalid" ||
-      !/^\/(?:research|runs|stocks|reports|themes|insights|settings|market|sectors|account)(?:\/|$)/.test(
+      !/^\/(?:$|(?:research|runs|stocks|reports|themes|insights|settings|market|sectors|account|investment)(?:\/|$))/.test(
         parsed.pathname,
       )
     )
@@ -41,5 +41,5 @@ export function safeReturnPath(value: string | null | undefined): string {
 
 export function authPageUrl(page: "login" | "register" | "setup", next?: string | null) {
   const destination = safeReturnPath(next);
-  return `/${page}${destination === "/research/new" ? "" : `?${new URLSearchParams({ next: destination })}`}`;
+  return `/${page}${destination === "/" ? "" : `?${new URLSearchParams({ next: destination })}`}`;
 }

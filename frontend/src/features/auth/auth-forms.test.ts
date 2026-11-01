@@ -29,6 +29,8 @@ describe("authentication form boundaries", () => {
     expect(safeReturnPath("/stocks?symbol=NVDA")).toBe("/stocks?symbol=NVDA");
     expect(safeReturnPath("/runs/record#reports")).toBe("/runs/record#reports");
     expect(safeReturnPath("/account")).toBe("/account");
+    expect(safeReturnPath("/investment/plan")).toBe("/investment/plan");
+    expect(safeReturnPath("/")).toBe("/");
     for (const value of [
       "https://example.com",
       "//example.com",
@@ -41,7 +43,7 @@ describe("authentication form boundaries", () => {
       "javascript:alert(1)",
       null,
     ])
-      expect(safeReturnPath(value)).toBe("/research/new");
+      expect(safeReturnPath(value)).toBe("/");
   });
 
   it("encodes only a validated local destination while switching auth forms", () => {

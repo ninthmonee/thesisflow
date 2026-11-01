@@ -36,6 +36,7 @@ import { AuthGate } from "../features/auth/auth-routes";
 import { useAuth } from "../features/auth/auth-context";
 import { AccountPage } from "../features/auth/account-page";
 import styles from "./app.module.css";
+import { DesignWorkbench } from "../features/design/design-workbench";
 
 const queryClient = new QueryClient();
 const NewResearchPage = lazy(() =>
@@ -231,13 +232,34 @@ function Terminal({ user }: { user: AuthUser }) {
   const current = navigation.find((item) =>
     location.pathname.startsWith(item.path.split("/").slice(0, 2).join("/")),
   );
+  if (new URLSearchParams(location.search).get("embedded") === "1") {
+    return (
+      <main className={styles.embeddedContent}>
+        {location.pathname === "/account" ? (
+          <AccountPage />
+        ) : bootstrap.isPending ? (
+          <Spin />
+        ) : bootstrap.isError ? (
+          <Alert
+            type="error"
+            title="无法读取工作区"
+            description={
+              bootstrap.error instanceof Error ? bootstrap.error.message : "请检查本机服务后重试。"
+            }
+          />
+        ) : (
+          <ConnectedPages data={bootstrap.data} />
+        )}
+      </main>
+    );
+  }
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <NavLink className={styles.brand} to="/research/new">
-          <span>TA</span>
+          <span>TF</span>
           <div>
-            TradingAgents<small>RESEARCH TERMINAL</small>
+            ThesisFlow<small>个人智能投研与决策工作台</small>
           </div>
         </NavLink>
         <div className={styles.navLabel}>WORKSPACE</div>
@@ -344,7 +366,7 @@ function Terminal({ user }: { user: AuthUser }) {
           )}
         </main>
         <footer className={styles.footer}>
-          <span>TRADINGAGENTS · {bootstrap.data?.application.version ?? "LOCAL"}</span>
+          <span>THESISFLOW · {bootstrap.data?.application.version ?? "LOCAL"}</span>
           <span>来源状态与配置均由本机 API 返回</span>
         </footer>
       </div>
@@ -355,7 +377,21 @@ function Terminal({ user }: { user: AuthUser }) {
 function AuthenticatedTerminal() {
   const auth = useAuth();
   const user = auth.session?.user;
-  return user ? <Terminal key={`${user.id}:${user.workspace.id}`} user={user} /> : null;
+  const advanced = window.location.pathname.startsWith(`${import.meta.env.BASE_URL}advanced`);
+  return user ? (
+    advanced ? (
+      <>
+        {new URLSearchParams(window.location.search).get("embedded") !== "1" && (
+          <a className={styles.returnToDesign} href={import.meta.env.BASE_URL}>
+            ← 返回新版工作台
+          </a>
+        )}
+        <Terminal key={`${user.id}:${user.workspace.id}`} user={user} />
+      </>
+    ) : (
+      <DesignWorkbench key={`${user.id}:${user.workspace.id}`} />
+    )
+  ) : null;
 }
 
 export function App() {
@@ -377,7 +413,14 @@ export function App() {
     >
       <AppBoundary>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <BrowserRouter
+            basename={
+              import.meta.env.BASE_URL +
+              (window.location.pathname.startsWith(`${import.meta.env.BASE_URL}advanced`)
+                ? "advanced"
+                : "")
+            }
+          >
             <AuthProvider>
               <AuthGate>
                 <AuthenticatedTerminal />

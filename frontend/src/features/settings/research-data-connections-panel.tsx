@@ -183,7 +183,7 @@ export function ResearchDataConnectionsPanel({ bootstrap }: { bootstrap: Bootstr
     <>
       <section className={styles.panel}>
         <div className={styles.toolbar}>
-          <h2>TradingAgents 研究数据连接</h2>
+          <h2>ThesisFlow 研究数据连接</h2>
           <Tag>凭据通过配置接入</Tag>
         </div>
         <div className={styles.body}>

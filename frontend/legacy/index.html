@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#087a59" />
-    <title>TradingAgents · 研究工作台</title>
+    <title>研衡 · ThesisFlow</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23087a59'/%3E%3Cpath d='M7 22V11h6v11m6 0V7h6v15M7 17h18' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="/assets/app.css" />
     <script src="/assets/app.js" defer></script>
@@ -42,9 +42,9 @@
     <a class="skip-link" href="#main-content">跳至主要内容</a>
     <div class="sidebar-scrim" id="sidebar-scrim" hidden></div>
     <aside class="sidebar" id="sidebar" aria-label="主导航">
-      <a class="brand" href="#workspace" aria-label="TradingAgents 首页">
+      <a class="brand" href="#workspace" aria-label="研衡 · ThesisFlow 首页">
         <span class="brand-icon"><svg class="icon"><use href="#i-logo"/></svg></span>
-        <span><strong>TradingAgents<span class="brand-period">.</span></strong><small>RESEARCH WORKSPACE</small></span>
+        <span><strong>ThesisFlow<span class="brand-period">.</span></strong><small>个人智能投研与决策工作台</small></span>
       </a>
       <div class="workspace-label"><span class="workspace-avatar">T</span><div><strong>本地研究空间</strong><span>Personal workspace</span></div><span class="local-dot" title="本地部署"></span></div>
       <p class="nav-caption">工作空间</p>
@@ -90,7 +90,7 @@
             <aside class="workflow-column"><section class="card workflow-card"><div class="card-heading"><div><span class="section-kicker">HOW IT WORKS</span><h2>一个团队，多种视角</h2></div><span class="workflow-badge">01—05</span></div><p class="workflow-description">从独立分析到共同审视，让判断经过充分讨论。</p><ol class="workflow-list"><li><span class="workflow-number">01</span><div><h3>并行分析</h3><p>技术、基本面、新闻与情绪，多维解读市场。</p><div class="mini-analysts"><span class="symbol-green"><svg class="icon"><use href="#i-chart"/></svg></span><span class="symbol-amber"><svg class="icon"><use href="#i-building"/></svg></span><span class="symbol-blue"><svg class="icon"><use href="#i-news"/></svg></span><span class="symbol-purple"><svg class="icon"><use href="#i-message"/></svg></span></div></div></li><li><span class="workflow-number">02</span><div><h3>多空辩论</h3><p>让支持与反对的证据充分交锋。</p></div></li><li><span class="workflow-number">03</span><div><h3>交易提案</h3><p>结合研究结论，形成行动建议。</p></div></li><li><span class="workflow-number">04</span><div><h3>风险审视</h3><p>不同风险偏好，再次审视每个假设。</p></div></li><li><span class="workflow-number final-step">05</span><div><h3>形成研究报告</h3><p>保留分析、辩论与最终判断。</p></div></li></ol><div class="workflow-footer"><svg class="icon"><use href="#i-file"/></svg><span>完整过程可阅读、可导出</span></div></section><div class="research-note"><span class="note-icon"><svg class="icon"><use href="#i-info"/></svg></span><div><h3>观点由 AI 生成，请独立判断</h3><p>本工具用于研究辅助。数据可能延迟或缺失，分析结果不构成投资建议。</p></div></div></aside>
           </div>
           <div id="active-run-container" hidden></div>
-          <div class="bottom-caption"><span>TRADINGAGENTS</span><p>让信息成为洞察，让研究留下依据。</p><span>LOCAL WORKSPACE</span></div>
+          <div class="bottom-caption"><span>THESISFLOW</span><p>让信息成为洞察，让研究留下依据。</p><span>LOCAL WORKSPACE</span></div>
         </section>
         <section class="page" id="page-history" aria-labelledby="history-heading" hidden><div class="page-heading"><div><div class="eyebrow page-eyebrow"><span></span> RESEARCH LIBRARY</div><h1 id="history-heading">每一次研究，都值得留存。</h1><p>回看观点的形成过程，积累自己的市场研究档案。</p></div><button class="button button-secondary" id="refresh-history"><svg class="icon"><use href="#i-refresh"/></svg>刷新记录</button></div><div class="card history-card"><div class="history-toolbar"><h2>研究记录 <span id="history-total">0</span></h2><div class="history-filters"><div class="input-with-icon"><svg class="icon"><use href="#i-search"/></svg><input type="search" id="history-search" placeholder="搜索标的或报告" aria-label="搜索历史报告"/></div><select id="history-filter" aria-label="按任务状态筛选"><option value="all">全部状态</option><option value="completed">已完成</option><option value="running">进行中</option><option value="failed">未完成</option></select></div></div><div id="history-list"></div></div><div id="history-run-container" hidden></div></section>
         <section class="page" id="page-settings" aria-labelledby="settings-heading" hidden><div class="page-heading"><div><div class="eyebrow page-eyebrow"><span></span> WORKSPACE CONFIGURATION</div><h1 id="settings-heading">你的研究环境，一目了然。</h1><p>查看当前模型、数据来源与连接状态。凭据始终保留在本地。</p></div></div><div id="settings-content"></div></section>

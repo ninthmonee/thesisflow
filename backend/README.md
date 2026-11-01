@@ -1,4 +1,11 @@
-# TradingAgents backend
+# 研衡 · ThesisFlow backend
+
+This is the backend of [ThesisFlow](https://github.com/ninthmonee/thesisflow), named
+研衡 in Chinese. It extends the upstream
+[TradingAgents](https://github.com/TauricResearch/TradingAgents) research engine.
+The `tradingagents` Python package, compatible CLI commands, environment variables,
+and stored identifiers retain their existing names. See [project naming](../docs/brand.md)
+and [source attribution](../README.md#来源与许可).
 
 Python application, CLI, API, workers, data adapters, migrations and tests live here.
 The React application and legacy browser sources live in `../frontend` and

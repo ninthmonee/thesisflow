@@ -217,6 +217,7 @@ def test_frozen_objective_and_context_are_passed_as_allowlisted_runtime_inputs(r
             "objective": "technical",
             "horizon": "short",
             "holding_state": "held",
+            "research_instructions": "核实需求增长是否兑现为收入与现金流。",
             "context_ids": ["00000000-0000-4000-8000-000000000001"],
         },
         manifest={
@@ -231,7 +232,12 @@ def test_frozen_objective_and_context_are_passed_as_allowlisted_runtime_inputs(r
         },
         **scope,
     )
-    worker = ResearchWorker(service, lambda _: build_default_config(), graph_factory=EvidenceGraph)
+    def resolve_config(_):
+        config = build_default_config()
+        config["research_request"] = {"research_instructions": "A later mutable configuration"}
+        return config
+
+    worker = ResearchWorker(service, resolve_config, graph_factory=EvidenceGraph)
     claim = service.tasks.claim_next("runtime-test", 90)
     manifest = service.get_manifest(run["id"], **scope)
     config, _ = worker._runtime(claim, manifest)
@@ -239,5 +245,9 @@ def test_frozen_objective_and_context_are_passed_as_allowlisted_runtime_inputs(r
         "objective": "technical",
         "horizon": "short",
         "holding_state": "held",
+        "research_instructions": "核实需求增长是否兑现为收入与现金流。",
     }
+    assert service.get_manifest(run["id"], **scope)["request"]["research_instructions"] == (
+        "核实需求增长是否兑现为收入与现金流。"
+    )
     assert config["research_context"][0]["id"] == "00000000-0000-4000-8000-000000000001"

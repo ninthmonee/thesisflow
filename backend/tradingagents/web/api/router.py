@@ -78,7 +78,7 @@ def build_bootstrap(
     capabilities = [
         Capability(
             id="research",
-            label="TradingAgents 个股研究",
+            label="ThesisFlow 个股研究",
             state="available" if configured else "configuration_required",
             reason="现有研究链路；凭据存在性检查不代表模型调用已验证。"
             if configured
@@ -234,7 +234,7 @@ def register_contract_models(app: FastAPI) -> None:
 def create_schema_app() -> FastAPI:
     """Pure contract export: no store, worker, default config, credentials, or network."""
     app = FastAPI(
-        title="TradingAgents Web API",
+        title="ThesisFlow Web API",
         version="1.0.0",
         docs_url=None,
         redoc_url=None,

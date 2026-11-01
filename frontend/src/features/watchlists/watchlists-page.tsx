@@ -463,7 +463,7 @@ export function WatchlistsPage({ bootstrap }: { bootstrap: BootstrapResponse }) 
               <Link
                 to={`/research/new?ticker=${encodeURIComponent(selectedInstrument?.symbol ?? "")}`}
               >
-                <Button>TradingAgents个股研究</Button>
+                <Button>ThesisFlow 个股研究</Button>
               </Link>
             )}
             <Button

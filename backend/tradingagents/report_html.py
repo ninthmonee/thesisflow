@@ -282,7 +282,7 @@ def render_report(ticker: str, final_state: dict, settings: dict | None, parts) 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
-<title>{escape(page_title)}: TradingAgents report</title>
+<title>{escape(page_title)}: ThesisFlow report</title>
 <style>{_CSS}</style>
 </head>
 <body>
